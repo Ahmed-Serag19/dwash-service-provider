@@ -244,7 +244,7 @@ const Navbar = () => {
               </button>
               <button
                 onClick={handleCloseModal}
-                className="px-6 py-2 bg-gray-300 text-black rounded-md hover:bg-gray-400 transition-colors"
+                className="px-6 py-2 bg-gray-300 text-black rounded-md hover:bg-gray-400 transition-colors hover:text-white"
               >
                 {t("cancel")}
               </button>
