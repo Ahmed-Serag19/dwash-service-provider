@@ -12,13 +12,16 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { GoBell, GoPersonFill } from "react-icons/go";
 import { GiHamburgerMenu } from "react-icons/gi";
 import LogoutModal from "@/components/LogoutModal";
+import i18n from "@/i18n";
+import { UserContent } from "@/interface/interfaces";
 
 interface HeaderProps {
   mobileOpen: boolean;
   setMobileOpen: (open: boolean) => void;
+  user: UserContent | null;
 }
 
-const Navbar = ({ mobileOpen, setMobileOpen }: HeaderProps) => {
+const Navbar = ({ mobileOpen, setMobileOpen, user }: HeaderProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const dropDownClassName =
@@ -48,7 +51,9 @@ const Navbar = ({ mobileOpen, setMobileOpen }: HeaderProps) => {
           <DropdownMenuTrigger asChild>
             <button className="gap-2 text-md flex items-center font-semibold text-blue-950 hover:text-blue-700 px-2 py-2 rounded-md  hover:bg-stone-200 transition duration-300">
               <GoPersonFill size={28} />
-              John Doe
+              {i18n.language === "en"
+                ? user?.userDto?.nameEn ?? "Guest"
+                : user?.userDto?.nameAr ?? "ضيف"}
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
