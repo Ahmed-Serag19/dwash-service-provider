@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuItem,
@@ -9,9 +9,6 @@ import {
   DropdownMenuSeparator,
 } from "@radix-ui/react-dropdown-menu";
 import LanguageSwitcher from "../components/LanguageSwitcher";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
-import { Button } from "./ui/button";
 import { GoBell, GoPersonFill } from "react-icons/go";
 import { GiHamburgerMenu } from "react-icons/gi";
 import LogoutModal from "./LogoutModal";
@@ -23,19 +20,7 @@ interface HeaderProps {
 
 const Navbar = ({ mobileOpen, setMobileOpen }: HeaderProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const navigate = useNavigate();
-  const { t } = useTranslation();
 
-  const handleLogout = () => {
-    sessionStorage.removeItem("userInfo");
-    toast.success(t("logoutSuccess"), {
-      position: "top-right",
-      autoClose: 3000,
-      theme: "colored",
-      className: "bg-blue-950",
-    });
-    navigate("/login");
-  };
   const dropDownClassName =
     "outline-none cursor-pointer rounded-md transition font-semibold duration-300 hover:bg-slate-100 w-full px-3 my-1 py-2 hover:text-blue-800 hover:bg-stone-200";
   const handleOpenModal = () => setIsModalOpen(true);
@@ -68,7 +53,7 @@ const Navbar = ({ mobileOpen, setMobileOpen }: HeaderProps) => {
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="w-42 border-blue-950 border-[1px] flex flex-col  rounded-md my-2 bg-slate-100"
+            className="w-42 border-blue-950 border-[1px] flex flex-col  rounded-md my-2 bg-stone-100"
           >
             <Link to="/profile">
               <DropdownMenuItem className={dropDownClassName}>
