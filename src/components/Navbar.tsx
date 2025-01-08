@@ -1,24 +1,26 @@
 import { useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import { FaUserCircle, FaSignOutAlt, FaLock } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuPortal,
-  DropdownMenuSubContent,
-  DropdownMenuSub,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
 } from "@radix-ui/react-dropdown-menu";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
-import NavbarLogo from "@/assets/images/navbar-logo.png";
-import { MdKeyboardArrowDown } from "react-icons/md";
-import { MdKeyboardArrowLeft } from "react-icons/md";
+import { Button } from "./ui/button";
+import { GoBell, GoPersonFill } from "react-icons/go";
+import { GiHamburgerMenu } from "react-icons/gi";
 
-const Navbar = () => {
+interface HeaderProps {
+  mobileOpen: boolean;
+  setMobileOpen: (open: boolean) => void;
+}
+
+const Navbar = ({ mobileOpen, setMobileOpen }: HeaderProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -38,195 +40,52 @@ const Navbar = () => {
   const handleCloseModal = () => setIsModalOpen(false);
 
   return (
-    <div className="bg-stone-50 text-blue-950 shadow-lg px-6 py-4 flex justify-around items-center max-md:justify-between z-40">
-      <NavLink
-        to="/"
-        className="hover:bg-stone-300 transition duration-300 rounded-2xl p-2"
+    <header className="sticky top-0 z-30 flex h-32 items-center min-h-16 justify-between border-b border-stone-200 bg-stone-50 px-4">
+      <button
+        className="md:hidden text-2xl"
+        // size="icon"
+        onClick={() => setMobileOpen(!mobileOpen)}
       >
-        <img src={NavbarLogo} alt="Dwash logo icon" className="w-32" />
-      </NavLink>
-
-      {/* Right section: Profile and Logout */}
-      <div className="flex items-center gap-4 max-md:hidden">
-        <div className="flex gap-5 ">
-          {/* Add New Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              className={
-                "text-blue-950 outline-none font-semibold hover:text-blue-600 transition-colors  flex justify-between items-center gap-1"
-              }
-            >
-              {t("addNew")}
-              <MdKeyboardArrowDown />
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent className="bg-white text-black rounded-xl shadow-lg space-y-3 p-2 mt-4 ">
-              <Link to="/service-provider-form">
-                <DropdownMenuItem className={dropDownClassName}>
-                  {t("serviceProvider")}
-                </DropdownMenuItem>
-              </Link>
-              <Link to="coupons">
-                <DropdownMenuItem className={dropDownClassName}>
-                  {t("discount")}
-                </DropdownMenuItem>
-              </Link>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {/* Service Providers Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger className="text-blue-950 outline-none font-semibold hover:text-blue-600 transition-colors flex justify-between items-center gap-1">
-              {t("serviceProviders")}
-              <MdKeyboardArrowDown />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-white text-black rounded-lg shadow-lg p-2 mt-4">
-              <Link to="/service-providers">
-                <DropdownMenuItem className={dropDownClassName}>
-                  {t("showServiceProviders")}
-                </DropdownMenuItem>
-              </Link>
-              <Link to="/service-requests">
-                <DropdownMenuItem className={dropDownClassName}>
-                  {t("serviceRequests")}
-                </DropdownMenuItem>
-              </Link>
-              <Link to="/edit-profile-requests">
-                <DropdownMenuItem className={dropDownClassName}>
-                  {t("personalProfileRequest")}
-                </DropdownMenuItem>
-              </Link>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {/* Client Orders Link */}
-          <NavLink
-            to="/clients-orders"
-            className="text-blue-950 outline-none font-semibold cursor-pointer hover:text-blue-600 transition-colors"
+        <GiHamburgerMenu size={32} className="text-blue-950 h-7 w-7" />
+      </button>
+      <div className="flex items-center gap-4">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="relative hover:bg-stone-200 rounded-lg transition duration-300">
+              <GoBell className="text-blue-950 w-7 h-7" />
+              <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 text-xs text-white">
+                3
+              </span>
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="start"
+            className="md:w-52 border-blue-950 border-[1px] flex flex-col gap-2 p-2 rounded-md my-3 bg-slate-100"
           >
-            {t("clientOrders")}
-          </NavLink>
-        </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger className="text-blue-950 outline-1 outline-offset-1 outline hover:outline-slate-400 rounded-md px-1 py-0.5 bg-stone-200 hover:bg-stone-100 font-semibold hover:text-blue-600 transition-colors">
-            <div className="flex items-center gap-1">
-              <FaUserCircle className="w-9 h-9 rounded-full p-0.5" />
-              <span className="font-semibold">{t("admin")}</span>
-            </div>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="bg-stone-100 text-black rounded-xl shadow-lg px-0.5">
-            <DropdownMenuItem className={`${dropDownClassName} rounded- mt-2`}>
-              <Link
-                to="/change-password"
-                className="flex items-center space-x-2 text-blue-950 font-semibold hover:text-stone-500 transition-colors duration-300"
-              >
-                <FaLock /> <span>{t("changePassword")}</span>
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={handleOpenModal}
-              className={`${dropDownClassName} rounded- mt-2`}
-            >
-              <button className="flex items-center space-x-2 text-blue-950 font-semibold hover:text-red-500 transition-colors duration-300">
-                <FaSignOutAlt /> <span>{t("logout")}</span>
-              </button>
-            </DropdownMenuItem>
+            <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+            <DropdownMenuSeparator className="bg-stone-400" />
+            <DropdownMenuItem>New order received</DropdownMenuItem>
+            <DropdownMenuItem>Payment confirmed</DropdownMenuItem>
+            <DropdownMenuItem>Schedule updated</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-
-        <div className="flex items-center">
-          <LanguageSwitcher />
-        </div>
-      </div>
-      <div className="md:hidden flex gap-5 ">
         <DropdownMenu>
-          <DropdownMenuTrigger className="text-blue-950 outline-none font-semibold hover:text-blue-600 transition-colors flex justify-between items-center gap-3">
-            <div className="flex items-center gap-1">
-              <FaUserCircle className="w-9 h-9 rounded-full p-0.5" />
-              <span className="font-semibold">{t("admin")}</span>
-            </div>
-            <MdKeyboardArrowDown />
+          <DropdownMenuTrigger asChild>
+            <button className="gap-2 text-md flex items-center font-semibold text-blue-950 px-2 py-2 rounded-md mx-3 hover:bg-stone-200 transition duration-300">
+              <GoPersonFill className="" size={28} />
+              John Doe
+            </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="bg-stone-100 text-black rounded-xl shadow-lg space-y-3 p-2 mt-2">
-            {/* Add New Submenu */}
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger
-                className={`${dropDownClassName} flex  gap-2 items-center`}
-              >
-                <MdKeyboardArrowLeft />
-
-                {t("addNew")}
-              </DropdownMenuSubTrigger>
-              <DropdownMenuPortal>
-                <DropdownMenuSubContent className="z-50 me-2 bg-stone-50 px-2 py-1 shadow-lg">
-                  <Link to="/service-provider-form">
-                    <DropdownMenuItem className={dropDownClassName}>
-                      {t("serviceProvider")}
-                    </DropdownMenuItem>
-                  </Link>
-                  <Link to="/coupons">
-                    <DropdownMenuItem className={dropDownClassName}>
-                      {t("discount")}
-                    </DropdownMenuItem>
-                  </Link>
-                </DropdownMenuSubContent>
-              </DropdownMenuPortal>
-            </DropdownMenuSub>
-
-            {/* Service Providers Submenu */}
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger
-                className={`${dropDownClassName} flex  gap-2 items-center`}
-              >
-                <MdKeyboardArrowLeft />
-                {t("serviceProviders")}
-              </DropdownMenuSubTrigger>
-              <DropdownMenuPortal>
-                <DropdownMenuSubContent className="z-50 me-2 bg-stone-50 px-2 py-1 shadow-lg">
-                  <Link to="/service-providers">
-                    <DropdownMenuItem className={dropDownClassName}>
-                      {t("showServiceProviders")}
-                    </DropdownMenuItem>
-                  </Link>
-                  <DropdownMenuItem className={dropDownClassName}>
-                    {t("serviceRequests")}
-                  </DropdownMenuItem>
-                  <Link to="/edit-profile-requests">
-                    <DropdownMenuItem className={dropDownClassName}>
-                      {t("personalProfileRequest")}
-                    </DropdownMenuItem>
-                  </Link>
-                </DropdownMenuSubContent>
-              </DropdownMenuPortal>
-            </DropdownMenuSub>
-
-            {/* Clients Orders */}
-            <Link to="/clients-orders">
-              <DropdownMenuItem className={dropDownClassName}>
-                {t("clientOrders")}
-              </DropdownMenuItem>
-            </Link>
-            {/* Change  Password */}
-            <Link to="/change-password">
-              <DropdownMenuItem className={dropDownClassName}>
-                {t("changePassword")}
-              </DropdownMenuItem>
-            </Link>
-
-            {/* Logout */}
-            <DropdownMenuItem
-              onClick={handleOpenModal}
-              className={`${dropDownClassName} rounded-none`}
-            >
-              <button className="flex items-center space-x-2 text-blue-950 font-semibold hover:text-red-500 transition-colors">
-                <FaSignOutAlt /> <span>{t("logout")}</span>
-              </button>
-            </DropdownMenuItem>
+          <DropdownMenuContent
+            align="end"
+            className="md:w-32 border-blue-950 border-[1px] flex flex-col gap-2 p-2 rounded-md my-2 bg-slate-100"
+          >
+            <DropdownMenuItem>Profile</DropdownMenuItem>
+            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Logout</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        <div className="flex items-center">
-          <LanguageSwitcher />
-        </div>
       </div>
       {/* Modal for Logout Confirmation */}
       {isModalOpen && (
@@ -252,7 +111,7 @@ const Navbar = () => {
           </div>
         </div>
       )}
-    </div>
+    </header>
   );
 };
 
