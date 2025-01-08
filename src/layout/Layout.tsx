@@ -16,16 +16,16 @@ const Layout = () => {
   }, [direction]);
 
   return (
-    <div className="min-h-screen bg-stone-50 flex">
+    <div className="min-h-screen bg-stone-50 flex relative ">
       <Sidebar mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
-      <div className="flex-1 flex flex-col md:ml-64">
+      <div className="grid min-h-screen w-full grid-rows-[auto_1fr_auto] md:ml-52 ">
         {/* Navbar */}
         <Navbar mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
 
         {/* Main Content */}
         <main
           style={{ direction }}
-          className="mx-auto sm:max-w-6xl flex-1 p-2 sm:p-5 w-full flex items-center justify-center overflow-y-auto"
+          className="mx-auto sm:max-w-6xl p-2 sm:p-5 w-full flex items-center justify-center overflow-y-auto"
         >
           <Outlet />
         </main>
