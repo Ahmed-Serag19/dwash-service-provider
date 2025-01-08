@@ -1,11 +1,7 @@
 import AppRoutes from "./routes/AppRoutes";
 
 function App() {
-  return (
-    // <div style={{ direction }}>
-    <AppRoutes />
-    // </div>
-  );
+  return <AppRoutes />;
 }
 
 export default App;

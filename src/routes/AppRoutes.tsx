@@ -1,14 +1,14 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Login from "../pages/Login";
+import Homepage from "@/pages/Homepage";
+import ChangePassword from "@/pages/ChangePassword";
+import Orders from "@/pages/Orders";
+import Profile from "@/pages/Profile";
+import Services from "@/pages/Services";
+import WalletComponent from "@/pages/WalletComponent";
+import TimeSlots from "@/pages/TimeSlots";
+import Login from "@/pages/Login";
+import Layout from "@/layout/Layout";
 // import ProtectedRoute from "@/routes/ProtectedRoute";
-import Layout from "../layout/Layout";
-import Homepage from "../pages/Homepage";
-import ChangePassword from "../pages/ChangePassword";
-import Orders from "../pages/Orders";
-import Profile from "../pages/Profile";
-import Services from "../pages/Services";
-import Wallet from "../pages/Wallet";
-import TimeSlots from "../pages/TimeSlots";
 
 const router = createBrowserRouter([
   {
@@ -25,7 +25,7 @@ const router = createBrowserRouter([
       { path: "/orders", element: <Orders /> },
       { path: "/profile", element: <Profile /> },
       { path: "/services", element: <Services /> },
-      { path: "/wallet", element: <Wallet /> },
+      { path: "/wallet", element: <WalletComponent /> },
       { path: "/time-slots", element: <TimeSlots /> },
     ],
   },

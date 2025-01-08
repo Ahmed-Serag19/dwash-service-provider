@@ -1,9 +1,9 @@
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
+import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
 import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import Sidebar from "../components/Sidebar";
+import Sidebar from "@/components/Sidebar";
 
 const Layout = () => {
   const [mobileOpen, setMobileOpen] = useState(false);

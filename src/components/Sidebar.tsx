@@ -7,11 +7,11 @@ import {
   Package,
   LogOut,
 } from "lucide-react";
-import { cn } from "../lib/utils";
-import Logo from "../assets/images/navbar-logo.png";
+import { cn } from "@/lib/utils";
+import Logo from "@/assets/images/navbar-logo.png";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import LogoutModal from "./LogoutModal";
+import LogoutModal from "@/components/LogoutModal";
 import { useTranslation } from "react-i18next";
 
 interface SidebarProps {

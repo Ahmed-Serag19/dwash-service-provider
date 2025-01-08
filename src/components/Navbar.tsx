@@ -8,10 +8,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@radix-ui/react-dropdown-menu";
-import LanguageSwitcher from "../components/LanguageSwitcher";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { GoBell, GoPersonFill } from "react-icons/go";
 import { GiHamburgerMenu } from "react-icons/gi";
-import LogoutModal from "./LogoutModal";
+import LogoutModal from "@/components/LogoutModal";
 
 interface HeaderProps {
   mobileOpen: boolean;
