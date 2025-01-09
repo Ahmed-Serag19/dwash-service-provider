@@ -1,5 +1,3 @@
-import { Save } from "lucide-react";
-
 export const en = {
   username: "Username",
   password: "Password",
