@@ -177,4 +177,6 @@ export const en = {
   brandBackground: "Brand Background",
   notProvided: "Not Provided",
   Save: "Save",
+  profileUpdateSuccess: "Profile updated successfully.",
+  profileUpdateError: "Failed to update profile.",
 };

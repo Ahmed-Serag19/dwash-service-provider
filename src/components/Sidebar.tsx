@@ -23,7 +23,7 @@ const navItems = [
   { icon: LayoutDashboard, label: "Home", to: "/" },
   { icon: Package, label: "Orders", to: "/orders" },
   { icon: Clock, label: "Timeslots", to: "/time-slots" },
-  { icon: Wallet, label: "Wallet", to: "/wallet" },
+  // { icon: Wallet, label: "Wallet", to: "/wallet" },
   { icon: UserCircle, label: "Profile", to: "/profile" },
   { icon: Settings, label: "Services", to: "/services" },
 ];
@@ -32,7 +32,7 @@ const navItemsAr = [
   { icon: LayoutDashboard, label: "الرئيسية", to: "/" },
   { icon: Package, label: "الطلبات", to: "/orders" },
   { icon: Clock, label: "الفواصل الزمنية", to: "/time-slots" },
-  { icon: Wallet, label: "المحفظة", to: "/wallet" },
+  // { icon: Wallet, label: "المحفظة", to: "/wallet" },
   { icon: UserCircle, label: "الصفحة الشخصية", to: "/profile" },
   { icon: Settings, label: "خدماتك", to: "/services" },
 ];

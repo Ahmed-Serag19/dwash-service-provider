@@ -6,7 +6,13 @@ import React, {
   ReactNode,
 } from "react";
 import { getUser } from "@/utils/user";
-import { UserContextProps, UserContent } from "@/interface/interfaces";
+import {
+  UserContextProps,
+  UserContent,
+  Notification,
+} from "@/interface/interfaces";
+import { endpoints } from "@/constants/endPoints";
+import axios from "axios";
 
 const UserContext = createContext<UserContextProps | undefined>(undefined);
 
@@ -16,6 +22,9 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
   const [user, setUser] = useState<UserContent | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [isNotificationsLoading, setIsNotificationsLoading] =
+    useState<boolean>(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -35,16 +44,65 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
         }
       } catch (err) {
         setError("An error occurred while fetching user data.");
+        console.error("Error fetching user:", err);
       } finally {
         setIsLoading(false);
       }
     };
 
+    const fetchNotifications = async () => {
+      const accessToken = sessionStorage.getItem("accessToken");
+
+      if (!accessToken) {
+        console.error("Access token not found.");
+        return;
+      }
+
+      try {
+        setIsNotificationsLoading(true);
+        const response = await axios.get(endpoints.getNotification, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        if (response.data.success) {
+          setNotifications(response.data.content);
+        } else {
+          console.error(
+            "Failed to fetch notifications:",
+            response.data.messageEn
+          );
+        }
+      } catch (err) {
+        console.error("Failed to fetch notifications:", err);
+      } finally {
+        setIsNotificationsLoading(false);
+      }
+    };
+
     fetchUser();
+    fetchNotifications();
   }, []);
 
+  const markNotificationAsRead = (id: number) => {
+    setNotifications((prev) =>
+      prev.map((notif) =>
+        notif.notificationId === id ? { ...notif, read: 1 } : notif
+      )
+    );
+  };
+
   return (
-    <UserContext.Provider value={{ user, isLoading, error }}>
+    <UserContext.Provider
+      value={{
+        user,
+        isLoading,
+        error,
+        notifications,
+        isNotificationsLoading,
+        markNotificationAsRead,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );

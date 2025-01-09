@@ -220,7 +220,9 @@ const FormField: React.FC<FormFieldProps> = ({
   textarea = false,
 }) => (
   <div className="space-y-2">
-    <Label htmlFor={name}>{label}</Label>
+    <Label className="text-lg" htmlFor={name}>
+      {label}
+    </Label>
     <Controller
       name={name}
       control={control}
@@ -261,7 +263,9 @@ const FileInput: React.FC<FileInputProps> = ({
   accept,
 }) => (
   <div className="space-y-2">
-    <Label htmlFor={name}>{label}</Label>
+    <Label className="text-lg " htmlFor={name}>
+      {label}
+    </Label>
     <Controller
       name={name}
       control={control}

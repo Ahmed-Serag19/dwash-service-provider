@@ -1,5 +1,5 @@
-const WalletComponent = () => {
-  return <div>WalletComponent</div>;
-};
+// const WalletComponent = () => {
+//   return <div>WalletComponent</div>;
+// };
 
-export default WalletComponent;
+// export default WalletComponent;

@@ -59,9 +59,23 @@ export interface UserContextProps {
   user: UserContent | null;
   isLoading: boolean;
   error: string | null;
+  notifications: Notification[];
+  isNotificationsLoading: boolean;
+  markNotificationAsRead: (id: number) => void;
 }
 
 export interface SidebarProps {
   mobileOpen: boolean;
   setMobileOpen: (open: boolean) => void;
+}
+
+export interface Notification {
+  notificationId: number;
+  notificationTitleEn: string;
+  notificationTitleAr: string;
+  notificationDescriptionEn: string;
+  notificationDescriptionAr: string;
+  read: number;
+  createdOn: string;
+  new: boolean;
 }

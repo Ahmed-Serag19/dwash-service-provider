@@ -174,4 +174,6 @@ export const ar = {
   brandBackground: "خلفية العلامة التجارية",
   notProvided: "غير متوفر",
   save: "حفظ",
+  profileUpdateSuccess: "تم تحديث الملف الشخصي بنجاح.",
+  profileUpdateError: "حدث خطأ أثناء تحديث الملف الشخصي.",
 };
