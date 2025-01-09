@@ -167,4 +167,11 @@ export const ar = {
   brandDescriptionsAr: "وصف البراند (بالعربية)",
   brandDescriptionsEn: "وصف البراند (بالإنجليزية)",
   profile: "الملف الشخصي",
+  brandInformation: "معلومات العلامة التجارية",
+  bankInformation: "معلومات البنك",
+  images: "الصور",
+  bankCertificate: "شهادة البنك",
+  brandBackground: "خلفية العلامة التجارية",
+  notProvided: "غير متوفر",
+  save: "حفظ",
 };

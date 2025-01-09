@@ -1,3 +1,5 @@
+import { Save } from "lucide-react";
+
 export const en = {
   username: "Username",
   password: "Password",
@@ -174,4 +176,5 @@ export const en = {
   bankCertificate: "Bank Certificate",
   brandBackground: "Brand Background",
   notProvided: "Not Provided",
+  Save: "Save",
 };
