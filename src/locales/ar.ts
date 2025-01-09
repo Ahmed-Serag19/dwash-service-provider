@@ -132,8 +132,8 @@ export const ar = {
   confirmRejectTitle: "تأكيد الرفض",
   confirmRejectDescription: "هل أنت متأكد أنك تريد رفض هذه الخدمة؟",
   brandDetails: "تفاصيل البراند",
-  brandNameAr: "اسم البراند (بالعربية)",
-  brandNameEn: "اسم البراند (بالإنجليزية)",
+  brandNameAr: "أسم البراند (بالعربية)",
+  brandNameEn: "أسم البراند (بالإنجليزية)",
   descriptionAr: "الوصف (بالعربية)",
   descriptionEn: "الوصف (بالإنجليزية)",
   submittedBy: "مرسل بواسطة",
@@ -164,4 +164,7 @@ export const ar = {
   passwordMinLength: "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل.",
   changingPassword: "جارٍ تغيير كلمة المرور...",
   requestNumber: "رقم الطلب",
+  brandDescriptionsAr: "وصف البراند (بالعربية)",
+  brandDescriptionsEn: "وصف البراند (بالإنجليزية)",
+  profile: "الملف الشخصي",
 };

@@ -8,6 +8,7 @@ import WalletComponent from "@/pages/WalletComponent";
 import TimeSlots from "@/pages/TimeSlots";
 import Login from "@/pages/Login";
 import Layout from "@/layout/Layout";
+import EditProfile from "@/pages/EditProfile";
 // import ProtectedRoute from "@/routes/ProtectedRoute";
 
 const router = createBrowserRouter([
@@ -27,6 +28,7 @@ const router = createBrowserRouter([
       { path: "/services", element: <Services /> },
       { path: "/wallet", element: <WalletComponent /> },
       { path: "/time-slots", element: <TimeSlots /> },
+      { path: "/edit-profile", element: <EditProfile /> },
     ],
   },
   { path: "/login", element: <Login /> },

@@ -165,4 +165,13 @@ export const en = {
   passwordMinLength: "Password must be at least 8 characters long.",
   changingPassword: "Changing password...",
   requestNumber: "Request Number",
+  brandDescriptionsAr: "Brand Descriptions (Arabic)",
+  brandDescriptionsEn: "Brand Descriptions (English)",
+  profile: "Profile",
+  brandInformation: "Brand Information",
+  bankInformation: "Bank Information",
+  images: "Images",
+  bankCertificate: "Bank Certificate",
+  brandBackground: "Brand Background",
+  notProvided: "Not Provided",
 };

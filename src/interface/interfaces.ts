@@ -60,3 +60,8 @@ export interface UserContextProps {
   isLoading: boolean;
   error: string | null;
 }
+
+export interface SidebarProps {
+  mobileOpen: boolean;
+  setMobileOpen: (open: boolean) => void;
+}
