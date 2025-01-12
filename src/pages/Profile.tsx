@@ -9,7 +9,7 @@ import DummyUser from "@/assets/images/dummy-user.webp";
 import DummyBg from "@/assets/images/dummy-bg.webp";
 
 const Profile: React.FC = () => {
-  const { user } = useUser();
+  const { user, isLoading } = useUser();
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
@@ -18,7 +18,13 @@ const Profile: React.FC = () => {
   };
 
   const direction = i18n.language === "ar" ? "rtl" : "ltr";
-
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="loader" />
+      </div>
+    );
+  }
   return (
     <div className="container mx-auto px-4 py-4 sm:py-8" style={{ direction }}>
       {/* Hero Section */}

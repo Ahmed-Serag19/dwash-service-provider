@@ -39,13 +39,14 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
         const data = await getUser(accessToken);
         if (data.success) {
           setUser(data.content);
+          setIsLoading(false);
         } else {
           setError(data.messageEn || "Failed to fetch user data.");
+          setIsLoading(false);
         }
       } catch (err) {
         setError("An error occurred while fetching user data.");
         console.error("Error fetching user:", err);
-      } finally {
         setIsLoading(false);
       }
     };

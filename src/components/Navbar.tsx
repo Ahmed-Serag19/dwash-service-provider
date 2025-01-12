@@ -19,9 +19,15 @@ interface HeaderProps {
   mobileOpen: boolean;
   setMobileOpen: (open: boolean) => void;
   user: UserContent | null;
+  isLoading: boolean;
 }
 
-const Navbar = ({ mobileOpen, setMobileOpen, user }: HeaderProps) => {
+const Navbar = ({
+  mobileOpen,
+  setMobileOpen,
+  user,
+  isLoading,
+}: HeaderProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const dropDownClassName =
@@ -29,6 +35,9 @@ const Navbar = ({ mobileOpen, setMobileOpen, user }: HeaderProps) => {
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
+  if (isLoading) {
+    return null;
+  }
   return (
     <header
       className="z-30 flex h-16 items-center min-h-16 justify-between border-b border-stone-200 bg-stone-50 px-4"
