@@ -35,6 +35,7 @@ const Layout = () => {
           mobileOpen={mobileOpen}
           setMobileOpen={setMobileOpen}
           user={user}
+          isLoading={isLoading}
         />
 
         {/* Main Content */}
