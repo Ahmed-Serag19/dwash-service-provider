@@ -51,23 +51,26 @@ const EditProfile: React.FC = () => {
   const onSubmit = async (data: FormData) => {
     try {
       const formData = new FormData();
-      const brandReq = {
-        brandNameAr: data.brandNameAr.trim(),
-        brandNameEn: data.brandNameEn.trim(),
-        brandDescriptionsAr: data.brandDescriptionsAr.trim(),
-        brandDescriptionsEn: data.brandDescriptionsEn.trim(),
-        iban: data.iban.trim(),
-        bankAccountNumber: data.bankAccountNumber.trim(),
-        bankName: data.bankName.trim(),
-      };
 
-      formData.append("brandReq", JSON.stringify(brandReq));
+      // Add all text fields directly to FormData
+      formData.append("brandNameAr", data.brandNameAr.trim());
+      formData.append("brandNameEn", data.brandNameEn.trim());
+      formData.append("brandDescriptionsAr", data.brandDescriptionsAr.trim());
+      formData.append("brandDescriptionsEn", data.brandDescriptionsEn.trim());
+      formData.append("iban", data.iban.trim());
+      formData.append("bankAccountNumber", data.bankAccountNumber.trim());
+      formData.append("bankName", data.bankName.trim());
 
-      if (data.brandLogo[0]) formData.append("brandLogo", data.brandLogo[0]);
-      if (data.brandBackgroundImage[0])
+      // Add files if they exist
+      if (data.brandLogo?.[0]) {
+        formData.append("brandLogo", data.brandLogo[0]);
+      }
+      if (data.brandBackgroundImage?.[0]) {
         formData.append("brandBackgroundImage", data.brandBackgroundImage[0]);
-      if (data.bankCertificate[0])
+      }
+      if (data.bankCertificate?.[0]) {
         formData.append("bankCertificate", data.bankCertificate[0]);
+      }
 
       await axios.put(endpoints.editUser, formData, {
         headers: {
@@ -82,7 +85,6 @@ const EditProfile: React.FC = () => {
       toast.error(t("profileUpdateError"));
     }
   };
-
   return (
     <div className="container mx-auto px-4 py-8">
       <Card>
@@ -106,19 +108,7 @@ const EditProfile: React.FC = () => {
                 errors={errors}
                 rules={{ required: t("fieldRequired") }}
               />
-              <FormField
-                name="email"
-                label={t("email")}
-                control={control}
-                errors={errors}
-                rules={{
-                  required: t("fieldRequired"),
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: t("invalidEmail"),
-                  },
-                }}
-              />
+
               <FormField
                 name="brandDescriptionsAr"
                 label={t("brandDescriptionsAr")}
