@@ -14,6 +14,7 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import LogoutModal from "@/components/LogoutModal";
 import i18n from "@/i18n";
 import { useUser } from "@/context/UserContext";
+import { t } from "i18next";
 
 interface HeaderProps {
   mobileOpen: boolean;
@@ -74,12 +75,12 @@ const Navbar = ({ mobileOpen, setMobileOpen }: HeaderProps) => {
           >
             <Link to="/profile">
               <DropdownMenuItem className={dropDownClassName}>
-                Profile
+                {t("profile")}
               </DropdownMenuItem>
             </Link>
             <Link to="/change-password">
               <DropdownMenuItem className={dropDownClassName}>
-                Change Password
+                {t("changePassword")}
               </DropdownMenuItem>
             </Link>
 
@@ -88,15 +89,15 @@ const Navbar = ({ mobileOpen, setMobileOpen }: HeaderProps) => {
               onClick={handleOpenModal}
               className={dropDownClassName}
             >
-              Logout
+              {t("logout")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="relative hover:bg-stone-200 rounded-lg transition duration-300">
-              <GoBell className="text-blue-950 w-7 h-7" />
-              <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 text-xs text-white">
+              <GoBell className="text-blue-950 w-6 h-6" />
+              <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-xs text-white">
                 3
               </span>
             </button>

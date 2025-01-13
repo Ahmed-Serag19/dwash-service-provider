@@ -159,7 +159,7 @@ const Profile: React.FC = () => {
         </TabsContent>
       </Tabs>
       <div className="mt-4 sm:mt-8">
-        <Button onClick={handleEdit} className="w-full sm:w-auto">
+        <Button onClick={handleEdit} className="w-full text-xl sm:w-auto">
           {t("edit")}
         </Button>
       </div>
@@ -189,6 +189,3 @@ const ProfileImage: React.FC<{ label: string; src: string }> = ({
 );
 
 export default Profile;
-function setError(arg0: string) {
-  throw new Error("Function not implemented.");
-}

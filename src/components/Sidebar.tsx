@@ -73,9 +73,9 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
                 <Link to={item.to} key={item.label}>
                   <button
                     className={cn(
-                      "w-full justify-start gap-3 font-semibold flex text-md text-blue-950 hover:bg-stone-200 items-center rounded-sm px-2 py-1.5 outline-none ",
+                      "w-full justify-start gap-3  flex text-md text-blue-900 hover:bg-stone-200 items-center rounded-sm px-2 py-1.5 outline-none ",
                       pathname === item.to &&
-                        "bg-stone-200 text-blue-950 font-semibold"
+                        "bg-stone-200 translate-x-2 transition-transform duration-300"
                     )}
                     onClick={() => setMobileOpen(false)}
                   >
