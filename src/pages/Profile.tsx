@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useUser } from "@/context/UserContext";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
@@ -7,18 +7,37 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DummyUser from "@/assets/images/dummy-user.webp";
 import DummyBg from "@/assets/images/dummy-bg.webp";
+import { endpoints } from "@/constants/endPoints";
+import axios from "axios";
+import { UserContent } from "@/interface/interfaces";
 
 const Profile: React.FC = () => {
-  const { user, isLoading } = useUser();
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-
+  const [user, setUser] = useState<UserContent>({} as UserContent);
+  const [loading, setLoading] = useState<boolean>(true);
   const handleEdit = () => {
     navigate("/edit-profile", { state: { user } });
   };
-
+  const getUser = async () => {
+    const accessToken = sessionStorage.getItem("accessToken");
+    try {
+      const response = await axios.get(endpoints.getUser, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      setUser(response.data.content);
+      setLoading(false);
+    } catch (err) {
+      console.error("Error fetching user:", err);
+      setError("An error occurred while fetching user data.");
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    getUser();
+  }, []);
   const direction = i18n.language === "ar" ? "rtl" : "ltr";
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="loader" />
@@ -186,3 +205,6 @@ const ProfileImage: React.FC<{ label: string; src: string }> = ({
 );
 
 export default Profile;
+function setError(arg0: string) {
+  throw new Error("Function not implemented.");
+}

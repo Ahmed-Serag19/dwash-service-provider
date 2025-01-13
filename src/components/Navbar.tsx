@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   DropdownMenu,
@@ -14,29 +14,49 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import LogoutModal from "@/components/LogoutModal";
 import i18n from "@/i18n";
 import { UserContent } from "@/interface/interfaces";
+import axios from "axios";
+import { endpoints } from "@/constants/endPoints";
+import { toast } from "react-toastify";
 
 interface HeaderProps {
   mobileOpen: boolean;
   setMobileOpen: (open: boolean) => void;
-  user: UserContent | null;
-  isLoading: boolean;
 }
 
-const Navbar = ({
-  mobileOpen,
-  setMobileOpen,
-  user,
-  isLoading,
-}: HeaderProps) => {
+const Navbar = ({ mobileOpen, setMobileOpen }: HeaderProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [user, setUser] = useState<UserContent>({} as UserContent);
+  const [loading, setLoading] = useState<boolean>(true);
+  const getUser = async () => {
+    const accessToken = sessionStorage.getItem("accessToken");
+    try {
+      const response = await axios.get(endpoints.getUser, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      setUser(response.data.content);
+      setLoading(false);
+    } catch (err) {
+      console.error("Error fetching user:", err);
+      toast.error("An error occurred while fetching user data.");
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    getUser();
+  }, []);
 
   const dropDownClassName =
     "outline-none cursor-pointer rounded-md transition font-semibold duration-300 hover:bg-slate-100 w-full px-3 my-1 py-2 hover:text-blue-800 hover:bg-stone-200";
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
-  if (isLoading) {
-    return null;
+  if (loading && !user) {
+    return (
+      <header className="flex items-center justify-between p-4  bg-gray-200 animate-pulse">
+        <div className="h-6 w-32 bg-gray-400 rounded"></div>
+        <div className="h-6 w-24 bg-gray-400 rounded"></div>
+      </header>
+    );
   }
   return (
     <header
@@ -61,8 +81,8 @@ const Navbar = ({
             <button className="gap-2 text-md flex items-center font-semibold text-blue-950 hover:text-blue-700 px-2 py-2 rounded-md  hover:bg-stone-200 transition duration-300">
               <GoPersonFill size={28} />
               {i18n.language === "en"
-                ? user?.userDto?.nameEn ?? "Guest"
-                : user?.userDto?.nameAr ?? "ضيف"}
+                ? user?.userDto?.nameEn
+                : user?.userDto?.nameAr}
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
