@@ -5,14 +5,15 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { getUser } from "@/utils/user";
-import {
-  UserContextProps,
-  UserContent,
-  Notification,
-} from "@/interface/interfaces";
-import { endpoints } from "@/constants/endPoints";
 import axios from "axios";
+import { endpoints } from "@/constants/endPoints";
+import { UserContent } from "@/interface/interfaces";
+
+interface UserContextProps {
+  user: UserContent | null;
+  isLoading: boolean;
+  refreshUser: () => Promise<void>;
+}
 
 const UserContext = createContext<UserContextProps | undefined>(undefined);
 
@@ -21,87 +22,38 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [user, setUser] = useState<UserContent | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [isNotificationsLoading, setIsNotificationsLoading] =
-    useState<boolean>(false);
+
+  const fetchUser = async () => {
+    const accessToken = sessionStorage.getItem("accessToken");
+    if (!accessToken) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.get(endpoints.getUser, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (response.data?.success) {
+        setUser(response.data.content);
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const accessToken = sessionStorage.getItem("accessToken");
-
-      if (!accessToken) {
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        const data = await getUser(accessToken);
-        if (data.success) {
-          setUser(data.content);
-          setIsLoading(false);
-        } else {
-          setError(data.messageEn || "Failed to fetch user data.");
-          setIsLoading(false);
-        }
-      } catch (err) {
-        setError("An error occurred while fetching user data.");
-        console.error("Error fetching user:", err);
-        setIsLoading(false);
-      }
-    };
-
-    const fetchNotifications = async () => {
-      const accessToken = sessionStorage.getItem("accessToken");
-
-      if (!accessToken) {
-        console.error("Access token not found.");
-        return;
-      }
-
-      try {
-        setIsNotificationsLoading(true);
-        const response = await axios.get(endpoints.getNotification, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        if (response.data.success) {
-          setNotifications(response.data.content);
-        } else {
-          console.error(
-            "Failed to fetch notifications:",
-            response.data.messageEn
-          );
-        }
-      } catch (err) {
-        console.error("Failed to fetch notifications:", err);
-      } finally {
-        setIsNotificationsLoading(false);
-      }
-    };
-
     fetchUser();
-    fetchNotifications();
   }, []);
-
-  const markNotificationAsRead = (id: number) => {
-    setNotifications((prev) =>
-      prev.map((notif) =>
-        notif.notificationId === id ? { ...notif, read: 1 } : notif
-      )
-    );
-  };
 
   return (
     <UserContext.Provider
       value={{
         user,
         isLoading,
-        error,
-        notifications,
-        isNotificationsLoading,
-        markNotificationAsRead,
+        refreshUser: fetchUser, // Expose the fetchUser function
       }}
     >
       {children}
@@ -111,7 +63,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 
 export const useUser = () => {
   const context = useContext(UserContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("useUser must be used within a UserProvider");
   }
   return context;

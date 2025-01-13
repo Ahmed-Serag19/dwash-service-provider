@@ -13,10 +13,7 @@ import { GoBell, GoPersonFill } from "react-icons/go";
 import { GiHamburgerMenu } from "react-icons/gi";
 import LogoutModal from "@/components/LogoutModal";
 import i18n from "@/i18n";
-import { UserContent } from "@/interface/interfaces";
-import axios from "axios";
-import { endpoints } from "@/constants/endPoints";
-import { toast } from "react-toastify";
+import { useUser } from "@/context/UserContext";
 
 interface HeaderProps {
   mobileOpen: boolean;
@@ -25,24 +22,10 @@ interface HeaderProps {
 
 const Navbar = ({ mobileOpen, setMobileOpen }: HeaderProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [user, setUser] = useState<UserContent>({} as UserContent);
-  const [loading, setLoading] = useState<boolean>(true);
-  const getUser = async () => {
-    const accessToken = sessionStorage.getItem("accessToken");
-    try {
-      const response = await axios.get(endpoints.getUser, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
-      setUser(response.data.content);
-      setLoading(false);
-    } catch (err) {
-      console.error("Error fetching user:", err);
-      toast.error("An error occurred while fetching user data.");
-      setLoading(false);
-    }
-  };
+  const { user, isLoading, refreshUser } = useUser();
+
   useEffect(() => {
-    getUser();
+    refreshUser();
   }, []);
 
   const dropDownClassName =
@@ -50,9 +33,9 @@ const Navbar = ({ mobileOpen, setMobileOpen }: HeaderProps) => {
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
-  if (loading && !user) {
+  if (isLoading && !user) {
     return (
-      <header className="flex items-center justify-between p-4  bg-gray-200 animate-pulse">
+      <header className="flex items-center justify-start p-4  bg-gray-200 animate-pulse">
         <div className="h-6 w-32 bg-gray-400 rounded"></div>
         <div className="h-6 w-24 bg-gray-400 rounded"></div>
       </header>
