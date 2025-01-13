@@ -4,7 +4,7 @@ import axios from "axios";
 import { endpoints } from "@/constants/endPoints";
 import Modal from "@/components/ui/Modal";
 import { t } from "i18next";
-import { addDays, format } from "date-fns";
+import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -14,27 +14,24 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 const TimeSlotPicker: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [date, setDate] = React.useState<Date>();
+  const [date, setDate] = useState<Date>();
   const [formData, setFormData] = useState({
     startTime: "",
     endTime: "",
   });
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  const handleTimeChange = (
+    field: "startTime" | "endTime",
+    hour: number,
+    minute: number
   ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const time = `${hour.toString().padStart(2, "0")}:${minute
+      .toString()
+      .padStart(2, "0")}`;
+    setFormData((prev) => ({ ...prev, [field]: time }));
   };
 
   const handleSubmit = async () => {
@@ -54,22 +51,20 @@ const TimeSlotPicker: React.FC = () => {
       {
         timeFrom: `${startTime}:00`,
         timeTo: `${endTime}:00`,
-        date,
+        date: format(date, "yyyy-MM-dd"),
       },
     ];
 
     try {
-      // await axios.post(endpoints.addTimeSlot, payload, {
-      //   headers: {
-      //     Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-      //   },
-      // });
+      await axios.post(endpoints.addTimeSlot, payload, {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+      });
       toast.success("Time slot added successfully!");
       setFormData({ startTime: "", endTime: "" });
       setDate(undefined);
       setIsModalOpen(false);
-      console.log(payload);
-      console.log(date);
     } catch (error) {
       console.error(error);
       toast.error("Failed to add time slot!");
@@ -77,13 +72,16 @@ const TimeSlotPicker: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Add Time Slot Button */}
-      <Button onClick={() => setIsModalOpen(true)} className="mb-4">
-        {t("addTimeSlot")}
+    <div className="container h-full mx-auto px-4 flex justify-center  py-8">
+      <Button
+        variant="outline"
+        onClick={() => setIsModalOpen(true)}
+        className="mb-4 bg-blue-950 text-white hover:bg-blue-900 hover:text-white"
+        size="lg"
+      >
+        {t("add")}
       </Button>
 
-      {/* Modal */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <h2 className="text-xl font-bold mb-4 text-blue-950">
           {t("addTimeSlot")}
@@ -95,88 +93,124 @@ const TimeSlotPicker: React.FC = () => {
                 <Button
                   variant={"outline"}
                   className={cn(
-                    "w-[240px] justify-start text-left font-normal",
+                    "w-full justify-start text-left font-normal",
                     !date && "text-muted-foreground"
                   )}
                 >
-                  <CalendarIcon />
-                  {date ? format(date, "PPP") : <span>Pick a date</span>}
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {date ? format(date, "PPP") : <span>{t("pickDate")}</span>}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent
-                align="start"
-                className="flex w-auto flex-col space-y-2 p-2"
-              >
-                <Select
-                  onValueChange={(value) =>
-                    setDate(addDays(new Date(), parseInt(value)))
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent position="popper">
-                    <SelectItem value="0">Today</SelectItem>
-                    <SelectItem value="1">Tomorrow</SelectItem>
-                    <SelectItem value="3">In 3 days</SelectItem>
-                    <SelectItem value="7">In a week</SelectItem>
-                  </SelectContent>
-                </Select>
-                <div className="rounded-md border">
-                  <Calendar mode="single" selected={date} onSelect={setDate} />
-                </div>
+              <PopoverContent className="w-auto p-0">
+                <Calendar mode="single" selected={date} onSelect={setDate} />
               </PopoverContent>
             </Popover>
           </div>
-          <div>
-            <label
-              htmlFor="startTime"
-              className="block mb-2 text-sm font-medium text-gray-900 "
-            >
-              {t("startTime")}
-            </label>
-            <input
-              type="time"
-              id="startTime"
-              name="startTime"
-              value={formData.startTime}
-              onChange={handleInputChange}
-              className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-950 focus:border-blue-950 block w-full p-2.5 "
-              required
+          <div className="grid  grid-cols-2 gap-4">
+            <TimePicker
+              label={t("startTime")}
+              selectedTime={formData.startTime}
+              onTimeChange={(hour, minute) =>
+                handleTimeChange("startTime", hour, minute)
+              }
             />
-          </div>
-          <div>
-            <label
-              htmlFor="endTime"
-              className="block mb-2 text-sm font-medium text-gray-900 "
-            >
-              {t("endTime")}
-            </label>
-            <input
-              type="time"
-              id="endTime"
-              name="endTime"
-              value={formData.endTime}
-              onChange={handleInputChange}
-              className="bg-gray-50 border  leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-950 focus:border-blue-950 block w-full p-2.5 "
-              required
+
+            <TimePicker
+              label={t("endTime")}
+              selectedTime={formData.endTime}
+              onTimeChange={(hour, minute) =>
+                handleTimeChange("endTime", hour, minute)
+              }
             />
           </div>
         </form>
-        <div className="flex justify-end gap-4 mt-6 ">
+
+        <div className="flex justify-end gap-4 mt-6">
           <Button
             variant="outline"
-            size="lg"
-            className="text-lg"
+            className="md:text-lg md:px-7 md:py-5"
             onClick={() => setIsModalOpen(false)}
           >
             {t("cancel")}
           </Button>
-          <Button size="lg" className="text-lg" onClick={handleSubmit}>
+          <Button className="md:text-lg md:px-7 md:py-5" onClick={handleSubmit}>
             {t("save")}
           </Button>
         </div>
       </Modal>
+    </div>
+  );
+};
+
+interface TimePickerProps {
+  label: string;
+  selectedTime: string;
+  onTimeChange: (hour: number, minute: number) => void;
+}
+
+const TimePicker: React.FC<TimePickerProps> = ({
+  label,
+  selectedTime,
+  onTimeChange,
+}) => {
+  const hours = Array.from({ length: 24 }, (_, i) => i);
+  const minutes = [0, 15, 30, 45];
+
+  const parseTime = (time: string) => {
+    const [hour, minute] = time.split(":").map(Number);
+    return { hour, minute };
+  };
+
+  const { hour, minute } =
+    selectedTime && selectedTime.includes(":")
+      ? parseTime(selectedTime)
+      : { hour: 0, minute: 0 };
+
+  return (
+    <div>
+      <label className="block mb-2 text-sm font-medium text-gray-900">
+        {label}
+      </label>
+      <div className="flex gap-2">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="w-full">
+              {hour.toString().padStart(2, "0")}:
+              {minute.toString().padStart(2, "0")}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-4 grid gap-4 max-h-48 overflow-scroll">
+            <div className="flex gap-4">
+              <div className="flex flex-col gap-2">
+                <span className="text-sm font-medium">Hour</span>
+                {hours.map((h) => (
+                  <Button
+                    key={h}
+                    size="icon"
+                    variant={hour === h ? "default" : "ghost"}
+                    onClick={() => onTimeChange(h, minute)}
+                  >
+                    {h.toString().padStart(2, "0")}
+                  </Button>
+                ))}
+              </div>
+              <div className="flex flex-col gap-2">
+                <span className="text-sm font-medium">Minute</span>
+                {minutes.map((m) => (
+                  <Button
+                    key={m}
+                    size="icon"
+                    variant={minute === m ? "default" : "ghost"}
+                    onClick={() => onTimeChange(hour, m)}
+                  >
+                    {m.toString().padStart(2, "0")}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
     </div>
   );
 };

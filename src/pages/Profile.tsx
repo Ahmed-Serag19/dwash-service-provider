@@ -159,7 +159,11 @@ const Profile: React.FC = () => {
         </TabsContent>
       </Tabs>
       <div className="mt-4 sm:mt-8">
-        <Button onClick={handleEdit} className="w-full text-xl sm:w-auto">
+        <Button
+          onClick={handleEdit}
+          size={"lg"}
+          className=" text-lg  sm:w-auto"
+        >
           {t("edit")}
         </Button>
       </div>

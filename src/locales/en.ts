@@ -174,7 +174,12 @@ export const en = {
   bankCertificate: "Bank Certificate",
   brandBackground: "Brand Background",
   notProvided: "Not Provided",
-  Save: "Save",
+  save: "Save",
   profileUpdateSuccess: "Profile update Request sent successfully.",
   profileUpdateError: "Failed to update profile.",
+  add: "Add",
+  addTimeSlot: "Add Time",
+  startTime: "Start Time",
+  endTime: "End Time",
+  pickDate: "Pick Date",
 };

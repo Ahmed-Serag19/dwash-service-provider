@@ -176,4 +176,9 @@ export const ar = {
   save: "حفظ",
   profileUpdateSuccess: "تم ارسال طلب تحديث الملف الشخصي بنجاح.",
   profileUpdateError: "حدث خطأ أثناء تحديث الملف الشخصي.",
+  add: "إضافة",
+  addTimeSlot: "إضافة وقت",
+  startTime: "وقت البدء",
+  endTime: "وقت الانتهاء",
+  pickDate: "اختر التاريخ",
 };

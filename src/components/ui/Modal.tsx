@@ -1,3 +1,4 @@
+import i18n from "@/i18n";
 import React from "react";
 
 interface ModalProps {
@@ -11,11 +12,13 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
 
   return (
     <div className="fixed inset-0  p-5 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 max-w-lg w-full relative">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 max-w-md w-full relative">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          className={`absolute top-2 right-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 ${
+            i18n.language === "ar" ? "left-2 right-auto" : ""
+          }`}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
