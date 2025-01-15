@@ -4,7 +4,7 @@ import ChangePassword from "@/pages/ChangePassword";
 import Orders from "@/pages/Orders";
 import Profile from "@/pages/Profile";
 import Services from "@/pages/Services";
-// import WalletComponent from "@/pages/WalletComponent";
+import WalletComponent from "@/pages/WalletComponent";
 import TimeSlots from "@/pages/TimeSlots";
 import Login from "@/pages/Login";
 import Layout from "@/layout/Layout";
@@ -26,7 +26,7 @@ const router = createBrowserRouter([
       { path: "/orders", element: <Orders /> },
       { path: "/profile", element: <Profile /> },
       { path: "/services", element: <Services /> },
-      // { path: "/wallet", element: <WalletComponent /> },
+      { path: "/wallet", element: <WalletComponent /> },
       { path: "/time-slots", element: <TimeSlots /> },
       { path: "/edit-profile", element: <EditProfile /> },
     ],

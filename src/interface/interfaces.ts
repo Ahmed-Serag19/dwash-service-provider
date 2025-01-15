@@ -79,3 +79,8 @@ export interface Notification {
   createdOn: string;
   new: boolean;
 }
+export interface TimePickerProps {
+  label: string;
+  selectedTime: string;
+  onTimeChange: (hour: number, minute: number) => void;
+}

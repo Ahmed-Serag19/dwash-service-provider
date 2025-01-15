@@ -3,7 +3,6 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { endpoints } from "@/constants/endPoints";
 import Modal from "@/components/ui/Modal";
-import { t } from "i18next";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -14,6 +13,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import i18n from "@/i18n";
+import { useTranslation } from "react-i18next";
 
 const TimeSlotPicker: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,7 +23,7 @@ const TimeSlotPicker: React.FC = () => {
     startTime: "",
     endTime: "",
   });
-
+  const { t } = useTranslation();
   const handleTimeChange = (
     field: "startTime" | "endTime",
     hour: number,
@@ -73,17 +74,22 @@ const TimeSlotPicker: React.FC = () => {
 
   return (
     <div className="container h-full mx-auto px-4 flex justify-center  py-8">
-      <Button
-        variant="outline"
-        onClick={() => setIsModalOpen(true)}
-        className="mb-4 bg-blue-950 text-white hover:bg-blue-900 hover:text-white"
-        size="lg"
+      <div
+        className={`flex ${
+          i18n.language === "en" ? "justify-end" : "justify-start"
+        } w-full  `}
       >
-        {t("add")}
-      </Button>
+        <Button
+          variant="outline"
+          onClick={() => setIsModalOpen(true)}
+          className="mb-4 bg-blue-950 text-white hover:bg-blue-900 hover:text-white px-8 py-4 text-lg"
+        >
+          {t("add")}
+        </Button>
+      </div>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <h2 className="text-xl font-bold mb-4 text-blue-950">
+        <h2 className="text-2xl font-bold mb-4 text-blue-950">
           {t("addTimeSlot")}
         </h2>
         <form className="space-y-4">
@@ -133,84 +139,14 @@ const TimeSlotPicker: React.FC = () => {
           >
             {t("cancel")}
           </Button>
-          <Button className="md:text-lg md:px-7 md:py-5" onClick={handleSubmit}>
+          <Button
+            className="md:text-lg md:px-7 md:py-5 bg-blue-950"
+            onClick={handleSubmit}
+          >
             {t("save")}
           </Button>
         </div>
       </Modal>
-    </div>
-  );
-};
-
-interface TimePickerProps {
-  label: string;
-  selectedTime: string;
-  onTimeChange: (hour: number, minute: number) => void;
-}
-
-const TimePicker: React.FC<TimePickerProps> = ({
-  label,
-  selectedTime,
-  onTimeChange,
-}) => {
-  const hours = Array.from({ length: 24 }, (_, i) => i);
-  const minutes = [0, 15, 30, 45];
-
-  const parseTime = (time: string) => {
-    const [hour, minute] = time.split(":").map(Number);
-    return { hour, minute };
-  };
-
-  const { hour, minute } =
-    selectedTime && selectedTime.includes(":")
-      ? parseTime(selectedTime)
-      : { hour: 0, minute: 0 };
-
-  return (
-    <div>
-      <label className="block mb-2 text-sm font-medium text-gray-900">
-        {label}
-      </label>
-      <div className="flex gap-2">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button variant="outline" className="w-full">
-              {hour.toString().padStart(2, "0")}:
-              {minute.toString().padStart(2, "0")}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-4 grid gap-4 max-h-48 overflow-scroll">
-            <div className="flex gap-4">
-              <div className="flex flex-col gap-2">
-                <span className="text-sm font-medium">Hour</span>
-                {hours.map((h) => (
-                  <Button
-                    key={h}
-                    size="icon"
-                    variant={hour === h ? "default" : "ghost"}
-                    onClick={() => onTimeChange(h, minute)}
-                  >
-                    {h.toString().padStart(2, "0")}
-                  </Button>
-                ))}
-              </div>
-              <div className="flex flex-col gap-2">
-                <span className="text-sm font-medium">Minute</span>
-                {minutes.map((m) => (
-                  <Button
-                    key={m}
-                    size="icon"
-                    variant={minute === m ? "default" : "ghost"}
-                    onClick={() => onTimeChange(hour, m)}
-                  >
-                    {m.toString().padStart(2, "0")}
-                  </Button>
-                ))}
-              </div>
-            </div>
-          </PopoverContent>
-        </Popover>
-      </div>
     </div>
   );
 };

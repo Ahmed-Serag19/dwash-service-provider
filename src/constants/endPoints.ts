@@ -5,5 +5,6 @@ export const endpoints = {
   getUser: `${API_BASE_URL}/freelancer/getBrand`,
   editUser: `${API_BASE_URL}/freelancer/request/editBrand`,
   getNotification: `${API_BASE_URL}/freelancer/getNotifications`,
+  getSlots: `${API_BASE_URL}/freelancer/getSlot`,
   addTimeSlot: `${API_BASE_URL}/freelancer/addSlot`,
 };

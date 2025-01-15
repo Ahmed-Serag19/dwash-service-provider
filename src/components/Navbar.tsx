@@ -44,20 +44,10 @@ const Navbar = ({ mobileOpen, setMobileOpen }: HeaderProps) => {
   }
   return (
     <header
-      className="z-30 flex h-16 items-center min-h-16 justify-between border-b border-stone-200 bg-stone-50 px-4"
+      className="z-30 flex h-16 items-center min-h-16 justify-between md:justify-between border-b border-stone-200 bg-stone-50 px-4"
       dir="rtl"
     >
-      <button
-        className="md:hidden text-2xl"
-        // size="icon"
-        onClick={() => setMobileOpen(!mobileOpen)}
-      >
-        <GiHamburgerMenu
-          size={32}
-          className="text-blue-950 h-7 w-7 hover:text-blue-800 transition duration-300"
-        />
-      </button>
-      <div className="flex items-center gap-7">
+      <div className="flex items-center gap-2 md:gap-7">
         <LanguageSwitcher />
 
         <DropdownMenu>
@@ -97,14 +87,18 @@ const Navbar = ({ mobileOpen, setMobileOpen }: HeaderProps) => {
           <DropdownMenuTrigger asChild>
             <button className="relative hover:bg-stone-200 rounded-lg transition duration-300">
               <GoBell className="text-blue-950 w-6 h-6" />
-              <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-xs text-white">
-                3
-              </span>
+              <div className="absolute left-2 -top-1  h-4 w-4 rounded-full bg-blue-500 text-xs text-white">
+                <div className="relative flex items-center justify-center justify-items-center ">
+                  <span className="absolute translate-y-[9px] left-[4.5px]">
+                    3
+                  </span>
+                </div>
+              </div>
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="start"
-            className="md:w-52 mx-2 border-blue-950 border-[1px] flex flex-col   rounded-md my-3 bg-stone-100"
+            className="md:w-52 mx-2 border-blue-950 border-[1px] flex flex-col rounded-md my-3 bg-stone-100"
           >
             <DropdownMenuLabel className={dropDownClassName}>
               Notifications
@@ -122,6 +116,18 @@ const Navbar = ({ mobileOpen, setMobileOpen }: HeaderProps) => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+      <button
+        className={`md:hidden text-2xl transition duration-300 ${
+          mobileOpen ? "sm:translate-x-40" : ""
+        }`}
+        // size="icon"
+        onClick={() => setMobileOpen(!mobileOpen)}
+      >
+        <GiHamburgerMenu
+          size={32}
+          className="text-blue-950 h-7 w-7 hover:text-blue-800 transition duration-300 "
+        />
+      </button>
       {/* Modal for Logout Confirmation */}
       {isModalOpen && <LogoutModal handleCloseModal={handleCloseModal} />}
     </header>
