@@ -5,7 +5,6 @@ import { endpoints } from "@/constants/endPoints";
 import Modal from "@/components/ui/Modal";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
-import i18n from "@/i18n";
 import { useTranslation } from "react-i18next";
 import TimePicker from "@/components/TimePicker";
 import DatePicker from "@/components/DatePicker";
@@ -20,7 +19,7 @@ const TimeSlotPicker: React.FC = () => {
     startTime: "",
     endTime: "",
   });
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const handleTimeChange = (
     field: "startTime" | "endTime",
     hour: number,
@@ -85,12 +84,11 @@ const TimeSlotPicker: React.FC = () => {
       await fetchSlots();
     } catch (error) {
       console.error(error);
-      if (axios.isAxiosError(error) && error.response) {
-        if (i18n.language === "en") {
-          toast.error(error.response.data.messageEn || t("addTimeSlotError"));
-        } else {
-          toast.error(error.response.data.messageAr || t("addTimeSlotError"));
-        }
+      if (
+        axios.isAxiosError(error) &&
+        error.response?.data?.messageEn === "Conflict Slots"
+      ) {
+        toast.error(t("conflictSlots"));
       } else {
         toast.error(t("addTimeSlotError"));
       }

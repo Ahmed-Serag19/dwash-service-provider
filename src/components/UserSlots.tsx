@@ -32,11 +32,11 @@ const UserSlots: React.FC<UserSlotsProps> = ({
       <h2 className="text-2xl font-bold mb-6 text-blue-950">
         {t("availableTimeSlots")}
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {slots.map((slot) => (
           <div
             key={slot.slotId}
-            className={`p-4 border rounded-lg border-blue-950 `}
+            className={`p-4 border rounded-lg border-blue-950 bg-blue-50`}
           >
             <div className="flex justify-between gap-4 flex-col mb-4">
               <h3 className="text-md font-semibold">
@@ -45,7 +45,7 @@ const UserSlots: React.FC<UserSlotsProps> = ({
               <h2 className="text-md font-semibold">
                 {t("time")}:{" "}
                 <span>
-                  ({slot.timeFrom} - {slot.timeTo})
+                  ({slot.timeFrom.slice(0, 5)} - {slot.timeTo.slice(0, 5)})
                 </span>
               </h2>
             </div>
@@ -70,7 +70,7 @@ const UserSlots: React.FC<UserSlotsProps> = ({
                   variant="outline"
                   size="default"
                   onClick={() => handleDeleteSlot(slot.slotId)}
-                  className="text-red-500 border-red-500 hover:bg-red-100"
+                  className="text-red-500 border-red-500 hover:bg-red-100 text-lg"
                 >
                   {t("delete")}
                 </Button>
