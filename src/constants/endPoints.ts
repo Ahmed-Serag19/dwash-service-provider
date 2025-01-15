@@ -10,4 +10,5 @@ export const endpoints = {
   deleteTimeSlot: (slotId: number) =>
     `${API_BASE_URL}/freelancer/deleteSlot?slotId=${slotId}`,
   getWallet: `${API_BASE_URL}/freelancer/getBalance`,
+  addService: `${API_BASE_URL}/freelancer/request/addService`,
 };
