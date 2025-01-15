@@ -36,7 +36,7 @@ const UserSlots: React.FC<UserSlotsProps> = ({
         {slots.map((slot) => (
           <div
             key={slot.slotId}
-            className={`p-4 border rounded-lg border-blue-950 bg-blue-50`}
+            className={`p-4 border rounded-lg border-blue-950 bg-slate-100`}
           >
             <div className="flex justify-between gap-4 flex-col mb-4">
               <h3 className="text-md font-semibold">

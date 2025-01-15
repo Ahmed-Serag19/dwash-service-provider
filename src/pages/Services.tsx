@@ -55,7 +55,30 @@ const Services: React.FC = () => {
     extraDescriptionsEn: "",
     extraPrice: null,
   });
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
 
+    if (files.length + formData.serviceImages.length > 5) {
+      toast.error(t("maxImagesError"));
+      return;
+    }
+
+    const newImages = Array.from(files).map((file) =>
+      URL.createObjectURL(file)
+    );
+    setFormData((prev) => ({
+      ...prev,
+      serviceImages: [...prev.serviceImages, ...newImages],
+    }));
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      serviceImages: prev.serviceImages.filter((_, i) => i !== index),
+    }));
+  };
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -96,7 +119,25 @@ const Services: React.FC = () => {
 
       toast.success(t("serviceAddedSuccessfully"));
       setIsModalOpen(false);
-      // Reset form data here if needed
+      setFormData({
+        addServiceReq: {
+          servicesNameAr: "",
+          servicesNameEn: "",
+          servicesDescriptionsAr: "",
+          servicesDescriptionsEn: "",
+          servicesPrice: 0,
+          servicesTypeId: 1,
+          extraServices: "",
+        },
+        serviceImages: [],
+      });
+      setExtraService({
+        extraNameAr: "",
+        extraNameEn: "",
+        extraDescriptionsAr: "",
+        extraDescriptionsEn: "",
+        extraPrice: null,
+      });
     } catch (error) {
       console.error("Error adding service:", error);
       toast.error(t("errorAddingService"));
@@ -105,12 +146,16 @@ const Services: React.FC = () => {
 
   return (
     <>
-      <Button
-        onClick={() => setIsModalOpen(true)}
-        className="bg-blue-950 text-white hover:bg-blue-900"
-      >
-        {t("addService")}
-      </Button>
+      <div className="flex flex-col w-full h-full py-5">
+        <div className="ml-auto">
+          <Button
+            onClick={() => setIsModalOpen(true)}
+            className="bg-blue-950 text-white hover:bg-blue-900"
+          >
+            {t("addService")}
+          </Button>
+        </div>
+      </div>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <h2 className="text-2xl font-bold mb-6 text-gray-800">
@@ -123,7 +168,7 @@ const Services: React.FC = () => {
           }}
           className="space-y-6"
         >
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
               <Label
                 htmlFor="servicesNameEn"
@@ -159,7 +204,7 @@ const Services: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <Label
                 className="text-md block text-blue-950 mt-2 mb-2 "
@@ -193,7 +238,7 @@ const Services: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center justify-center">
             <div>
               <Label
                 className="text-md text-blue-950 mt-2 mb-2 block"
@@ -209,6 +254,41 @@ const Services: React.FC = () => {
                 onChange={handleInputChange}
                 required
               />
+            </div>
+            <div>
+              <Label
+                htmlFor="serviceImages"
+                className="block mb-2 text-gray-700"
+              >
+                {t("serviceImages")} (Max 5)
+              </Label>
+              <Input
+                id="serviceImages"
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleImageUpload}
+                className="w-full"
+                disabled={formData.serviceImages.length >= 5}
+              />
+              <div className="grid grid-cols-3 gap-4 mt-4">
+                {formData.serviceImages.map((image, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={image}
+                      alt={`Service Image ${index + 1}`}
+                      className="w-full h-24 object-cover rounded-lg"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(index)}
+                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -240,7 +320,7 @@ const Services: React.FC = () => {
               >
                 <X className="h-4 w-4" />
               </Button>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label
                     className="text-md text-blue-950 mt-2 mb-2 block"
@@ -273,7 +353,7 @@ const Services: React.FC = () => {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label
                     className="text-md text-blue-950 mt-2 mb-2 block"
