@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/popover";
 import i18n from "@/i18n";
 import { useTranslation } from "react-i18next";
+import TimePicker from "@/components/TimePicker";
+import DatePicker from "@/components/DatePicker";
 
 const TimeSlotPicker: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -94,23 +96,7 @@ const TimeSlotPicker: React.FC = () => {
         </h2>
         <form className="space-y-4">
           <div>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !date && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? format(date, "PPP") : <span>{t("pickDate")}</span>}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar mode="single" selected={date} onSelect={setDate} />
-              </PopoverContent>
-            </Popover>
+            <DatePicker date={date} setDate={setDate} />
           </div>
           <div className="grid  grid-cols-2 gap-4">
             <TimePicker
