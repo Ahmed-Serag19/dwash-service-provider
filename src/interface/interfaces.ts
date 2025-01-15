@@ -84,3 +84,15 @@ export interface TimePickerProps {
   selectedTime: string;
   onTimeChange: (hour: number, minute: number) => void;
 }
+
+export interface Slot {
+  slotId: number;
+  brandNameAr: string;
+  brandNameEn: string;
+  timeFrom: string;
+  timeTo: string;
+  date: string;
+  reserved: number;
+  username: string | null;
+  mobile: string | null;
+}

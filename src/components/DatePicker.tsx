@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/popover";
 import { format, isBefore, startOfToday } from "date-fns";
 import { cn } from "@/lib/utils";
+import { t } from "i18next";
 
 interface DatePickerProps {
   date: Date | undefined;
@@ -30,7 +31,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ date, setDate }) => {
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, "PPP") : <span>Pick a date</span>}
+          {date ? format(date, "PPP") : <span>{t("pickDate")}</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">

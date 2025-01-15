@@ -7,4 +7,6 @@ export const endpoints = {
   getNotification: `${API_BASE_URL}/freelancer/getNotifications`,
   getSlots: `${API_BASE_URL}/freelancer/getSlot`,
   addTimeSlot: `${API_BASE_URL}/freelancer/addSlot`,
+  deleteTimeSlot: (slotId: number) =>
+    `${API_BASE_URL}/freelancer/deleteSlot?slotId=${slotId}`,
 };

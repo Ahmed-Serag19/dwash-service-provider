@@ -1,26 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { endpoints } from "@/constants/endPoints";
 import Modal from "@/components/ui/Modal";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import i18n from "@/i18n";
 import { useTranslation } from "react-i18next";
 import TimePicker from "@/components/TimePicker";
 import DatePicker from "@/components/DatePicker";
-
+import UserSlots from "@/components/UserSlots";
+import { Slot } from "@/interface/interfaces";
 const TimeSlotPicker: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [date, setDate] = useState<Date>();
+  const [slots, setSlots] = useState<Slot[]>([]);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     startTime: "",
     endTime: "",
@@ -36,17 +31,36 @@ const TimeSlotPicker: React.FC = () => {
       .padStart(2, "0")}`;
     setFormData((prev) => ({ ...prev, [field]: time }));
   };
-
+  const fetchSlots = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(endpoints.getSlots, {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+      });
+      if (response.data.success) {
+        setSlots(response.data.content);
+      } else {
+        toast.error("Failed to fetch time slots.");
+      }
+    } catch (error) {
+      console.error("Error fetching slots:", error);
+      toast.error("An error occurred while fetching slots.");
+    } finally {
+      setLoading(false);
+    }
+  };
   const handleSubmit = async () => {
     const { startTime, endTime } = formData;
 
     if (!date || !startTime || !endTime) {
-      toast.error("All fields are required!");
+      toast.error(t("fillAllFieldsError"));
       return;
     }
 
     if (startTime >= endTime) {
-      toast.error("Start time must be earlier than end time!");
+      toast.error(t("endTimeError"));
       return;
     }
 
@@ -64,18 +78,45 @@ const TimeSlotPicker: React.FC = () => {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },
       });
-      toast.success("Time slot added successfully!");
+      toast.success(t("timeSlotAdded"));
       setFormData({ startTime: "", endTime: "" });
       setDate(undefined);
       setIsModalOpen(false);
+      await fetchSlots();
     } catch (error) {
       console.error(error);
-      toast.error("Failed to add time slot!");
+      if (axios.isAxiosError(error) && error.response) {
+        if (i18n.language === "en") {
+          toast.error(error.response.data.messageEn || t("addTimeSlotError"));
+        } else {
+          toast.error(error.response.data.messageAr || t("addTimeSlotError"));
+        }
+      } else {
+        toast.error(t("addTimeSlotError"));
+      }
+    }
+  };
+  useEffect(() => {
+    fetchSlots();
+  }, []);
+
+  const handleDeleteSlot = async (slotId: number) => {
+    try {
+      await axios.delete(`${endpoints.deleteTimeSlot(slotId)}`, {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+      });
+      toast.success("Time slot deleted successfully.");
+      setSlots((prev) => prev.filter((slot) => slot.slotId !== slotId));
+    } catch (error) {
+      console.error("Error deleting slot:", error);
+      toast.error("Failed to delete the time slot.");
     }
   };
 
   return (
-    <div className="container h-full mx-auto px-4 flex justify-center  py-8">
+    <div className="container h-full mx-auto px-4 flex flex-col justify-start py-8">
       <div
         className={`flex ${
           i18n.language === "en" ? "justify-end" : "justify-start"
@@ -89,9 +130,14 @@ const TimeSlotPicker: React.FC = () => {
           {t("add")}
         </Button>
       </div>
+      <UserSlots
+        handleDeleteSlot={handleDeleteSlot}
+        slots={slots}
+        loading={loading}
+      />
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <h2 className="text-2xl font-bold mb-4 text-blue-950">
+        <h2 className="text-lg md:text-2xl font-bold mb-4 text-blue-950">
           {t("addTimeSlot")}
         </h2>
         <form className="space-y-4">
