@@ -11,4 +11,8 @@ export const endpoints = {
     `${API_BASE_URL}/freelancer/deleteSlot?slotId=${slotId}`,
   getWallet: `${API_BASE_URL}/freelancer/getBalance`,
   addService: `${API_BASE_URL}/freelancer/request/addService`,
+  getServices: `${API_BASE_URL}/freelancer/getServices`,
+  editService: `${API_BASE_URL}/freelancer/request/editService`,
+  deactivateService: `${API_BASE_URL}/freelancer/deactivateService`,
+  activateService: `${API_BASE_URL}/freelancer/activateService`,
 };

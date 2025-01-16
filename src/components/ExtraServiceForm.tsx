@@ -5,24 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { X, Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
-
-interface ExtraService {
-  extraNameAr: string;
-  extraNameEn: string;
-  extraDescriptionsAr: string;
-  extraDescriptionsEn: string;
-  extraPrice: number | null;
-}
-
-interface ExtraServiceFormProps {
-  extraServices: ExtraService[];
-  onAdd: () => void;
-  onRemove: (index: number) => void;
-  onChange: (
-    index: number,
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
-}
+import { ExtraServiceFormProps } from "@/interface/interfaces";
 
 const ExtraServiceForm: React.FC<ExtraServiceFormProps> = ({
   extraServices,

@@ -96,3 +96,50 @@ export interface Slot {
   username: string | null;
   mobile: string | null;
 }
+
+interface ExtraService {
+  extraNameAr: string;
+  extraNameEn: string;
+  extraDescriptionsAr: string;
+  extraDescriptionsEn: string;
+  extraPrice: number | null;
+}
+
+export interface Service {
+  serviceId: number;
+  brandId: number;
+  brandNameAr: string;
+  brandNameEn: string;
+  servicesNameAr: string;
+  servicesNameEn: string;
+  servicesDescriptionsAr: string;
+  servicesDescriptionsEn: string;
+  servicesPrice: number;
+  servicesTypeId: number;
+  serviceTypeNameAr: string;
+  serviceTypeNameEn: string;
+  servicesStatus: number;
+  serviceImages: { id: number; serviceId: number; imagePath: string }[];
+  extraServices: ExtraService[];
+}
+
+export interface AddServiceRequest {
+  servicesNameAr: string;
+  servicesNameEn: string;
+  servicesDescriptionsAr: string;
+  servicesDescriptionsEn: string;
+  servicesPrice: number;
+  servicesTypeId: number;
+  extraServices: ExtraService[];
+  serviceImages: File[];
+}
+
+export interface ExtraServiceFormProps {
+  extraServices: ExtraService[];
+  onAdd: () => void;
+  onRemove: (index: number) => void;
+  onChange: (
+    index: number,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
+}
