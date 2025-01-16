@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { X, Plus } from "lucide-react";
 import { endpoints } from "@/constants/endPoints";
+import ExtraServiceForm from "@/components/ExtraServiceForm";
 
 interface ExtraService {
   extraNameAr: string;
@@ -124,7 +125,8 @@ const Services: React.FC = () => {
     }));
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setLoading(true);
 
     const form = new FormData();
@@ -184,13 +186,7 @@ const Services: React.FC = () => {
         <h2 className="text-2xl font-bold mb-6 text-gray-800">
           {t("addNewService")}
         </h2>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSubmit();
-          }}
-          className="space-y-6"
-        >
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* Main service fields */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
@@ -335,111 +331,12 @@ const Services: React.FC = () => {
           </div>
 
           {showExtraServices && (
-            <div className="space-y-4 border p-4 rounded-md">
-              {formData.extraServices.map((extraService, index) => (
-                <div key={index} className="relative border p-4 rounded-md">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute top-2 right-2"
-                    onClick={() => removeExtraService(index)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <Label
-                        htmlFor={`extraNameEn-${index}`}
-                        className="text-md text-blue-950 mt-2 mb-2 block"
-                      >
-                        {t("extraServiceNameEn")}
-                      </Label>
-                      <Input
-                        id={`extraNameEn-${index}`}
-                        name="extraNameEn"
-                        value={extraService.extraNameEn}
-                        onChange={(e) => handleExtraServiceChange(index, e)}
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label
-                        htmlFor={`extraNameAr-${index}`}
-                        className="text-md text-blue-950 mt-2 mb-2 block"
-                      >
-                        {t("extraServiceNameAr")}
-                      </Label>
-                      <Input
-                        id={`extraNameAr-${index}`}
-                        name="extraNameAr"
-                        value={extraService.extraNameAr}
-                        onChange={(e) => handleExtraServiceChange(index, e)}
-                        required
-                        dir="rtl"
-                      />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                    <div>
-                      <Label
-                        htmlFor={`extraDescriptionsEn-${index}`}
-                        className="text-md text-blue-950 mt-2 mb-2 block"
-                      >
-                        {t("extraServiceDescriptionEn")}
-                      </Label>
-                      <Textarea
-                        id={`extraDescriptionsEn-${index}`}
-                        name="extraDescriptionsEn"
-                        value={extraService.extraDescriptionsEn}
-                        onChange={(e) => handleExtraServiceChange(index, e)}
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label
-                        htmlFor={`extraDescriptionsAr-${index}`}
-                        className="text-md text-blue-950 mt-2 mb-2 block"
-                      >
-                        {t("extraServiceDescriptionAr")}
-                      </Label>
-                      <Textarea
-                        id={`extraDescriptionsAr-${index}`}
-                        name="extraDescriptionsAr"
-                        value={extraService.extraDescriptionsAr}
-                        onChange={(e) => handleExtraServiceChange(index, e)}
-                        required
-                        dir="rtl"
-                      />
-                    </div>
-                  </div>
-                  <div className="mt-4">
-                    <Label
-                      htmlFor={`extraPrice-${index}`}
-                      className="text-md text-blue-950 mt-2 mb-2 block"
-                    >
-                      {t("extraServicePrice")}
-                    </Label>
-                    <Input
-                      id={`extraPrice-${index}`}
-                      name="extraPrice"
-                      type="number"
-                      value={extraService.extraPrice || ""}
-                      onChange={(e) => handleExtraServiceChange(index, e)}
-                      required
-                    />
-                  </div>
-                </div>
-              ))}
-              <Button
-                type="button"
-                onClick={addExtraService}
-                className="mt-4 bg-green-600 text-white hover:bg-green-700"
-              >
-                <Plus className="mr-2 h-4 w-4" />
-                {t("addAnotherExtraService")}
-              </Button>
-            </div>
+            <ExtraServiceForm
+              onAdd={addExtraService}
+              onChange={handleExtraServiceChange}
+              onRemove={removeExtraService}
+              extraServices={formData.extraServices}
+            />
           )}
 
           <div className="flex justify-end gap-4">

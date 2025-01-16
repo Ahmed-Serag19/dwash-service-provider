@@ -231,4 +231,10 @@ export const ar = {
   extraServicePrice: "سعر الخدمة الإضافية",
   serviceAddedSuccessfully: "تم إضافة الخدمة بنجاح!",
   errorAddingService: "حدث خطأ أثناء إضافة الخدمة. يرجى المحاولة مرة أخرى.",
+  addAnotherExtraService: "إضافة خدمة إضافية جديدة",
+  extraServiceNameEnPlaceholder: "أدخل الاسم بالإنجليزية",
+  extraServiceNameArPlaceholder: "أدخل الاسم بالعربية",
+  extraServiceDescriptionEnPlaceholder: "أدخل الوصف بالإنجليزية",
+  extraServiceDescriptionArPlaceholder: "أدخل الوصف بالعربية",
+  extraServicePricePlaceholder: "أدخل السعر",
 };

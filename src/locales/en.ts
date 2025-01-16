@@ -232,4 +232,10 @@ export const en = {
   extraServicePrice: "Extra Service Price",
   serviceAddedSuccessfully: "Service added successfully!",
   errorAddingService: "Error adding service. Please try again.",
+  addAnotherExtraService: "Add Another Extra Service",
+  extraServiceNameEnPlaceholder: "Enter name in English",
+  extraServiceNameArPlaceholder: "Enter name in Arabic",
+  extraServiceDescriptionEnPlaceholder: "Enter description in English",
+  extraServiceDescriptionArPlaceholder: "Enter description in Arabic",
+  extraServicePricePlaceholder: "Enter price",
 };

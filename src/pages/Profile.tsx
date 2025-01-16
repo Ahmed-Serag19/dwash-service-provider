@@ -60,7 +60,11 @@ const Profile: React.FC = () => {
       </div>
 
       {/* Tabbed Content */}
-      <Tabs defaultValue="brand" className="space-y-4 ">
+      <Tabs
+        defaultValue="brand"
+        className="space-y-4 "
+        dir={i18n.language === "en" ? "ltr" : "rtl"}
+      >
         <TabsList className="flex flex-wrap justify-center items-center mb-4 sm:mb-8 max-w-sm ">
           <TabsTrigger value="brand" className="flex-grow sm:flex-grow-0">
             {t("brandInformation")}
@@ -75,25 +79,17 @@ const Profile: React.FC = () => {
         <TabsContent value="brand">
           <Card>
             <CardContent className="p-4 sm:p-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-1 gap-4 sm:gap-8">
                 <ProfileField
                   label={t("brandNameAr")}
                   value={user?.userDto?.nameAr || ""}
                 />
-                {i18n.language === "en" ? (
-                  <ProfileField
-                    label={t("brandNameEn")}
-                    value={user?.userDto?.nameEn || ""}
-                  />
-                ) : (
-                  <div className="mb-2 sm:mb-4">
-                    <span>{user?.userDto?.nameEn || ""} </span>
-                    <span className="font-semibold text-gray-700 mx-2">
-                      {" "}
-                      :{t("brandNameEn")}
-                    </span>
-                  </div>
-                )}
+
+                <ProfileField
+                  label={t("brandNameEn")}
+                  value={user?.userDto?.nameEn || ""}
+                />
+
                 <ProfileField
                   label={t("email")}
                   value={user?.userDto?.email || ""}
@@ -113,7 +109,7 @@ const Profile: React.FC = () => {
         <TabsContent value="bank">
           <Card>
             <CardContent className="p-4 sm:p-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8">
+              <div className="grid grid-cols-1  gap-4 sm:gap-8">
                 <ProfileField
                   label={t("iban")}
                   value={user?.brandWalletDto?.iban || ""}
@@ -144,7 +140,7 @@ const Profile: React.FC = () => {
         <TabsContent value="images">
           <Card>
             <CardContent className="p-4 sm:p-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8">
+              <div className="grid grid-cols-1  gap-4 sm:gap-8">
                 <ProfileImage
                   label={t("brandLogo")}
                   src={user?.brandLogo || ""}
@@ -174,8 +170,8 @@ const ProfileField: React.FC<{ label: string; value: string }> = ({
   label,
   value,
 }) => (
-  <div className="mb-2 sm:mb-4">
-    <span className="font-semibold text-gray-700 block sm:inline sm:mr-2">
+  <div className="mb-2 sm:mb-4 flex flex-col">
+    <span className="font-semibold text-gray-700 block sm:inline sm:mr-2 mb-3">
       {label}:
     </span>
     <span className="block sm:inline">{value || "Not Provided"}</span>
