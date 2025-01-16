@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import Modal from "@/components/ui/Modal";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { X } from "lucide-react";
+import { X, Plus } from "lucide-react";
 import { endpoints } from "@/constants/endPoints";
 
 interface ExtraService {
@@ -20,56 +20,100 @@ interface ExtraService {
 }
 
 interface AddServiceRequest {
-  addServiceReq: {
-    servicesNameAr: string;
-    servicesNameEn: string;
-    servicesDescriptionsAr: string;
-    servicesDescriptionsEn: string;
-    servicesPrice: number;
-    servicesTypeId: number;
-    extraServices: string;
-  };
-  serviceImages: string[];
+  servicesNameAr: string;
+  servicesNameEn: string;
+  servicesDescriptionsAr: string;
+  servicesDescriptionsEn: string;
+  servicesPrice: number;
+  servicesTypeId: number;
+  extraServices: ExtraService[];
+  serviceImages: File[];
 }
 
 const Services: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showExtraService, setShowExtraService] = useState(false);
+  const [showExtraServices, setShowExtraServices] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<AddServiceRequest>({
-    addServiceReq: {
-      servicesNameAr: "",
-      servicesNameEn: "",
-      servicesDescriptionsAr: "",
-      servicesDescriptionsEn: "",
-      servicesPrice: 0,
-      servicesTypeId: 1,
-      extraServices: "",
-    },
+    servicesNameAr: "",
+    servicesNameEn: "",
+    servicesDescriptionsAr: "",
+    servicesDescriptionsEn: "",
+    servicesPrice: 0,
+    servicesTypeId: 1,
+    extraServices: [],
     serviceImages: [],
   });
-  const [extraService, setExtraService] = useState<ExtraService>({
-    extraNameAr: "",
-    extraNameEn: "",
-    extraDescriptionsAr: "",
-    extraDescriptionsEn: "",
-    extraPrice: null,
-  });
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]:
+        name === "servicesPrice" || name === "servicesTypeId"
+          ? Math.max(Number(value), 0)
+          : value,
+    }));
+  };
+
+  const handleExtraServiceChange = (
+    index: number,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      extraServices: prev.extraServices.map((service, i) =>
+        i === index
+          ? {
+              ...service,
+              [name]:
+                name === "extraPrice" ? Math.max(Number(value), 0) : value,
+            }
+          : service
+      ),
+    }));
+  };
+
+  const addExtraService = () => {
+    setFormData((prev) => ({
+      ...prev,
+      extraServices: [
+        ...prev.extraServices,
+        {
+          extraNameAr: "",
+          extraNameEn: "",
+          extraDescriptionsAr: "",
+          extraDescriptionsEn: "",
+          extraPrice: null,
+        },
+      ],
+    }));
+  };
+
+  const removeExtraService = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      extraServices: prev.extraServices.filter((_, i) => i !== index),
+    }));
+  };
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
 
-    if (files.length + formData.serviceImages.length > 5) {
+    const newFiles = Array.from(files);
+    if (newFiles.length + formData.serviceImages.length > 5) {
       toast.error(t("maxImagesError"));
       return;
     }
 
-    const newImages = Array.from(files).map((file) =>
-      URL.createObjectURL(file)
-    );
     setFormData((prev) => ({
       ...prev,
-      serviceImages: [...prev.serviceImages, ...newImages],
+      serviceImages: [...prev.serviceImages, ...newFiles],
     }));
   };
 
@@ -79,39 +123,24 @@ const Services: React.FC = () => {
       serviceImages: prev.serviceImages.filter((_, i) => i !== index),
     }));
   };
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      addServiceReq: {
-        ...prev.addServiceReq,
-        [name]:
-          name === "servicesPrice" || name === "servicesTypeId"
-            ? Number(value)
-            : value,
-      },
-    }));
-  };
-
-  const handleExtraServiceChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setExtraService((prev) => ({
-      ...prev,
-      [name]: name === "extraPrice" ? Number(value) : value,
-    }));
-  };
 
   const handleSubmit = async () => {
-    try {
-      if (showExtraService) {
-        formData.addServiceReq.extraServices = JSON.stringify(extraService);
-      }
+    setLoading(true);
 
-      await axios.post(endpoints.addService, formData, {
+    const form = new FormData();
+    form.append("servicesNameAr", formData.servicesNameAr);
+    form.append("servicesNameEn", formData.servicesNameEn);
+    form.append("servicesDescriptionsAr", formData.servicesDescriptionsAr);
+    form.append("servicesDescriptionsEn", formData.servicesDescriptionsEn);
+    form.append("servicesPrice", formData.servicesPrice.toString());
+    form.append("servicesTypeId", formData.servicesTypeId.toString());
+    form.append("extraServices", JSON.stringify(formData.extraServices));
+    formData.serviceImages.forEach((image) =>
+      form.append("serviceImages", image)
+    );
+
+    try {
+      await axios.post(endpoints.addService, form, {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },
@@ -120,27 +149,21 @@ const Services: React.FC = () => {
       toast.success(t("serviceAddedSuccessfully"));
       setIsModalOpen(false);
       setFormData({
-        addServiceReq: {
-          servicesNameAr: "",
-          servicesNameEn: "",
-          servicesDescriptionsAr: "",
-          servicesDescriptionsEn: "",
-          servicesPrice: 0,
-          servicesTypeId: 1,
-          extraServices: "",
-        },
+        servicesNameAr: "",
+        servicesNameEn: "",
+        servicesDescriptionsAr: "",
+        servicesDescriptionsEn: "",
+        servicesPrice: 0,
+        servicesTypeId: 1,
+        extraServices: [],
         serviceImages: [],
       });
-      setExtraService({
-        extraNameAr: "",
-        extraNameEn: "",
-        extraDescriptionsAr: "",
-        extraDescriptionsEn: "",
-        extraPrice: null,
-      });
+      setShowExtraServices(false);
     } catch (error) {
       console.error("Error adding service:", error);
       toast.error(t("errorAddingService"));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -168,18 +191,19 @@ const Services: React.FC = () => {
           }}
           className="space-y-6"
         >
+          {/* Main service fields */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
               <Label
                 htmlFor="servicesNameEn"
-                className="block mb-2 text-md text-blue-950 mt-2 "
+                className="block mb-2 text-md text-blue-950 mt-2"
               >
                 {t("serviceNameEn")}
               </Label>
               <Input
                 id="servicesNameEn"
                 name="servicesNameEn"
-                value={formData.addServiceReq.servicesNameEn}
+                value={formData.servicesNameEn}
                 onChange={handleInputChange}
                 required
                 className="w-full"
@@ -188,14 +212,14 @@ const Services: React.FC = () => {
             <div>
               <Label
                 htmlFor="servicesNameAr"
-                className="block mb-2 text-md text-blue-950 mt-2 "
+                className="block mb-2 text-md text-blue-950 mt-2"
               >
                 {t("serviceNameAr")}
               </Label>
               <Input
                 id="servicesNameAr"
                 name="servicesNameAr"
-                value={formData.addServiceReq.servicesNameAr}
+                value={formData.servicesNameAr}
                 onChange={handleInputChange}
                 required
                 dir="rtl"
@@ -207,30 +231,30 @@ const Services: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <Label
-                className="text-md block text-blue-950 mt-2 mb-2 "
                 htmlFor="servicesDescriptionsEn"
+                className="text-md block text-blue-950 mt-2 mb-2"
               >
                 {t("serviceDescriptionEn")}
               </Label>
               <Textarea
                 id="servicesDescriptionsEn"
                 name="servicesDescriptionsEn"
-                value={formData.addServiceReq.servicesDescriptionsEn}
+                value={formData.servicesDescriptionsEn}
                 onChange={handleInputChange}
                 required
               />
             </div>
             <div>
               <Label
-                className="text-md text-blue-950 mt-2 mb-2 block"
                 htmlFor="servicesDescriptionsAr"
+                className="text-md text-blue-950 mt-2 mb-2 block"
               >
                 {t("serviceDescriptionAr")}
               </Label>
               <Textarea
                 id="servicesDescriptionsAr"
                 name="servicesDescriptionsAr"
-                value={formData.addServiceReq.servicesDescriptionsAr}
+                value={formData.servicesDescriptionsAr}
                 onChange={handleInputChange}
                 required
                 dir="rtl"
@@ -241,8 +265,8 @@ const Services: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center justify-center">
             <div>
               <Label
-                className="text-md text-blue-950 mt-2 mb-2 block"
                 htmlFor="servicesPrice"
+                className="text-md text-blue-950 mt-2 mb-2 block"
               >
                 {t("servicePrice")}
               </Label>
@@ -250,7 +274,7 @@ const Services: React.FC = () => {
                 id="servicesPrice"
                 name="servicesPrice"
                 type="number"
-                value={formData.addServiceReq.servicesPrice}
+                value={formData.servicesPrice}
                 onChange={handleInputChange}
                 required
               />
@@ -275,7 +299,7 @@ const Services: React.FC = () => {
                 {formData.serviceImages.map((image, index) => (
                   <div key={index} className="relative">
                     <img
-                      src={image}
+                      src={URL.createObjectURL(image) || "/placeholder.svg"}
                       alt={`Service Image ${index + 1}`}
                       className="w-full h-24 object-cover rounded-lg"
                     />
@@ -292,118 +316,132 @@ const Services: React.FC = () => {
             </div>
           </div>
 
+          {/* Extra services section */}
           <div className="flex items-center gap-3">
             <Label
-              className="text-md text-blue-950 mt-2 mb-2 block"
               htmlFor="extra-service"
+              className="text-md text-blue-950 mt-2 mb-2 block"
             >
-              {t("addExtraService")}
+              {t("addExtraServices")}
             </Label>
             <span dir="ltr">
               <Switch
                 id="extra-service"
-                className=" text-blue-950 mt-2 mb-2 block"
-                checked={showExtraService}
-                onCheckedChange={setShowExtraService}
+                className="text-blue-950 mt-2 mb-2 block"
+                checked={showExtraServices}
+                onCheckedChange={setShowExtraServices}
               />
             </span>
           </div>
 
-          {showExtraService && (
-            <div className="space-y-4 border p-4 rounded-md relative">
+          {showExtraServices && (
+            <div className="space-y-4 border p-4 rounded-md">
+              {formData.extraServices.map((extraService, index) => (
+                <div key={index} className="relative border p-4 rounded-md">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute top-2 right-2"
+                    onClick={() => removeExtraService(index)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <Label
+                        htmlFor={`extraNameEn-${index}`}
+                        className="text-md text-blue-950 mt-2 mb-2 block"
+                      >
+                        {t("extraServiceNameEn")}
+                      </Label>
+                      <Input
+                        id={`extraNameEn-${index}`}
+                        name="extraNameEn"
+                        value={extraService.extraNameEn}
+                        onChange={(e) => handleExtraServiceChange(index, e)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label
+                        htmlFor={`extraNameAr-${index}`}
+                        className="text-md text-blue-950 mt-2 mb-2 block"
+                      >
+                        {t("extraServiceNameAr")}
+                      </Label>
+                      <Input
+                        id={`extraNameAr-${index}`}
+                        name="extraNameAr"
+                        value={extraService.extraNameAr}
+                        onChange={(e) => handleExtraServiceChange(index, e)}
+                        required
+                        dir="rtl"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                    <div>
+                      <Label
+                        htmlFor={`extraDescriptionsEn-${index}`}
+                        className="text-md text-blue-950 mt-2 mb-2 block"
+                      >
+                        {t("extraServiceDescriptionEn")}
+                      </Label>
+                      <Textarea
+                        id={`extraDescriptionsEn-${index}`}
+                        name="extraDescriptionsEn"
+                        value={extraService.extraDescriptionsEn}
+                        onChange={(e) => handleExtraServiceChange(index, e)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label
+                        htmlFor={`extraDescriptionsAr-${index}`}
+                        className="text-md text-blue-950 mt-2 mb-2 block"
+                      >
+                        {t("extraServiceDescriptionAr")}
+                      </Label>
+                      <Textarea
+                        id={`extraDescriptionsAr-${index}`}
+                        name="extraDescriptionsAr"
+                        value={extraService.extraDescriptionsAr}
+                        onChange={(e) => handleExtraServiceChange(index, e)}
+                        required
+                        dir="rtl"
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <Label
+                      htmlFor={`extraPrice-${index}`}
+                      className="text-md text-blue-950 mt-2 mb-2 block"
+                    >
+                      {t("extraServicePrice")}
+                    </Label>
+                    <Input
+                      id={`extraPrice-${index}`}
+                      name="extraPrice"
+                      type="number"
+                      value={extraService.extraPrice || ""}
+                      onChange={(e) => handleExtraServiceChange(index, e)}
+                      required
+                    />
+                  </div>
+                </div>
+              ))}
               <Button
                 type="button"
-                variant="ghost"
-                size="icon"
-                className="absolute top-2 right-2"
-                onClick={() => setShowExtraService(false)}
+                onClick={addExtraService}
+                className="mt-4 bg-green-600 text-white hover:bg-green-700"
               >
-                <X className="h-4 w-4" />
+                <Plus className="mr-2 h-4 w-4" />
+                {t("addAnotherExtraService")}
               </Button>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <Label
-                    className="text-md text-blue-950 mt-2 mb-2 block"
-                    htmlFor="extraNameEn"
-                  >
-                    {t("extraServiceNameEn")}
-                  </Label>
-                  <Input
-                    id="extraNameEn"
-                    name="extraNameEn"
-                    value={extraService.extraNameEn}
-                    onChange={handleExtraServiceChange}
-                    required={showExtraService}
-                  />
-                </div>
-                <div>
-                  <Label
-                    className="text-md text-blue-950 mt-2 mb-2 block"
-                    htmlFor="extraNameAr"
-                  >
-                    {t("extraServiceNameAr")}
-                  </Label>
-                  <Input
-                    id="extraNameAr"
-                    name="extraNameAr"
-                    value={extraService.extraNameAr}
-                    onChange={handleExtraServiceChange}
-                    required={showExtraService}
-                    dir="rtl"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <Label
-                    className="text-md text-blue-950 mt-2 mb-2 block"
-                    htmlFor="extraDescriptionsEn"
-                  >
-                    {t("extraServiceDescriptionEn")}
-                  </Label>
-                  <Textarea
-                    id="extraDescriptionsEn"
-                    name="extraDescriptionsEn"
-                    value={extraService.extraDescriptionsEn}
-                    onChange={handleExtraServiceChange}
-                    required={showExtraService}
-                  />
-                </div>
-                <div>
-                  <Label
-                    className="text-md text-blue-950 mt-2 mb-2 block"
-                    htmlFor="extraDescriptionsAr"
-                  >
-                    {t("extraServiceDescriptionAr")}
-                  </Label>
-                  <Textarea
-                    id="extraDescriptionsAr"
-                    name="extraDescriptionsAr"
-                    value={extraService.extraDescriptionsAr}
-                    onChange={handleExtraServiceChange}
-                    required={showExtraService}
-                    dir="rtl"
-                  />
-                </div>
-              </div>
-              <div>
-                <Label
-                  className="text-md text-blue-950 mt-2 mb-2 block"
-                  htmlFor="extraPrice"
-                >
-                  {t("extraServicePrice")}
-                </Label>
-                <Input
-                  id="extraPrice"
-                  name="extraPrice"
-                  type="number"
-                  value={extraService.extraPrice || ""}
-                  onChange={handleExtraServiceChange}
-                  required={showExtraService}
-                />
-              </div>
             </div>
           )}
+
           <div className="flex justify-end gap-4">
             <Button
               type="button"
@@ -416,8 +454,9 @@ const Services: React.FC = () => {
             </Button>
             <Button
               type="submit"
+              disabled={loading}
               size="lg"
-              className="bg-blue-950 text-white hover:bg-blue-900 px-6 py-2 text-lg"
+              className="bg-blue-950 text-white hover:bg-blue-900 px-6 py-2 text-lg disabled:bg-gray-600 disabled:cursor-not-allowed"
             >
               {t("save")}
             </Button>
