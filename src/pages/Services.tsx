@@ -11,13 +11,90 @@ import { Switch } from "@/components/ui/switch";
 import { X, Plus } from "lucide-react";
 import { endpoints } from "@/constants/endPoints";
 import ExtraServiceForm from "@/components/ExtraServiceForm";
+import ServiceList from "@/components/ServiceList";
 import { Service, AddServiceRequest } from "@/interface/interfaces";
+
 const Services: React.FC = () => {
   const { t, i18n } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showExtraServices, setShowExtraServices] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [services, setServices] = useState<Service[]>([]);
+  const [services, setServices] = useState<Service[]>([
+    {
+      serviceId: 1,
+      brandId: 1,
+      brandNameAr: "غسيل سيارات 1",
+      brandNameEn: "Car Wash 1",
+      servicesNameAr: "غسيل خارجي",
+      servicesNameEn: "Exterior Wash",
+      servicesDescriptionsAr: "غسيل خارجي شامل للسيارة",
+      servicesDescriptionsEn: "Comprehensive exterior wash for the car",
+      servicesPrice: 50,
+      servicesTypeId: 1,
+      serviceTypeNameAr: "غسيل",
+      serviceTypeNameEn: "Wash",
+      servicesStatus: 0,
+      serviceImages: [],
+      extraServices: [],
+    },
+    {
+      serviceId: 2,
+      brandId: 2,
+      brandNameAr: "غسيل سيارات 2",
+      brandNameEn: "Car Wash 2",
+      servicesNameAr: "غسيل داخلي",
+      servicesNameEn: "Interior Wash",
+      servicesDescriptionsAr: "تنظيف داخلي شامل للسيارة",
+      servicesDescriptionsEn: "Comprehensive interior cleaning for the car",
+      servicesPrice: 70,
+      servicesTypeId: 2,
+      serviceTypeNameAr: "تنظيف",
+      serviceTypeNameEn: "Cleaning",
+      servicesStatus: 1,
+      serviceImages: [],
+      extraServices: [
+        {
+          extraNameAr: "تلميع داخلي",
+          extraNameEn: "Interior Polishing",
+          extraDescriptionsAr: "تلميع داخلي للسيارة",
+          extraDescriptionsEn: "Interior polishing for the car",
+          extraPrice: 30,
+        },
+      ],
+    },
+    {
+      serviceId: 3,
+      brandId: 3,
+      brandNameAr: "غسيل سيارات 3",
+      brandNameEn: "Car Wash 3",
+      servicesNameAr: "تلميع السيارة",
+      servicesNameEn: "Car Polishing",
+      servicesDescriptionsAr: "تلميع شامل للسيارة",
+      servicesDescriptionsEn: "Comprehensive car polishing",
+      servicesPrice: 100,
+      servicesTypeId: 3,
+      serviceTypeNameAr: "تلميع",
+      serviceTypeNameEn: "Polishing",
+      servicesStatus: 0,
+      serviceImages: [],
+      extraServices: [
+        {
+          extraNameAr: "تلميع خارجي",
+          extraNameEn: "Exterior Polishing",
+          extraDescriptionsAr: "تلميع خارجي للسيارة",
+          extraDescriptionsEn: "Exterior polishing for the car",
+          extraPrice: 40,
+        },
+        {
+          extraNameAr: "تنظيف المحرك",
+          extraNameEn: "Engine Cleaning",
+          extraDescriptionsAr: "تنظيف شامل للمحرك",
+          extraDescriptionsEn: "Comprehensive engine cleaning",
+          extraPrice: 50,
+        },
+      ],
+    },
+  ]);
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [formData, setFormData] = useState<AddServiceRequest>({
     servicesNameAr: "",
@@ -30,9 +107,9 @@ const Services: React.FC = () => {
     serviceImages: [],
   });
 
-  useEffect(() => {
-    fetchServices();
-  }, []);
+  // useEffect(() => {
+  //   fetchServices();
+  // }, []);
 
   const fetchServices = async () => {
     try {
@@ -258,55 +335,12 @@ const Services: React.FC = () => {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {services.map((service) => (
-          <div
-            key={service.serviceId}
-            className="border rounded-lg p-4 shadow-sm"
-          >
-            <h3 className="text-lg font-semibold mb-2">
-              {i18n.language === "ar"
-                ? service.servicesNameAr
-                : service.servicesNameEn}
-            </h3>
-            <p className="text-sm text-gray-600 mb-2">
-              {i18n.language === "ar"
-                ? service.servicesDescriptionsAr
-                : service.servicesDescriptionsEn}
-            </p>
-            <p className="font-bold">
-              {t("price")}: {service.servicesPrice}
-            </p>
-            <p
-              className={`mt-2 ${
-                service.servicesStatus === 0 ? "text-green-600" : "text-red-600"
-              }`}
-            >
-              {service.servicesStatus === 0 ? t("active") : t("inactive")}
-            </p>
-            <div className="mt-4 flex justify-between">
-              <Button variant="outline" onClick={() => handleEdit(service)}>
-                {t("edit")}
-              </Button>
-              {service.servicesStatus === 0 ? (
-                <Button
-                  variant="destructive"
-                  onClick={() => handleDeactivate(service.serviceId)}
-                >
-                  {t("deactivate")}
-                </Button>
-              ) : (
-                <Button
-                  variant="default"
-                  onClick={() => handleActivate(service.serviceId)}
-                >
-                  {t("activate")}
-                </Button>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
+      <ServiceList
+        services={services}
+        onEdit={handleEdit}
+        onActivate={handleActivate}
+        onDeactivate={handleDeactivate}
+      />
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <h2 className="text-2xl font-bold mb-6 text-gray-800">

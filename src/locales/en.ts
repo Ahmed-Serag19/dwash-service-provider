@@ -238,4 +238,7 @@ export const en = {
   extraServiceDescriptionEnPlaceholder: "Enter description in English",
   extraServiceDescriptionArPlaceholder: "Enter description in Arabic",
   extraServicePricePlaceholder: "Enter price",
+  active: "Active",
+  inactive: "Inactive",
+  update: "Update",
 };

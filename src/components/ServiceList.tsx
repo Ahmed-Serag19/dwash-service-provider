@@ -3,38 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-
-interface Service {
-  serviceId: number;
-  brandId: number;
-  brandNameAr: string;
-  brandNameEn: string;
-  servicesNameAr: string;
-  servicesNameEn: string;
-  servicesDescriptionsAr: string;
-  servicesDescriptionsEn: string;
-  servicesPrice: number;
-  servicesTypeId: number;
-  serviceTypeNameAr: string;
-  serviceTypeNameEn: string;
-  servicesStatus: number;
-  serviceImages: { id: number; serviceId: number; imagePath: string }[];
-  extraServices: {
-    id: number;
-    extraNameAr: string;
-    extraNameEn: string;
-    extraDescriptionsAr: string;
-    extraDescriptionsEn: string;
-    extraPrice: number;
-  }[];
-}
-
-interface ServiceListProps {
-  services: Service[];
-  onEdit: (service: Service) => void;
-  onActivate: (serviceId: number) => void;
-  onDeactivate: (serviceId: number) => void;
-}
+import { ServiceListProps } from "@/interface/interfaces";
 
 const ServiceList: React.FC<ServiceListProps> = ({
   services,
@@ -46,7 +15,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
   const isArabic = i18n.language === "ar";
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2  gap-4">
       {services.map((service) => (
         <Card key={service.serviceId} className="overflow-hidden">
           <CardContent className="p-4">
@@ -62,7 +31,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
               {t("price")}: {service.servicesPrice}
             </p>
             <Badge
-              variant={service.servicesStatus === 0 ? "success" : "destructive"}
+              variant={service.servicesStatus === 0 ? "default" : "destructive"}
               className="mt-2"
             >
               {service.servicesStatus === 0 ? t("active") : t("inactive")}

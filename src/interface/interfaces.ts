@@ -143,3 +143,10 @@ export interface ExtraServiceFormProps {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
 }
+
+export interface ServiceListProps {
+  services: Service[];
+  onEdit: (service: Service) => void;
+  onActivate: (serviceId: number) => void;
+  onDeactivate: (serviceId: number) => void;
+}

@@ -237,4 +237,7 @@ export const ar = {
   extraServiceDescriptionEnPlaceholder: "أدخل الوصف بالإنجليزية",
   extraServiceDescriptionArPlaceholder: "أدخل الوصف بالعربية",
   extraServicePricePlaceholder: "أدخل السعر",
+  active: "مفعل",
+  inactive: "غير مفعل",
+  update: "تحديث",
 };
