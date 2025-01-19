@@ -10,7 +10,9 @@ import TimePicker from "@/components/TimePicker";
 import DatePicker from "@/components/DatePicker";
 import UserSlots from "@/components/UserSlots";
 import { Slot } from "@/interface/interfaces";
+import { useLocation } from "react-router-dom";
 const TimeSlotPicker: React.FC = () => {
+  const location = useLocation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [date, setDate] = useState<Date>();
   const [slots, setSlots] = useState<Slot[]>([]);
@@ -30,6 +32,13 @@ const TimeSlotPicker: React.FC = () => {
       .padStart(2, "0")}`;
     setFormData((prev) => ({ ...prev, [field]: time }));
   };
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("add") === "true") {
+      setIsModalOpen(true);
+    }
+  }, [location]);
   const fetchSlots = async () => {
     setLoading(true);
     try {

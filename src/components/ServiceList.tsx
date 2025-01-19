@@ -26,7 +26,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1  lg:grid-cols-2 gap-y-10 gap-x-5">
         {services.map((service) => (
           <Card key={service.serviceId} className="overflow-hidden max-w-md">
             <CardContent className="p-4">
