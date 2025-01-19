@@ -241,4 +241,5 @@ export const en = {
   active: "Active",
   inactive: "Inactive",
   update: "Update",
+  services: "Services",
 };

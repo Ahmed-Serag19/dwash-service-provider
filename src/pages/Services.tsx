@@ -8,14 +8,14 @@ import { Textarea } from "@/components/ui/textarea";
 import Modal from "@/components/ui/Modal";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { X, Plus } from "lucide-react";
+import { X } from "lucide-react";
 import { endpoints } from "@/constants/endPoints";
 import ExtraServiceForm from "@/components/ExtraServiceForm";
 import ServiceList from "@/components/ServiceList";
 import { Service, AddServiceRequest } from "@/interface/interfaces";
 
 const Services: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showExtraServices, setShowExtraServices] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -322,8 +322,8 @@ const Services: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">{t("services")}</h1>
+      <div className="flex justify-between items-center mb-10">
+        <h1 className="text-3xl text-blue-950 font-bold">{t("services")}</h1>
         <Button
           onClick={() => {
             resetForm();

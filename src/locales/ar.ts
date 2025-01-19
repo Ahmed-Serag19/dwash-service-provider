@@ -240,4 +240,5 @@ export const ar = {
   active: "مفعل",
   inactive: "غير مفعل",
   update: "تحديث",
+  services: "الخدمات",
 };
