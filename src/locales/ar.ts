@@ -241,4 +241,9 @@ export const ar = {
   inactive: "غير مفعل",
   update: "تحديث",
   services: "الخدمات",
+  addExtraServices: "اضافة خدمة اضافية",
+  extraServices: "الخدمات الإضافية",
+  noExtraServices: "لا توجد خدمات إضافية.",
+  serviceImages: "صور الخدمة",
+  noImagesAvailable: "لا توجد صور متاحة.",
 };

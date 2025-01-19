@@ -242,4 +242,9 @@ export const en = {
   inactive: "Inactive",
   update: "Update",
   services: "Services",
+  addExtraServices: "Add an extra service",
+  extraServices: "Extra Services",
+  noExtraServices: "No extra services available.",
+  serviceImages: "Service Images",
+  noImagesAvailable: "No images available.",
 };

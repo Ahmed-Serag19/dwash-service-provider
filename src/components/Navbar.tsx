@@ -52,7 +52,7 @@ const Navbar = ({ mobileOpen, setMobileOpen }: HeaderProps) => {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="gap-2 text-md flex items-center font-semibold text-blue-950 hover:text-blue-700 px-2 py-2 rounded-md  hover:bg-stone-200 transition duration-300">
+            <button className="gap-2 text-md flex items-center font-semibold text-blue-950  px-2 py-2 rounded-md  hover:bg-stone-200 transition duration-300">
               <GoPersonFill size={28} />
               {i18n.language === "en"
                 ? user?.userDto?.nameEn

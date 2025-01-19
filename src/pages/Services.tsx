@@ -13,8 +13,10 @@ import { endpoints } from "@/constants/endPoints";
 import ExtraServiceForm from "@/components/ExtraServiceForm";
 import ServiceList from "@/components/ServiceList";
 import { Service, AddServiceRequest } from "@/interface/interfaces";
+import { useLocation } from "react-router-dom";
 
 const Services: React.FC = () => {
+  const location = useLocation();
   const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showExtraServices, setShowExtraServices] = useState(false);
@@ -110,6 +112,12 @@ const Services: React.FC = () => {
   // useEffect(() => {
   //   fetchServices();
   // }, []);
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("add") === "true") {
+      setIsModalOpen(true);
+    }
+  }, [location]);
 
   const fetchServices = async () => {
     try {
