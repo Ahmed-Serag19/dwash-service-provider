@@ -247,4 +247,5 @@ export const en = {
   noExtraServices: "No extra services available.",
   serviceImages: "Service Images",
   noImagesAvailable: "No images available.",
+  recentOrders: "Current Orders",
 };

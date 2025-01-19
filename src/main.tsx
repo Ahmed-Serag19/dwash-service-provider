@@ -5,20 +5,25 @@ import App from "@/App.tsx";
 import "./i18n.ts";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { QueryClient, QueryClientProvider } from "react-query";
+
+const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
-    <ToastContainer
-      position="top-right"
-      autoClose={2500}
-      hideProgressBar={false}
-      newestOnTop={false}
-      closeOnClick={true}
-      rtl={false}
-      pauseOnFocusLoss
-      draggable
-      pauseOnHover
-    />
+    <QueryClientProvider client={queryClient}>
+      <App />
+      <ToastContainer
+        position="top-right"
+        autoClose={2500}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={true}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+    </QueryClientProvider>
   </StrictMode>
 );

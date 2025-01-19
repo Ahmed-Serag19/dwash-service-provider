@@ -246,4 +246,12 @@ export const ar = {
   noExtraServices: "لا توجد خدمات إضافية.",
   serviceImages: "صور الخدمة",
   noImagesAvailable: "لا توجد صور متاحة.",
+  addSlot: "إضافة فترة",
+  viewEarnings: "عرض الأرباح",
+  title: "الطلبات الأخيرة",
+  service: "الخدمة",
+  customer: "العميل",
+  viewAll: "عرض جميع الطلبات",
+  message: "لديك {{count}} طلب/طلبات اليوم مع {{customerName}} في {{time}}.",
+  recentOrders: "الطلبات الحالية",
 };

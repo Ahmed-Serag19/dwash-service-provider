@@ -1,7 +1,7 @@
-import React from "react";
+import { useTranslation } from "react-i18next";
 
 export default function ReminderCard() {
-  // Dummy data for the reminder
+  const { t } = useTranslation();
   const reminder = {
     orderCount: 1,
     customerName: "John Doe",
@@ -10,12 +10,13 @@ export default function ReminderCard() {
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-      <h3 className="text-lg font-medium text-blue-950 mb-2">
-        Today's Reminder
-      </h3>
-      <p className="text-blue-950">
-        You have {reminder.orderCount} order{reminder.orderCount > 1 ? "s" : ""}{" "}
-        today with {reminder.customerName} at {reminder.time}.
+      <h3 className="text-lg font-medium text-blue-950 mb-2">{t("title")}</h3>
+      <p className="text-blue-950 text-sm sm:text-base">
+        {t("message", {
+          count: reminder.orderCount,
+          customerName: reminder.customerName,
+          time: reminder.time,
+        })}
       </p>
     </div>
   );
