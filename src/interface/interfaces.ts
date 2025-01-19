@@ -150,3 +150,68 @@ export interface ServiceListProps {
   onActivate: (serviceId: number) => void;
   onDeactivate: (serviceId: number) => void;
 }
+
+export interface ItemExtra {
+  itemExtraId: number;
+  itemExtraNameAr: string;
+  itemExtraNameEn: string;
+  invoiceItemId: number;
+  itemExtraPrice: number;
+}
+
+export interface Item {
+  invoiceItemId: number;
+  invoiceId: number;
+  itemNameAr: string;
+  itemNameEn: string;
+  serviceTypeAr: string;
+  serviceTypeEn: string;
+  itemPrice: number;
+  itemExtraDtos: ItemExtra[] | null;
+}
+
+export interface Request {
+  id: number;
+  requestCodeId: number;
+  createdOn: string;
+  waitingProcessId: number;
+  status: number;
+  statusName: "WAITING" | "ACCEPTED" | "UNDER_PROCESSING" | "COMPLETED";
+  requestTypeNameAr: string;
+  requestTypeNameEn: string;
+  cancellation: boolean;
+}
+
+export interface Order {
+  invoiceId: number;
+  brandId: number;
+  brandNameAr: string;
+  brandNameEn: string;
+  userNameAr: string;
+  userNameEn: string;
+  userPhoneNumber: string;
+  latitude: string;
+  longitude: string;
+  status: string;
+  totalAmount: number;
+  discountAmount: number;
+  dueAmount: number;
+  reviewed: boolean;
+  fromTime: string;
+  timeTo: string;
+  reservationDate: string;
+  request: Request;
+  itemDto: Item;
+}
+
+export interface OrdersResponse {
+  success: boolean;
+  messageEn: string;
+  messageAr: string;
+  content: {
+    data: Order[];
+    totalPages: number;
+    totalElements: number;
+    numberOfElements: number;
+  };
+}
