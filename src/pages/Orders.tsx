@@ -1,299 +1,397 @@
-import { useState, useEffect } from "react";
-import { useTranslation } from "react-i18next";
-import { toast } from "react-toastify";
+import React, { useState } from "react";
+import { useQuery } from "react-query";
+import { format } from "date-fns";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  Phone,
+  User,
+  AlertCircle,
+} from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Order } from "@/interface/interfaces";
 
-export default function Order(props) {
-  const orderData = props.item.props.item || props.item;
-  const { t, i18n } = useTranslation();
-  const accessToken = localStorage.getItem("accessToken");
-
-  const [show, setShow] = useState(false);
-  const [show2, setShow2] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("");
-
-  useEffect(() => {
-    const { statusName } = orderData.request || {};
-    if (statusName === "UNDER_PROCESSING") {
-      setSelectedOption("2"); // Default to "In Progress"
-    } else if (statusName === "COMPLETED") {
-      setSelectedOption("3"); // Default to "Completed"
-    } else {
-      setSelectedOption("1"); // Default to "Certain" (placeholder)
-    }
-  }, [orderData.request?.statusName]);
-
-  const handleSelectChange = async (e) => {
-    const selectedValue = e.target.value;
-    setSelectedOption(selectedValue); // Update the dropdown selection locally
-
-    const orderId = orderData.request?.id;
-
-    // Update the order status via API
-    await updateOrderStatus(orderId, selectedValue);
-
-    // If "Completed" is selected, refresh the order list after 2 seconds
-    if (selectedValue === "3") {
-      setTimeout(() => {
-        props.refreshOrders(); // Call parent function to refresh orders
-      }, 2000);
-    }
-  };
-
-  const handleClose = () => {
-    setShow(false);
-    setShow2(false);
-  };
-
-  const handleShowReject = () => setShow(true);
-  const handleShowAccept = () => setShow2(true);
-
-  const handleRejection = () => {
-    props.removeReject();
-    handleClose();
-  };
-
-  const handleAcception = () => {
-    props.removeAccept();
-    handleClose();
-  };
-
-  const updateOrderStatus = async (orderId, action) => {
-    try {
-      let url = "";
-      switch (action) {
-        case "2": // In Progress
-          url = `${API.API_BASE_URL}freelancer/proceedOrder?orderId=${orderId}`;
-          break;
-        case "3": // Completed
-          url = `${API.API_BASE_URL}freelancer/completeOrder?orderId=${orderId}`;
-          break;
-        default:
-          return;
-      }
-
-      await axiosInstance.put(
-        url,
-        {},
+// Dummy data for open orders
+const dummyOpenOrders = [
+  {
+    invoiceId: 120,
+    brandNameEn: "Nadia",
+    userNameEn: "John Doe",
+    userPhoneNumber: "0549976777",
+    totalAmount: 650,
+    fromTime: "16:35:20",
+    timeTo: "17:35:20",
+    reservationDate: "2024-11-19",
+    latitude: "24.754280119964605",
+    longitude: "46.70827533669625",
+    request: {
+      statusName: "WAITING",
+    },
+    itemDto: {
+      itemNameEn: "Hair cut",
+      itemNameAr: "قص شعر",
+      serviceTypeEn: "Hair Service",
+      serviceTypeAr: "خدمة شعر",
+      itemPrice: 500,
+      itemExtraDtos: [
         {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+          itemExtraNameEn: "Short hair cut",
+          itemExtraPrice: 150,
+        },
+      ],
+    },
+  },
+  {
+    invoiceId: 121,
+    brandNameEn: "Nadia",
+    userNameEn: "Jane Smith",
+    userPhoneNumber: "0549976778",
+    totalAmount: 900,
+    fromTime: "14:00:00",
+    timeTo: "15:30:00",
+    reservationDate: "2024-11-20",
+    latitude: "24.754280119964605",
+    longitude: "46.70827533669625",
+    request: {
+      statusName: "ACCEPTED",
+    },
+    itemDto: {
+      itemNameEn: "Full Makeup",
+      itemNameAr: "مكياج كامل",
+      serviceTypeEn: "Makeup Service",
+      serviceTypeAr: "خدمة مكياج",
+      itemPrice: 800,
+      itemExtraDtos: [
+        {
+          itemExtraNameEn: "False lashes",
+          itemExtraPrice: 100,
+        },
+      ],
+    },
+  },
+];
 
-      toast.success(t("orderStatusUpdated"), {
-        position: "top-center",
-        autoClose: 5002,
-        progress: 0,
-      });
-    } catch (error) {
-      if (
-        error.response &&
-        error.response.data.messageEn.includes(
-          "change status to under processing should be in the same day"
-        )
-      ) {
-        toast.error(
-          i18n.language === "ar"
-            ? "لا يمكن تغيير الحالة إلى قيد المعالجة إلا في نفس يوم الحجز"
-            : "Status can only be changed to 'In Progress' on the same day as the reservation.",
-          {
-            position: "top-center",
-            autoClose: 5002,
-            progress: 0,
-          }
-        );
-      } else if (
-        error.response &&
-        error.response.data.messageEn.includes("the request is not authorized")
-      ) {
-        toast.error(
-          i18n.language === "ar"
-            ? "لا يمكن إكمال الطلب إلا إذا كان قيد المعالجة."
-            : "The order cannot be completed unless it is 'In Progress.'",
-          {
-            position: "top-center",
-            autoClose: 5002,
-            progress: 0,
-          }
-        );
-      } else {
-        toast.error(t("orderStatusUpdated_err"), {
-          position: "top-center",
-          autoClose: 5002,
-          progress: 0,
-        });
-      }
-    }
-  };
+// Dummy data for closed orders
+const dummyClosedOrders = [
+  {
+    invoiceId: 118,
+    brandNameEn: "Nadia",
+    userNameEn: "Alice Johnson",
+    userPhoneNumber: "0549976779",
+    totalAmount: 500,
+    fromTime: "10:00:00",
+    timeTo: "11:00:00",
+    reservationDate: "2024-11-15",
+    latitude: "24.754280119964605",
+    longitude: "46.70827533669625",
+    request: {
+      statusName: "COMPLETED",
+    },
+    itemDto: {
+      itemNameEn: "Hair Styling",
+      itemNameAr: "تصفيف الشعر",
+      serviceTypeEn: "Hair Service",
+      serviceTypeAr: "خدمة شعر",
+      itemPrice: 500,
+      itemExtraDtos: null,
+    },
+  },
+  {
+    invoiceId: 117,
+    brandNameEn: "Nadia",
+    userNameEn: "Bob Williams",
+    userPhoneNumber: "0549976780",
+    totalAmount: 750,
+    fromTime: "13:00:00",
+    timeTo: "14:30:00",
+    reservationDate: "2024-11-14",
+    latitude: "24.754280119964605",
+    longitude: "46.70827533669625",
+    request: {
+      statusName: "CANCELLED_BY_ADMIN",
+    },
+    itemDto: {
+      itemNameEn: "Bridal Makeup",
+      itemNameAr: "مكياج عروس",
+      serviceTypeEn: "Makeup Service",
+      serviceTypeAr: "خدمة مكياج",
+      itemPrice: 750,
+      itemExtraDtos: null,
+    },
+  },
+];
 
-  const generateGoogleMapsLink = () => {
-    const latitude = orderData.latitude?.replace(/\\|"/g, "");
-    const longitude = orderData.longitude?.replace(/\\|"/g, "");
+// Mock API call - replace with actual API call when ready
+const fetchOrders = async (status: "OPENNING" | "CLOSED") => {
+  // Simulating API call
+  await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
+  if (status === "OPENNING") {
+    return { content: { data: dummyOpenOrders } };
+  } else {
+    return { content: { data: dummyClosedOrders } };
+  }
+};
 
-    if (latitude && longitude) {
-      const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
-      window.open(googleMapsUrl, "_blank");
-    } else {
-      toast.error(t("locationNotAvailable") + t("contactServiceProvider"), {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
-    }
-  };
+export default function OrderList() {
+  const [activeTab, setActiveTab] = useState<"current" | "closed">("current");
+
+  const {
+    data: currentOrders,
+    isLoading: isLoadingCurrent,
+    error: errorCurrent,
+  } = useQuery(["orders", "OPENNING"], () => fetchOrders("OPENNING"));
+  const {
+    data: closedOrders,
+    isLoading: isLoadingClosed,
+    error: errorClosed,
+  } = useQuery(["orders", "CLOSED"], () => fetchOrders("CLOSED"));
+
+  const isLoading =
+    activeTab === "current" ? isLoadingCurrent : isLoadingClosed;
+  const error = activeTab === "current" ? errorCurrent : errorClosed;
+  const orders =
+    activeTab === "current"
+      ? currentOrders?.content?.data
+      : closedOrders?.content?.data;
 
   return (
-    <div className="orders-container">
-      <div id="orderCard" className="order-card">
-        <div className="card-btn">
-          <Button onClick={props.viewDetails} id="f-btn" variant="primary">
-            {t("showDetails")}
-          </Button>
-
-          {orderData.request?.statusName === "UNDER_PROCESSING" && (
-            <Form.Select
-              className="select"
-              name="register-type"
-              aria-label={t("service_name")}
-              onChange={handleSelectChange}
-              value={selectedOption}
-            >
-              <option value="1" disabled>
-                {t("certain")}
-              </option>
-              <option value="2">{t("in_progress")}</option>
-              <option value="3">{t("completed")}</option>
-            </Form.Select>
-          )}
-          {orderData.request?.statusName !== "ACCEPTED" &&
-            orderData.request?.statusName !== "UNDER_PROCESSING" && (
-              <>
-                <Button
-                  onClick={handleShowAccept}
-                  id="green-btn"
-                  variant="primary"
-                >
-                  {t("accept")}
-                </Button>
-                <Button
-                  id="red-btn"
-                  onClick={handleShowReject}
-                  variant="primary"
-                >
-                  {t("decline")}
-                </Button>
-              </>
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle>Orders</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Tabs
+          value={activeTab}
+          onValueChange={(value) => setActiveTab(value as "current" | "closed")}
+          className="w-full"
+        >
+          <TabsList>
+            <TabsTrigger value="current">Current Orders</TabsTrigger>
+            <TabsTrigger value="closed">Closed Orders</TabsTrigger>
+          </TabsList>
+          <TabsContent value="current">
+            {renderOrderContent(
+              isLoadingCurrent,
+              errorCurrent,
+              currentOrders?.content?.data
             )}
-          {orderData.request?.statusName === "ACCEPTED" && (
-            <Form.Select
-              className="select"
-              name="register-type"
-              aria-label={t("service_name")}
-              onChange={handleSelectChange}
-              value={selectedOption}
-            >
-              <option value="1" disabled>
-                {t("certain")}
-              </option>
-              <option value="2">{t("in_progress")}</option>
-              <option value="3">{t("completed")}</option>
-            </Form.Select>
-          )}
-        </div>
-        <div className="card-info">
-          <div className="card-text">
-            <h4 className="order-title">
-              {i18n.language === "ar"
-                ? orderData.itemDto?.itemNameAr || "unknown"
-                : orderData.itemDto?.itemNameEn || "unknown"}
-            </h4>
-            <p className="order-number">
-              {t("orderNumber")} : {orderData.request?.id || "unknown"}
-            </p>
-            <p className="order-date">
-              {t("adding_service_date")}:{" "}
-              {formatDate(orderData.request?.createdOn) || "unknown"}
-            </p>
-            <p className="order-time">
-              {t("time")} : <span>{orderData.fromTime || "unknown"} </span> to{" "}
-              <span>{orderData.timeTo || "unknown"}</span>
-            </p>
-            <p className="name">
-              {t("name")} :{" "}
-              {i18n.language === "ar"
-                ? orderData.userNameAr || "unknown"
-                : orderData.userNameEn || "unknown"}
-            </p>
-            <p className="order-date">
-              {t("reservationDate")} :{" "}
-              {formatDate(orderData?.reservationDate) || "unknown"}
-            </p>
-            <p className="phone">
-              {t("phoneNumber")} : {orderData.userPhoneNumber || "unknown"}
-            </p>
-            <p className="location">
-              {t("location")} :{" "}
-              <a href="#" onClick={generateGoogleMapsLink}>
-                <i className="fa-solid fa-location-dot"></i>{" "}
-                {t("viewLocationOnMap")}
-              </a>
-            </p>
-            <p className="total">
-              {t("total")} : {orderData.totalAmount || "unknown"} {t("sar")}
-            </p>
-          </div>
-          <div className="card-user-img">
-            <img src={hair_icon} alt="User" />
-          </div>
-        </div>
-      </div>
+          </TabsContent>
+          <TabsContent value="closed">
+            {renderOrderContent(
+              isLoadingClosed,
+              errorClosed,
+              closedOrders?.content?.data
+            )}
+          </TabsContent>
+        </Tabs>
+      </CardContent>
+    </Card>
+  );
+}
 
-      {/* Modal for reject confirmation */}
-      <Modal
-        show={show}
-        onHide={handleClose}
-        backdrop="static"
-        keyboard={false}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>{t("confirm_operation")}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>{t("reject_order_msg")}</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            {t("cancel")}
-          </Button>
-          <Button onClick={handleRejection} variant="primary">
-            {t("reject")}
-          </Button>
-        </Modal.Footer>
-      </Modal>
+function renderOrderContent(
+  isLoading: boolean,
+  error: any,
+  orders: any[] | undefined
+) {
+  if (isLoading) return <div>Loading...</div>;
+  if (error)
+    return (
+      <ErrorAlert message="Failed to fetch orders. Please try again later." />
+    );
+  if (!orders || orders.length === 0)
+    return <ErrorAlert message="No orders found." />;
+  return <OrderTable orders={orders} />;
+}
 
-      {/* Modal for accept confirmation */}
-      <Modal
-        show={show2}
-        onHide={handleClose}
-        backdrop="static"
-        keyboard={false}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>{t("confirm_operation")}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>{t("accept_order_msg")}</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            {t("cancel")}
-          </Button>
-          <Button onClick={handleAcception} variant="primary">
-            {t("accept")}
-          </Button>
-        </Modal.Footer>
-      </Modal>
+function ErrorAlert({ message }: { message: string }) {
+  return (
+    <Alert variant="destructive">
+      <AlertCircle className="h-4 w-4" />
+      <AlertTitle>Error</AlertTitle>
+      <AlertDescription>{message}</AlertDescription>
+    </Alert>
+  );
+}
+
+function OrderTable({ orders }: { orders: Order[] }) {
+  return (
+    <div className="overflow-x-auto">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Order ID</TableHead>
+            <TableHead>Service</TableHead>
+            <TableHead>Customer</TableHead>
+            <TableHead>Date & Time</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Amount</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {orders.map((order) => (
+            <TableRow key={order.invoiceId}>
+              <TableCell>{order.invoiceId}</TableCell>
+              <TableCell>{order.itemDto.itemNameEn}</TableCell>
+              <TableCell>{order.userNameEn}</TableCell>
+              <TableCell>
+                <div className="flex flex-col">
+                  <span className="flex items-center">
+                    <Calendar className="mr-2 h-4 w-4" />
+                    {format(new Date(order.reservationDate), "MMM dd, yyyy")}
+                  </span>
+                  <span className="flex items-center">
+                    <Clock className="mr-2 h-4 w-4" />
+                    {order.fromTime} - {order.timeTo}
+                  </span>
+                </div>
+              </TableCell>
+              <TableCell>
+                <Badge variant={getStatusVariant(order.request.statusName)}>
+                  {formatStatus(order.request.statusName)}
+                </Badge>
+              </TableCell>
+              <TableCell>{order.totalAmount} SAR</TableCell>
+              <TableCell>
+                <OrderDetailsDialog order={order} />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
+}
+
+function OrderDetailsDialog({ order }: { order: Order }) {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm">
+          View Details
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Order Details</DialogTitle>
+          <DialogDescription>Order #{order.invoiceId}</DialogDescription>
+        </DialogHeader>
+        <ScrollArea className="max-h-[60vh] overflow-y-auto">
+          <div className="space-y-4">
+            <div>
+              <h4 className="font-semibold">Service</h4>
+              <p>
+                {order.itemDto.itemNameEn} ({order.itemDto.itemNameAr})
+              </p>
+              <p className="text-sm text-gray-500">
+                {order.itemDto.serviceTypeEn} ({order.itemDto.serviceTypeAr})
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold">Customer</h4>
+              <p>{order.userNameEn}</p>
+              <p className="flex items-center">
+                <Phone className="mr-2 h-4 w-4" />
+                {order.userPhoneNumber}
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold">Date & Time</h4>
+              <p className="flex items-center">
+                <Calendar className="mr-2 h-4 w-4" />
+                {format(new Date(order.reservationDate), "MMMM dd, yyyy")}
+              </p>
+              <p className="flex items-center">
+                <Clock className="mr-2 h-4 w-4" />
+                {order.fromTime} - {order.timeTo}
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold">Location</h4>
+              <p className="flex items-center">
+                <MapPin className="mr-2 h-4 w-4" />
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${order.latitude},${order.longitude}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline"
+                >
+                  View on Map
+                </a>
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold">Pricing</h4>
+              <p>Service Price: {order.itemDto.itemPrice} SAR</p>
+              {order.itemDto.itemExtraDtos &&
+                order.itemDto.itemExtraDtos.length > 0 && (
+                  <div>
+                    <p className="font-medium">Extra Services:</p>
+                    {order.itemDto.itemExtraDtos.map((extra, index) => (
+                      <p key={index}>
+                        {extra.itemExtraNameEn}: {extra.itemExtraPrice} SAR
+                      </p>
+                    ))}
+                  </div>
+                )}
+              <p className="font-semibold mt-2">
+                Total Amount: {order.totalAmount} SAR
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold">Status</h4>
+              <Badge variant={getStatusVariant(order.request.statusName)}>
+                {formatStatus(order.request.statusName)}
+              </Badge>
+            </div>
+          </div>
+        </ScrollArea>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function getStatusVariant(status: string) {
+  switch (status) {
+    case "COMPLETED":
+      return "default";
+    case "CANCELLED_BY_ADMIN":
+      return "destructive";
+    case "WAITING":
+      return "secondary";
+    case "ACCEPTED":
+      return "default";
+    default:
+      return "default";
+  }
+}
+
+function formatStatus(status: string) {
+  return status
+    .split("_")
+    .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
+    .join(" ");
 }
