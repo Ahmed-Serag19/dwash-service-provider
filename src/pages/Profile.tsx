@@ -19,7 +19,7 @@ const Profile: React.FC = () => {
 
   useEffect(() => {
     refreshUser();
-  }, []);
+  }, [refreshUser]);
   const direction = i18n.language === "ar" ? "rtl" : "ltr";
   if (isLoading && !user) {
     return (

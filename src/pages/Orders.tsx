@@ -44,7 +44,18 @@ export default function OrderList() {
     isLoading: isLoadingClosed,
     error: errorClosed,
   } = useQuery(["orders", "CLOSED"], () => fetchOrders("CLOSED"));
-
+  function renderOrderContent(
+    isLoading: boolean,
+    error: unknown,
+    orders: Order[] | undefined,
+    language: string
+  ) {
+    if (isLoading) return <div>{t("loading")}</div>;
+    if (error) return <ErrorAlert message={t("failedToFetchOrders")} />;
+    if (!orders || orders.length === 0)
+      return <ErrorAlert message={t("noOrdersFound")} />;
+    return <OrderTable orders={orders} language={language} />;
+  }
   // const isLoading =
   //   activeTab === "current" ? isLoadingCurrent : isLoadingClosed;
   // const error = activeTab === "current" ? errorCurrent : errorClosed;
@@ -74,6 +85,7 @@ export default function OrderList() {
             {renderOrderContent(
               isLoadingCurrent,
               errorCurrent,
+              // @ts-expect-error
               currentOrders?.content?.data,
               i18n.language
             )}
@@ -82,6 +94,7 @@ export default function OrderList() {
             {renderOrderContent(
               isLoadingClosed,
               errorClosed,
+              // @ts-expect-error
               closedOrders?.content?.data,
               i18n.language
             )}
@@ -90,20 +103,6 @@ export default function OrderList() {
       </CardContent>
     </Card>
   );
-}
-
-function renderOrderContent(
-  isLoading: boolean,
-  error: any,
-  orders: any[] | undefined,
-  language: string
-) {
-  const { t } = useTranslation();
-  if (isLoading) return <div>{t("loading")}</div>;
-  if (error) return <ErrorAlert message={t("failedToFetchOrders")} />;
-  if (!orders || orders.length === 0)
-    return <ErrorAlert message={t("noOrdersFound")} />;
-  return <OrderTable orders={orders} language={language} />;
 }
 
 function ErrorAlert({ message }: { message: string }) {

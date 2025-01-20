@@ -56,8 +56,12 @@ const ChangePassword: React.FC = () => {
       } else {
         toast.error(response.data.messageEn || t("unknownError"));
       }
-    } catch (error: any) {
-      toast.error(error.response?.data?.messageEn || t("unknownError"));
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.messageEn || t("unknownError"));
+      } else {
+        toast.error(t("unknownError"));
+      }
     } finally {
       setIsSubmitting(false);
     }

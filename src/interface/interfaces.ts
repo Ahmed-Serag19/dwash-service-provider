@@ -13,7 +13,7 @@ interface UserDto {
   identityTyNameEn: string;
   mobile: string;
   identificationTypeId: string;
-  userAddressDto: any | null;
+  userAddressDto: string | null;
 }
 
 interface BrandWalletDto {
@@ -51,7 +51,7 @@ export interface UserContent {
   userDto: UserDto;
   brandDistrictId: string | null;
   brandCreatedNo: string | null;
-  requestDto: any | null;
+  requestDto: string | null;
   brandWalletDto: BrandWalletDto;
 }
 
@@ -214,4 +214,61 @@ export interface OrdersResponse {
     totalElements: number;
     numberOfElements: number;
   };
+}
+
+export interface ItemExtraDto {
+  itemExtraNameEn: string;
+  itemExtraNameAr: string;
+  itemExtraPrice: number;
+}
+
+export interface ItemDto {
+  itemNameEn: string;
+  itemNameAr: string;
+  serviceTypeEn: string;
+  serviceTypeAr: string;
+  itemPrice: number;
+  itemExtraDtos: ItemExtraDto[];
+}
+
+export interface OpenOrder {
+  invoiceId: number;
+  brandNameEn: string;
+  brandNameAr: string;
+  userNameEn: string;
+  userNameAr: string;
+  userPhoneNumber: string;
+  totalAmount: number;
+  fromTime: string;
+  timeTo: string;
+  reservationDate: string;
+  latitude: string;
+  longitude: string;
+  request: Request;
+  itemDto: ItemDto;
+  status: string;
+  discountAmount: number;
+  dueAmount: number;
+  reviewed: boolean;
+}
+
+export interface ClosedOrder {
+  invoiceId: number;
+  brandNameEn: string;
+  brandNameAr: string;
+  userNameEn: string;
+  userNameAr: string;
+  userPhoneNumber: string;
+  totalAmount: number;
+  fromTime: string;
+  timeTo: string;
+  reservationDate: string;
+  latitude: string;
+  longitude: string;
+  request: Request;
+  itemDto: ItemDto;
+  status: string;
+  discountAmount: number;
+  dueAmount: number;
+  reviewed: boolean;
 }
