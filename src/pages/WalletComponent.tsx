@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { endpoints } from "@/constants/endPoints";
@@ -93,27 +93,27 @@ const WalletComponent: React.FC = () => {
   const { t } = useTranslation();
 
   // useEffect(() => {
-  //   const fetchWalletData = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const response = await axios.get(endpoints.getWallet, {
-  //         headers: {
-  //           Authorization: `Bearer {sessionStorage.getItem("accessToken")}`,
-  //         },
-  //       });
-  //       if (response.data.success) {
-  //         setWalletData(response.data.content);
-  //       } else {
-  //         toast.error(t("walletFetchError"));
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching wallet data:", error);
-  //       toast.error(t("walletFetchError"));
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
+  const fetchWalletData = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(endpoints.getWallet, {
+        headers: {
+          Authorization: `Bearer {sessionStorage.getItem("accessToken")}`,
+        },
+      });
+      if (response.data.success) {
+        setWalletData(response.data.content);
+      } else {
+        toast.error(t("walletFetchError"));
+      }
+    } catch (error) {
+      console.error("Error fetching wallet data:", error);
+      toast.error(t("walletFetchError"));
+    } finally {
+      setLoading(false);
+    }
+  };
+  console.log(fetchWalletData);
   //   fetchWalletData();
   // }, [t]);
 

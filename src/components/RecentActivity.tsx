@@ -1,4 +1,3 @@
-import React from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
 import {
@@ -26,6 +25,7 @@ interface RecentActivityProps {
 
 export default function RecentActivity({ services }: RecentActivityProps) {
   const { t, i18n } = useTranslation();
+  console.log(services);
   const recentOrders = [
     {
       service: "Exterior Wash",
