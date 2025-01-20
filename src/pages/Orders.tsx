@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Order } from "@/interface/interfaces";
+import { useTranslation } from "react-i18next";
 
 // Dummy data for open orders
 const dummyOpenOrders = [
@@ -154,7 +155,8 @@ const fetchOrders = async (status: "OPENNING" | "CLOSED") => {
   }
 };
 
-export default function OrderList() {
+export default function Orders() {
+  const { t, i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState<"current" | "closed">("current");
 
   const {
@@ -177,20 +179,23 @@ export default function OrderList() {
       : closedOrders?.content?.data;
 
   return (
-    <Card className="w-full">
+    <Card className="w-full min-h-96">
       <CardHeader>
-        <CardTitle>Orders</CardTitle>
+        <CardTitle className="text-2xl text-blue-950">{t("orders")}</CardTitle>
       </CardHeader>
       <CardContent>
         <Tabs
           value={activeTab}
           onValueChange={(value) => setActiveTab(value as "current" | "closed")}
           className="w-full"
+          dir={i18n.language === "en" ? "ltr" : "rtl"}
         >
-          <TabsList>
-            <TabsTrigger value="current">Current Orders</TabsTrigger>
-            <TabsTrigger value="closed">Closed Orders</TabsTrigger>
-          </TabsList>
+          <div className="py-10 flex justify-center">
+            <TabsList>
+              <TabsTrigger value="current">{t("activeOrders")}</TabsTrigger>
+              <TabsTrigger value="closed">{t("closedOrders")}</TabsTrigger>
+            </TabsList>
+          </div>
           <TabsContent value="current">
             {renderOrderContent(
               isLoadingCurrent,
@@ -216,7 +221,14 @@ function renderOrderContent(
   error: any,
   orders: any[] | undefined
 ) {
-  if (isLoading) return <div>Loading...</div>;
+  const { t } = useTranslation();
+  if (isLoading) {
+    return (
+      <div className="w-full  flex justify-center items-center">
+        <div className="loader"></div>
+      </div>
+    );
+  }
   if (error)
     return (
       <ErrorAlert message="Failed to fetch orders. Please try again later." />

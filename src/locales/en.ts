@@ -248,4 +248,7 @@ export const en = {
   serviceImages: "Service Images",
   noImagesAvailable: "No images available.",
   recentOrders: "Current Orders",
+  closedOrders: "Closed Orders",
+  activeOrders: "Active Orders",
+  orders: "Orders",
 };

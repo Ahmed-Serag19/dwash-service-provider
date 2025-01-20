@@ -254,4 +254,7 @@ export const ar = {
   viewAll: "عرض جميع الطلبات",
   message: "لديك {{count}} طلب/طلبات اليوم مع {{customerName}} في {{time}}.",
   recentOrders: "الطلبات الحالية",
+  closedOrders: "الطلبات المغلقة",
+  orders: "الطلبات",
+  activeOrders: "الطلبات القائمة",
 };
