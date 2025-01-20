@@ -10,7 +10,7 @@ const LogoutModal = ({ handleCloseModal }: LogoutModalProps) => {
   const { t } = useTranslation();
 
   const handleLogout = () => {
-    sessionStorage.removeItem("userInfo");
+    sessionStorage.removeItem("accessToken");
     toast.success(t("logoutSuccess"), {
       position: "top-right",
       autoClose: 3000,

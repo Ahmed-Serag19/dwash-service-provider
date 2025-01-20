@@ -9,16 +9,18 @@ import TimeSlots from "@/pages/TimeSlots";
 import Login from "@/pages/Login";
 import Layout from "@/layout/Layout";
 import EditProfile from "@/pages/EditProfile";
-// import ProtectedRoute from "@/routes/ProtectedRoute";
+import NotFoundPage from "@/pages/NotFound";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: (
-      //   <ProtectedRoute>
-      <Layout />
-      //   </ProtectedRoute>
+      <ProtectedRoute>
+        <Layout />
+      </ProtectedRoute>
     ),
+    errorElement: <NotFoundPage />,
     children: [
       { index: true, element: <Homepage /> },
       { path: "/", element: <Homepage /> },
@@ -31,7 +33,7 @@ const router = createBrowserRouter([
       { path: "/edit-profile", element: <EditProfile /> },
     ],
   },
-  { path: "/login", element: <Login /> },
+  { path: "/login", element: <Login />, errorElement: <NotFoundPage /> },
 ]);
 
 const AppRoutes = () => <RouterProvider router={router} />;

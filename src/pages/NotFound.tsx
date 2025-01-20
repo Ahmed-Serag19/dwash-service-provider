@@ -16,9 +16,7 @@ const NotFoundPage = () => {
       <div className="text-center">
         <h1 className="text-6xl font-bold text-primary mb-4">404</h1>
         <h2 className="text-2xl font-semibold mb-4">{t("pageNotFound")}</h2>
-        <p className="text-muted-foreground mb-8 max-w-md">
-          {t("lostDataMessage")}
-        </p>
+
         <div className="flex flex-col sm:flex-row justify-center gap-4">
           <Link
             to="/"
@@ -26,8 +24,8 @@ const NotFoundPage = () => {
           >
             {isArabic ? (
               <>
-                <ArrowRight className="w-4 h-4 ml-2" />
                 {t("backToDashboard")}
+                <ArrowRight className="w-4 h-4 ml-2" />
               </>
             ) : (
               <>
