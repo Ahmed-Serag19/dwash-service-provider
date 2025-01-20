@@ -258,4 +258,11 @@ export const en = {
   location: "Location",
   pricing: "Price details",
   viewOnMap: "Show location",
+  viewOrders: "View Orders",
+  pageNotFound: "Page Not Found",
+  lostDataMessage:
+    "Don't worry, even the best data sometimes get lost in the internet.",
+  backToDashboard: "Back to Dashboard",
+  contactSupportMessage:
+    "If you believe this is an error, please contact our support team.",
 };

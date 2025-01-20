@@ -264,4 +264,10 @@ export const ar = {
   location: "المكان",
   pricing: "تفاصيل السعر",
   viewOnMap: "أظهار المكان",
+  viewOrders: "الذهاب الى الطلبات",
+  pageNotFound: "الصفحة غير موجودة",
+  lostDataMessage: "لا تقلق، حتى أفضل البيانات قد تضيع أحياناً على الإنترنت.",
+  backToDashboard: "العودة إلى لوحة التحكم",
+  contactSupportMessage:
+    "إذا كنت تعتقد أن هذا خطأ، يرجى الاتصال بفريق الدعم الخاص بنا.",
 };

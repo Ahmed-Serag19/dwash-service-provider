@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 
 interface Service {
   serviceId: number;
@@ -136,9 +137,14 @@ export default function RecentActivity({ services }: RecentActivityProps) {
           </TableBody>
         </Table>
       </div>
-      <Button variant="link" className="mt-4 text-blue-600 hover:text-blue-700">
-        View all orders <ChevronRight className="ml-2 h-4 w-4" />
-      </Button>
+      <Link to="/orders">
+        <Button
+          variant="link"
+          className="mt-4 text-blue-600 hover:text-blue-700"
+        >
+          {t("viewOrders")} <ChevronRight className="ml-2 h-4 w-4" />
+        </Button>
+      </Link>
     </div>
   );
 }

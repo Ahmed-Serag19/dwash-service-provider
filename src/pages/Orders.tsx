@@ -17,130 +17,7 @@ import { Calendar, Clock, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Order } from "@/interface/interfaces";
 import OrderModal from "@/components/OrderModal";
-
-// Full dummy data for open orders
-const dummyOpenOrders = [
-  {
-    invoiceId: 120,
-    brandNameEn: "Nadia",
-    brandNameAr: "ناديا",
-    userNameEn: "John Doe",
-    userNameAr: "جون دو",
-    userPhoneNumber: "0549976777",
-    totalAmount: 650,
-    fromTime: "16:35:20",
-    timeTo: "17:35:20",
-    reservationDate: "2024-11-19",
-    latitude: "24.754280119964605",
-    longitude: "46.70827533669625",
-    request: {
-      statusName: "WAITING",
-      statusNameAr: "قيد الانتظار",
-    },
-    itemDto: {
-      itemNameEn: "Hair cut",
-      itemNameAr: "قص شعر",
-      serviceTypeEn: "Hair Service",
-      serviceTypeAr: "خدمة شعر",
-      itemPrice: 500,
-      itemExtraDtos: [
-        {
-          itemExtraNameEn: "Short hair cut",
-          itemExtraNameAr: "قص شعر قصير",
-          itemExtraPrice: 150,
-        },
-      ],
-    },
-  },
-  {
-    invoiceId: 121,
-    brandNameEn: "Nadia",
-    brandNameAr: "ناديا",
-    userNameEn: "Jane Smith",
-    userNameAr: "جين سميث",
-    userPhoneNumber: "0549976778",
-    totalAmount: 900,
-    fromTime: "14:00:00",
-    timeTo: "15:30:00",
-    reservationDate: "2024-11-20",
-    latitude: "24.754280119964605",
-    longitude: "46.70827533669625",
-    request: {
-      statusName: "ACCEPTED",
-      statusNameAr: "مقبول",
-    },
-    itemDto: {
-      itemNameEn: "Full Makeup",
-      itemNameAr: "مكياج كامل",
-      serviceTypeEn: "Makeup Service",
-      serviceTypeAr: "خدمة مكياج",
-      itemPrice: 800,
-      itemExtraDtos: [
-        {
-          itemExtraNameEn: "False lashes",
-          itemExtraNameAr: "رموش صناعية",
-          itemExtraPrice: 100,
-        },
-      ],
-    },
-  },
-];
-
-// Full dummy data for closed orders
-const dummyClosedOrders = [
-  {
-    invoiceId: 118,
-    brandNameEn: "Nadia",
-    brandNameAr: "ناديا",
-    userNameEn: "Alice Johnson",
-    userNameAr: "أليس جونسون",
-    userPhoneNumber: "0549976779",
-    totalAmount: 500,
-    fromTime: "10:00:00",
-    timeTo: "11:00:00",
-    reservationDate: "2024-11-15",
-    latitude: "24.754280119964605",
-    longitude: "46.70827533669625",
-    request: {
-      statusName: "COMPLETED",
-      statusNameAr: "مكتمل",
-    },
-    itemDto: {
-      itemNameEn: "Hair Styling",
-      itemNameAr: "تصفيف الشعر",
-      serviceTypeEn: "Hair Service",
-      serviceTypeAr: "خدمة شعر",
-      itemPrice: 500,
-      itemExtraDtos: [],
-    },
-  },
-  {
-    invoiceId: 117,
-    brandNameEn: "Nadia",
-    brandNameAr: "ناديا",
-    userNameEn: "Bob Williams",
-    userNameAr: "بوب ويليامز",
-    userPhoneNumber: "0549976780",
-    totalAmount: 750,
-    fromTime: "13:00:00",
-    timeTo: "14:30:00",
-    reservationDate: "2024-11-14",
-    latitude: "24.754280119964605",
-    longitude: "46.70827533669625",
-    request: {
-      statusName: "CANCELLED_BY_ADMIN",
-      statusNameAr: "ملغى من قبل الإدارة",
-    },
-    itemDto: {
-      itemNameEn: "Bridal Makeup",
-      itemNameAr: "مكياج عروس",
-      serviceTypeEn: "Makeup Service",
-      serviceTypeAr: "خدمة مكياج",
-      itemPrice: 750,
-      itemExtraDtos: [],
-    },
-  },
-];
+import { dummyClosedOrders, dummyOpenOrders } from "@/utils/dummyOrders";
 
 // Mock API call - replace with actual API call when ready
 const fetchOrders = async (status: "OPENNING" | "CLOSED") => {
@@ -168,13 +45,13 @@ export default function OrderList() {
     error: errorClosed,
   } = useQuery(["orders", "CLOSED"], () => fetchOrders("CLOSED"));
 
-  const isLoading =
-    activeTab === "current" ? isLoadingCurrent : isLoadingClosed;
-  const error = activeTab === "current" ? errorCurrent : errorClosed;
-  const orders =
-    activeTab === "current"
-      ? currentOrders?.content?.data
-      : closedOrders?.content?.data;
+  // const isLoading =
+  //   activeTab === "current" ? isLoadingCurrent : isLoadingClosed;
+  // const error = activeTab === "current" ? errorCurrent : errorClosed;
+  // const orders =
+  //   activeTab === "current"
+  //     ? currentOrders?.content?.data
+  //     : closedOrders?.content?.data;
 
   return (
     <Card className="w-full text-blue-950">
