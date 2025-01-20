@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useQuery } from "react-query";
 import { format } from "date-fns";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -11,35 +12,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Calendar,
-  Clock,
-  MapPin,
-  Phone,
-  User,
-  AlertCircle,
-} from "lucide-react";
+import { Calendar, Clock, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Order } from "@/interface/interfaces";
-import { useTranslation } from "react-i18next";
+import OrderModal from "@/components/OrderModal";
 
-// Dummy data for open orders
+// Full dummy data for open orders
 const dummyOpenOrders = [
   {
     invoiceId: 120,
     brandNameEn: "Nadia",
+    brandNameAr: "ناديا",
     userNameEn: "John Doe",
+    userNameAr: "جون دو",
     userPhoneNumber: "0549976777",
     totalAmount: 650,
     fromTime: "16:35:20",
@@ -49,6 +35,7 @@ const dummyOpenOrders = [
     longitude: "46.70827533669625",
     request: {
       statusName: "WAITING",
+      statusNameAr: "قيد الانتظار",
     },
     itemDto: {
       itemNameEn: "Hair cut",
@@ -59,6 +46,7 @@ const dummyOpenOrders = [
       itemExtraDtos: [
         {
           itemExtraNameEn: "Short hair cut",
+          itemExtraNameAr: "قص شعر قصير",
           itemExtraPrice: 150,
         },
       ],
@@ -67,7 +55,9 @@ const dummyOpenOrders = [
   {
     invoiceId: 121,
     brandNameEn: "Nadia",
+    brandNameAr: "ناديا",
     userNameEn: "Jane Smith",
+    userNameAr: "جين سميث",
     userPhoneNumber: "0549976778",
     totalAmount: 900,
     fromTime: "14:00:00",
@@ -77,6 +67,7 @@ const dummyOpenOrders = [
     longitude: "46.70827533669625",
     request: {
       statusName: "ACCEPTED",
+      statusNameAr: "مقبول",
     },
     itemDto: {
       itemNameEn: "Full Makeup",
@@ -87,6 +78,7 @@ const dummyOpenOrders = [
       itemExtraDtos: [
         {
           itemExtraNameEn: "False lashes",
+          itemExtraNameAr: "رموش صناعية",
           itemExtraPrice: 100,
         },
       ],
@@ -94,12 +86,14 @@ const dummyOpenOrders = [
   },
 ];
 
-// Dummy data for closed orders
+// Full dummy data for closed orders
 const dummyClosedOrders = [
   {
     invoiceId: 118,
     brandNameEn: "Nadia",
+    brandNameAr: "ناديا",
     userNameEn: "Alice Johnson",
+    userNameAr: "أليس جونسون",
     userPhoneNumber: "0549976779",
     totalAmount: 500,
     fromTime: "10:00:00",
@@ -109,6 +103,7 @@ const dummyClosedOrders = [
     longitude: "46.70827533669625",
     request: {
       statusName: "COMPLETED",
+      statusNameAr: "مكتمل",
     },
     itemDto: {
       itemNameEn: "Hair Styling",
@@ -116,13 +111,15 @@ const dummyClosedOrders = [
       serviceTypeEn: "Hair Service",
       serviceTypeAr: "خدمة شعر",
       itemPrice: 500,
-      itemExtraDtos: null,
+      itemExtraDtos: [],
     },
   },
   {
     invoiceId: 117,
     brandNameEn: "Nadia",
+    brandNameAr: "ناديا",
     userNameEn: "Bob Williams",
+    userNameAr: "بوب ويليامز",
     userPhoneNumber: "0549976780",
     totalAmount: 750,
     fromTime: "13:00:00",
@@ -132,6 +129,7 @@ const dummyClosedOrders = [
     longitude: "46.70827533669625",
     request: {
       statusName: "CANCELLED_BY_ADMIN",
+      statusNameAr: "ملغى من قبل الإدارة",
     },
     itemDto: {
       itemNameEn: "Bridal Makeup",
@@ -139,7 +137,7 @@ const dummyClosedOrders = [
       serviceTypeEn: "Makeup Service",
       serviceTypeAr: "خدمة مكياج",
       itemPrice: 750,
-      itemExtraDtos: null,
+      itemExtraDtos: [],
     },
   },
 ];
@@ -155,7 +153,7 @@ const fetchOrders = async (status: "OPENNING" | "CLOSED") => {
   }
 };
 
-export default function Orders() {
+export default function OrderList() {
   const { t, i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState<"current" | "closed">("current");
 
@@ -179,18 +177,17 @@ export default function Orders() {
       : closedOrders?.content?.data;
 
   return (
-    <Card className="w-full min-h-96">
+    <Card className="w-full text-blue-950">
       <CardHeader>
-        <CardTitle className="text-2xl text-blue-950">{t("orders")}</CardTitle>
+        <CardTitle className="text-2xl">{t("orders")}</CardTitle>
       </CardHeader>
       <CardContent>
         <Tabs
           value={activeTab}
           onValueChange={(value) => setActiveTab(value as "current" | "closed")}
           className="w-full"
-          dir={i18n.language === "en" ? "ltr" : "rtl"}
         >
-          <div className="py-10 flex justify-center">
+          <div className="flex justify-center py-10">
             <TabsList>
               <TabsTrigger value="current">{t("activeOrders")}</TabsTrigger>
               <TabsTrigger value="closed">{t("closedOrders")}</TabsTrigger>
@@ -200,14 +197,16 @@ export default function Orders() {
             {renderOrderContent(
               isLoadingCurrent,
               errorCurrent,
-              currentOrders?.content?.data
+              currentOrders?.content?.data,
+              i18n.language
             )}
           </TabsContent>
           <TabsContent value="closed">
             {renderOrderContent(
               isLoadingClosed,
               errorClosed,
-              closedOrders?.content?.data
+              closedOrders?.content?.data,
+              i18n.language
             )}
           </TabsContent>
         </Tabs>
@@ -219,23 +218,15 @@ export default function Orders() {
 function renderOrderContent(
   isLoading: boolean,
   error: any,
-  orders: any[] | undefined
+  orders: any[] | undefined,
+  language: string
 ) {
   const { t } = useTranslation();
-  if (isLoading) {
-    return (
-      <div className="w-full  flex justify-center items-center">
-        <div className="loader"></div>
-      </div>
-    );
-  }
-  if (error)
-    return (
-      <ErrorAlert message="Failed to fetch orders. Please try again later." />
-    );
+  if (isLoading) return <div>{t("loading")}</div>;
+  if (error) return <ErrorAlert message={t("failedToFetchOrders")} />;
   if (!orders || orders.length === 0)
-    return <ErrorAlert message="No orders found." />;
-  return <OrderTable orders={orders} />;
+    return <ErrorAlert message={t("noOrdersFound")} />;
+  return <OrderTable orders={orders} language={language} />;
 }
 
 function ErrorAlert({ message }: { message: string }) {
@@ -248,47 +239,145 @@ function ErrorAlert({ message }: { message: string }) {
   );
 }
 
-function OrderTable({ orders }: { orders: Order[] }) {
+function OrderTable({
+  orders,
+  language,
+}: {
+  orders: Order[];
+  language: string;
+}) {
+  const { t, i18n } = useTranslation();
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-auto min-h-[450px] text-blue-950">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Order ID</TableHead>
-            <TableHead>Service</TableHead>
-            <TableHead>Customer</TableHead>
-            <TableHead>Date & Time</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Amount</TableHead>
-            <TableHead>Actions</TableHead>
+            <TableHead
+              className={`min-w-[75px] ${
+                i18n.language === "ar" ? "text-right" : "text-left"
+              }`}
+            >
+              {t("orderId")}
+            </TableHead>
+            <TableHead
+              className={`min-w-[100px] ${
+                i18n.language === "ar" ? "text-right" : "text-left"
+              }`}
+            >
+              {t("service")}
+            </TableHead>
+            <TableHead
+              className={`min-w-[100px] ${
+                i18n.language === "ar" ? "text-right" : "text-left"
+              }`}
+            >
+              {t("customer")}
+            </TableHead>
+            <TableHead
+              className={`min-w-[150px] ${
+                i18n.language === "ar" ? "text-right" : "text-left"
+              }`}
+            >
+              {t("dateTime")}
+            </TableHead>
+            <TableHead
+              className={`min-w-[100px] ${
+                i18n.language === "ar" ? "text-right" : "text-left"
+              }`}
+            >
+              {t("status")}
+            </TableHead>
+            <TableHead
+              className={`min-w-[100px] ${
+                i18n.language === "ar" ? "text-right" : "text-left"
+              }`}
+            >
+              {t("price")}
+            </TableHead>
+            <TableHead
+              className={`min-w-[100px] ${
+                i18n.language === "ar" ? "text-right" : "text-left"
+              }`}
+            >
+              {t("actions")}
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {orders.map((order) => (
             <TableRow key={order.invoiceId}>
-              <TableCell>{order.invoiceId}</TableCell>
-              <TableCell>{order.itemDto.itemNameEn}</TableCell>
-              <TableCell>{order.userNameEn}</TableCell>
-              <TableCell>
-                <div className="flex flex-col">
-                  <span className="flex items-center">
+              <TableCell
+                className={`min-w-[75px] ${
+                  i18n.language === "ar" ? "text-right" : "text-left"
+                }`}
+              >
+                {order.invoiceId}
+              </TableCell>
+              <TableCell
+                className={`min-w-[100px] ${
+                  i18n.language === "ar" ? "text-right" : "text-left"
+                }`}
+              >
+                {language === "en"
+                  ? order.itemDto.itemNameEn
+                  : order.itemDto.itemNameAr}
+              </TableCell>
+              <TableCell
+                className={`min-w-[100px] ${
+                  i18n.language === "ar" ? "text-right" : "text-left"
+                }`}
+              >
+                {language === "en" ? order.userNameEn : order.userNameAr}
+              </TableCell>
+              <TableCell
+                className={`min-w-[100px] ${
+                  i18n.language === "ar" ? "text-right" : "text-left"
+                }`}
+              >
+                <div className="flex flex-col ">
+                  <span
+                    className={`flex items-center min-w-[150px] ${
+                      i18n.language === "ar" ? "justify-end" : "justify-start"
+                    } `}
+                  >
                     <Calendar className="mr-2 h-4 w-4" />
                     {format(new Date(order.reservationDate), "MMM dd, yyyy")}
                   </span>
-                  <span className="flex items-center">
+                  <span
+                    className={`flex items-center ${
+                      i18n.language === "ar" ? "justify-end" : "justify-start"
+                    }  `}
+                  >
                     <Clock className="mr-2 h-4 w-4" />
-                    {order.fromTime} - {order.timeTo}
+                    {order.fromTime.split(":").slice(0, 2).join(":")} -{" "}
+                    {order.timeTo.split(":").slice(0, 2).join(":")}{" "}
                   </span>
                 </div>
               </TableCell>
-              <TableCell>
+              <TableCell
+                className={`min-w-[100px] ${
+                  i18n.language === "ar" ? "text-right" : "text-left"
+                }`}
+              >
                 <Badge variant={getStatusVariant(order.request.statusName)}>
-                  {formatStatus(order.request.statusName)}
+                  {language === "en"
+                    ? formatStatus(order.request.statusName)
+                    : order.request.statusName}
                 </Badge>
               </TableCell>
-              <TableCell>{order.totalAmount} SAR</TableCell>
-              <TableCell>
-                <OrderDetailsDialog order={order} />
+              <TableCell
+                className={`min-w-[100px] ${
+                  i18n.language === "ar" ? "text-right" : "text-left"
+                }`}
+              >
+                {order.totalAmount} SAR
+              </TableCell>
+              <TableCell
+                className={`min-w-[100px] ${
+                  i18n.language === "ar" ? "justify-end" : "justify-start"
+                } flex `}
+              >
+                <OrderModal order={order} language={language} />
               </TableCell>
             </TableRow>
           ))}
@@ -297,95 +386,12 @@ function OrderTable({ orders }: { orders: Order[] }) {
     </div>
   );
 }
-
-function OrderDetailsDialog({ order }: { order: Order }) {
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          View Details
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Order Details</DialogTitle>
-          <DialogDescription>Order #{order.invoiceId}</DialogDescription>
-        </DialogHeader>
-        <ScrollArea className="max-h-[60vh] overflow-y-auto">
-          <div className="space-y-4">
-            <div>
-              <h4 className="font-semibold">Service</h4>
-              <p>
-                {order.itemDto.itemNameEn} ({order.itemDto.itemNameAr})
-              </p>
-              <p className="text-sm text-gray-500">
-                {order.itemDto.serviceTypeEn} ({order.itemDto.serviceTypeAr})
-              </p>
-            </div>
-            <div>
-              <h4 className="font-semibold">Customer</h4>
-              <p>{order.userNameEn}</p>
-              <p className="flex items-center">
-                <Phone className="mr-2 h-4 w-4" />
-                {order.userPhoneNumber}
-              </p>
-            </div>
-            <div>
-              <h4 className="font-semibold">Date & Time</h4>
-              <p className="flex items-center">
-                <Calendar className="mr-2 h-4 w-4" />
-                {format(new Date(order.reservationDate), "MMMM dd, yyyy")}
-              </p>
-              <p className="flex items-center">
-                <Clock className="mr-2 h-4 w-4" />
-                {order.fromTime} - {order.timeTo}
-              </p>
-            </div>
-            <div>
-              <h4 className="font-semibold">Location</h4>
-              <p className="flex items-center">
-                <MapPin className="mr-2 h-4 w-4" />
-                <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${order.latitude},${order.longitude}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline"
-                >
-                  View on Map
-                </a>
-              </p>
-            </div>
-            <div>
-              <h4 className="font-semibold">Pricing</h4>
-              <p>Service Price: {order.itemDto.itemPrice} SAR</p>
-              {order.itemDto.itemExtraDtos &&
-                order.itemDto.itemExtraDtos.length > 0 && (
-                  <div>
-                    <p className="font-medium">Extra Services:</p>
-                    {order.itemDto.itemExtraDtos.map((extra, index) => (
-                      <p key={index}>
-                        {extra.itemExtraNameEn}: {extra.itemExtraPrice} SAR
-                      </p>
-                    ))}
-                  </div>
-                )}
-              <p className="font-semibold mt-2">
-                Total Amount: {order.totalAmount} SAR
-              </p>
-            </div>
-            <div>
-              <h4 className="font-semibold">Status</h4>
-              <Badge variant={getStatusVariant(order.request.statusName)}>
-                {formatStatus(order.request.statusName)}
-              </Badge>
-            </div>
-          </div>
-        </ScrollArea>
-      </DialogContent>
-    </Dialog>
-  );
+function formatStatus(status: string) {
+  return status
+    .split("_")
+    .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
+    .join(" ");
 }
-
 function getStatusVariant(status: string) {
   switch (status) {
     case "COMPLETED":
@@ -395,15 +401,8 @@ function getStatusVariant(status: string) {
     case "WAITING":
       return "secondary";
     case "ACCEPTED":
-      return "default";
+      return "outline";
     default:
       return "default";
   }
-}
-
-function formatStatus(status: string) {
-  return status
-    .split("_")
-    .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
-    .join(" ");
 }

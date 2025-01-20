@@ -257,4 +257,11 @@ export const ar = {
   closedOrders: "الطلبات المغلقة",
   orders: "الطلبات",
   activeOrders: "الطلبات القائمة",
+  orderId: "رقم الطلب",
+  dateTime: "التاريخ و الوقت",
+  actions: "التحكم",
+  orderDetails: "تفاصيل الطلب",
+  location: "المكان",
+  pricing: "تفاصيل السعر",
+  viewOnMap: "أظهار المكان",
 };

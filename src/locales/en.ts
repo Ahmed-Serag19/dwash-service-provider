@@ -251,4 +251,11 @@ export const en = {
   closedOrders: "Closed Orders",
   activeOrders: "Active Orders",
   orders: "Orders",
+  orderId: "Order Id",
+  dateTime: "Date and Time",
+  actions: "Actions",
+  orderDetails: "Order details",
+  location: "Location",
+  pricing: "Price details",
+  viewOnMap: "Show location",
 };
