@@ -5,6 +5,7 @@ import viteCompression from "vite-plugin-compression";
 
 export default defineConfig({
   plugins: [react(), viteCompression()],
+  optimizeDeps: { exclude: ["jspdf", "jspdf-autotable"] },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
