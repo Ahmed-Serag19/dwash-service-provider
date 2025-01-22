@@ -9,7 +9,7 @@ import TimeSlots from "@/pages/TimeSlots";
 import Login from "@/pages/Login";
 import Layout from "@/layout/Layout";
 import EditProfile from "@/pages/EditProfile";
-import NotFoundPage from "@/pages/NotFound";
+import NotFoundPage from "@/pages/404";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 const router = createBrowserRouter([
