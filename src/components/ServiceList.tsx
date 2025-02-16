@@ -42,7 +42,9 @@ const ServiceList: React.FC<ServiceListProps> = ({
                 {t("price")}: {service.servicesPrice}
               </p>
               <Badge
-                variant={service.servicesStatus === 0 ? "default" : "secondary"}
+                variant={
+                  service.servicesStatus === 0 ? "default" : "destructive"
+                }
                 className="mt-2"
               >
                 {service.servicesStatus === 0 ? t("active") : t("inactive")}

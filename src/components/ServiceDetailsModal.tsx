@@ -33,47 +33,62 @@ const ServiceDetailsModal: React.FC<ServiceDetailsModalProps> = ({
 
   if (!service) return null;
 
+  // Handle service data (name, description, price, status)
+  const serviceStatusText =
+    service.servicesStatus === 0 ? t("active") : t("inactive");
+  const serviceName = isArabic
+    ? service.servicesNameAr
+    : service.servicesNameEn;
+  const serviceDescriptionAr =
+    service.servicesDescriptionsAr || t("noDescription");
+  const serviceDescriptionEn =
+    service.servicesDescriptionsEn || t("noDescription");
+
+  // Handle serviceImages array and extraServices (which might be null)
+  const serviceImages =
+    service.serviceImages?.map((image) => image.imagePath) || [];
+  const extraServices = service.extraServices || [];
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[700px] rounded-md ">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">
-            {isArabic ? service.servicesNameAr : service.servicesNameEn}
+            {serviceName}
           </DialogTitle>
           <DialogDescription>
             <Badge
               variant={service.servicesStatus === 0 ? "default" : "secondary"}
               className="mt-2"
             >
-              {service.servicesStatus === 0 ? t("active") : t("inactive")}
+              {serviceStatusText}
             </Badge>
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <span className="font-semibold">{t("price")}:</span>
-            <span className="col-span-3">{service.servicesPrice}</span>
+            <span className="col-span-3">{service.servicesPrice} SAR</span>
           </div>
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="description">
               <AccordionTrigger>{t("description")}</AccordionTrigger>
               <AccordionContent>
                 <p className="mb-2">
-                  <strong>{t("descriptionAr")}:</strong>{" "}
-                  {service.servicesDescriptionsAr}
+                  <strong>{t("descriptionAr")}:</strong> {serviceDescriptionAr}
                 </p>
                 <p>
-                  <strong>{t("descriptionEn")}:</strong>{" "}
-                  {service.servicesDescriptionsEn}
+                  <strong>{t("descriptionEn")}:</strong> {serviceDescriptionEn}
                 </p>
               </AccordionContent>
             </AccordionItem>
+            {/* Handle Extra Services */}
             <AccordionItem value="extraServices">
               <AccordionTrigger>{t("extraServices")}</AccordionTrigger>
               <AccordionContent>
-                {service.extraServices.length > 0 ? (
+                {extraServices.length > 0 ? (
                   <ul className="space-y-4">
-                    {service.extraServices.map((extra, index) => (
+                    {extraServices.map((extra, index) => (
                       <li key={index} className="border-b pb-2">
                         <p className="font-semibold">
                           {isArabic ? extra.extraNameAr : extra.extraNameEn}
@@ -84,7 +99,7 @@ const ServiceDetailsModal: React.FC<ServiceDetailsModalProps> = ({
                             : extra.extraDescriptionsEn}
                         </p>
                         <p className="text-sm font-bold mt-1">
-                          {t("price")}: {extra.extraPrice}
+                          {t("price")}: {extra.extraPrice} SAR
                         </p>
                       </li>
                     ))}
@@ -97,12 +112,12 @@ const ServiceDetailsModal: React.FC<ServiceDetailsModalProps> = ({
           </Accordion>
           <div>
             <h3 className="text-lg font-semibold mb-2">{t("serviceImages")}</h3>
-            {service.serviceImages.length > 0 ? (
+            {serviceImages.length > 0 ? (
               <div className="grid grid-cols-3 gap-4">
-                {service.serviceImages.map((image, index) => (
+                {serviceImages.map((imagePath, index) => (
                   <img
                     key={index}
-                    src={image.imagePath || "/placeholder.svg"}
+                    src={imagePath || "/placeholder.svg"}
                     alt={`Service Image ${index + 1}`}
                     className="w-full h-24 object-cover rounded-md"
                   />

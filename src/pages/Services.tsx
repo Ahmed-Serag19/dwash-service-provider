@@ -155,7 +155,7 @@ const Services: React.FC = () => {
 
     try {
       if (editingService) {
-        await axios.put(
+        await axios.post(
           `${endpoints.editService}?serviceId=${editingService.serviceId}`,
           form,
           {
@@ -193,10 +193,14 @@ const Services: React.FC = () => {
       servicesDescriptionsEn: service.servicesDescriptionsEn,
       servicesPrice: service.servicesPrice,
       servicesTypeId: service.servicesTypeId,
-      extraServices: service.extraServices,
+      extraServices: service.extraServices || [],
       serviceImages: [],
     });
-    setShowExtraServices(service.extraServices.length > 0);
+
+    setShowExtraServices(
+      service.extraServices && service.extraServices.length > 0
+    );
+
     setIsModalOpen(true);
   };
 

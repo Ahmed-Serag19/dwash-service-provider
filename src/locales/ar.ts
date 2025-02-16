@@ -270,4 +270,9 @@ export const ar = {
   backToDashboard: "العودة إلى لوحة التحكم",
   contactSupportMessage:
     "إذا كنت تعتقد أن هذا خطأ، يرجى الاتصال بفريق الدعم الخاص بنا.",
+  serviceUpdatedSuccessfully: "تم ارسال طلب تعديل الخدمة",
+  serviceActivatedSuccessfully: "تم تفعيل الخدمة بنجاح",
+  errorActivatingService: "لم يتم تفعيل الخدمة",
+  errorAddingUpdatingService: "لم يتم تحديث الخدمة",
+  serviceDeactivatedSuccessfully: "تم تعطيل الخدمة بنجاح",
 };

@@ -265,4 +265,9 @@ export const en = {
   backToDashboard: "Back to Dashboard",
   contactSupportMessage:
     "If you believe this is an error, please contact our support team.",
+  serviceUpdatedSuccessfully: "Update Service request sent",
+  serviceActivatedSuccessfully: "Service Activated Successfully",
+  errorActivatingService: "Error Activating Service",
+  errorAddingUpdatingService: "Error Updating Service",
+  serviceDeactivatedSuccessfully: "Service Deactivated Successfully",
 };
