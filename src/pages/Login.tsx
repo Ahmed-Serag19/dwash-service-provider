@@ -93,7 +93,10 @@ const Login = () => {
   };
 
   return (
-    <div className="flex justify-around items-center min-h-screen w-full bg-stone-50 gap-5 py-4 relative sm:ps-2 sm:py-0">
+    <div
+      dir={i18n.language === "ar" ? "rtl" : "ltr"}
+      className="flex justify-around items-center min-h-screen w-full bg-stone-50 gap-5 py-4 relative sm:ps-2 sm:py-0"
+    >
       <div className="sm:max-w-xl sm:min-w-lg w-11/12 bg-white p-8 rounded-lg shadow-lg  space-y-14 sm:w-1/2">
         <h2 className="text-2xl font-semibold text-blue-950 mb-6">
           {t("login")}
@@ -178,8 +181,8 @@ const Login = () => {
       </div>
       <div
         className={`absolute ${
-          i18n.language === "ar" ? "bottom-10 right-10" : "left-10 bottom-10"
-        }`}
+          i18n.language === "ar" ? "right-10" : "left-10"
+        } bottom-10`}
       >
         <LanguageSwitcher />
       </div>

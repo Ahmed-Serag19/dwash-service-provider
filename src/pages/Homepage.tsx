@@ -22,7 +22,7 @@ const Homepage = () => {
       label: "Active Services",
       value: services?.filter((s) => s.servicesStatus === 1).length ?? 0,
     },
-    { label: "Total Earnings", value: `${wallet?.balance ?? 5931} SAR` },
+    { label: "Total Earnings", value: `${wallet?.balance ?? 0} SAR` },
     { label: "Available Time Slots", value: timeSlots?.length ?? 0 },
   ];
 

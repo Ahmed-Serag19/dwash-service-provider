@@ -21,82 +21,7 @@ const Services: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showExtraServices, setShowExtraServices] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [services, setServices] = useState<Service[]>([
-    {
-      serviceId: 1,
-      brandId: 1,
-      brandNameAr: "غسيل سيارات 1",
-      brandNameEn: "Car Wash 1",
-      servicesNameAr: "غسيل خارجي",
-      servicesNameEn: "Exterior Wash",
-      servicesDescriptionsAr: "غسيل خارجي شامل للسيارة",
-      servicesDescriptionsEn: "Comprehensive exterior wash for the car",
-      servicesPrice: 50,
-      servicesTypeId: 1,
-      serviceTypeNameAr: "غسيل",
-      serviceTypeNameEn: "Wash",
-      servicesStatus: 0,
-      serviceImages: [],
-      extraServices: [],
-    },
-    {
-      serviceId: 2,
-      brandId: 2,
-      brandNameAr: "غسيل سيارات 2",
-      brandNameEn: "Car Wash 2",
-      servicesNameAr: "غسيل داخلي",
-      servicesNameEn: "Interior Wash",
-      servicesDescriptionsAr: "تنظيف داخلي شامل للسيارة",
-      servicesDescriptionsEn: "Comprehensive interior cleaning for the car",
-      servicesPrice: 70,
-      servicesTypeId: 2,
-      serviceTypeNameAr: "تنظيف",
-      serviceTypeNameEn: "Cleaning",
-      servicesStatus: 1,
-      serviceImages: [],
-      extraServices: [
-        {
-          extraNameAr: "تلميع داخلي",
-          extraNameEn: "Interior Polishing",
-          extraDescriptionsAr: "تلميع داخلي للسيارة",
-          extraDescriptionsEn: "Interior polishing for the car",
-          extraPrice: 30,
-        },
-      ],
-    },
-    {
-      serviceId: 3,
-      brandId: 3,
-      brandNameAr: "غسيل سيارات 3",
-      brandNameEn: "Car Wash 3",
-      servicesNameAr: "تلميع السيارة",
-      servicesNameEn: "Car Polishing",
-      servicesDescriptionsAr: "تلميع شامل للسيارة",
-      servicesDescriptionsEn: "Comprehensive car polishing",
-      servicesPrice: 100,
-      servicesTypeId: 3,
-      serviceTypeNameAr: "تلميع",
-      serviceTypeNameEn: "Polishing",
-      servicesStatus: 0,
-      serviceImages: [],
-      extraServices: [
-        {
-          extraNameAr: "تلميع خارجي",
-          extraNameEn: "Exterior Polishing",
-          extraDescriptionsAr: "تلميع خارجي للسيارة",
-          extraDescriptionsEn: "Exterior polishing for the car",
-          extraPrice: 40,
-        },
-        {
-          extraNameAr: "تنظيف المحرك",
-          extraNameEn: "Engine Cleaning",
-          extraDescriptionsAr: "تنظيف شامل للمحرك",
-          extraDescriptionsEn: "Comprehensive engine cleaning",
-          extraPrice: 50,
-        },
-      ],
-    },
-  ]);
+  const [services, setServices] = useState<Service[]>([]);
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [formData, setFormData] = useState<AddServiceRequest>({
     servicesNameAr: "",
@@ -109,9 +34,9 @@ const Services: React.FC = () => {
     serviceImages: [],
   });
 
-  // useEffect(() => {
-  //   fetchServices();
-  // }, []);
+  useEffect(() => {
+    fetchServices();
+  }, []);
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     if (params.get("add") === "true") {
@@ -122,7 +47,7 @@ const Services: React.FC = () => {
   const fetchServices = async () => {
     try {
       const response = await axios.get(endpoints.getServices, {
-        params: { size: 8, page: 0, servicesTypeId: 0 },
+        params: { size: 8, page: 0, servicesTypeId: 1 },
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },
@@ -329,7 +254,7 @@ const Services: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 md:min-h-[700px]">
       <div className="flex justify-between items-center mb-10">
         <h1 className="text-3xl text-blue-950 font-bold">{t("services")}</h1>
         <Button

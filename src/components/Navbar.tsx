@@ -27,7 +27,7 @@ const Navbar = ({ mobileOpen, setMobileOpen }: HeaderProps) => {
 
   useEffect(() => {
     refreshUser();
-  }, [refreshUser]);
+  }, []);
 
   const dropDownClassName =
     "outline-none cursor-pointer rounded-md transition font-semibold duration-300 hover:bg-slate-100 w-full px-3 my-1 py-2 hover:text-blue-800 hover:bg-stone-200";

@@ -100,7 +100,7 @@ const mockServices = [
   },
 ];
 
-const mockWallet = { balance: 5931 };
+const mockWallet = { balance: 0 };
 
 const mockTimeSlots = [
   { id: 1, time: "09:00 AM" },
@@ -112,3 +112,15 @@ export const fetchOrders = () => Promise.resolve(mockOrders);
 export const fetchServices = () => Promise.resolve(mockServices);
 export const fetchWallet = () => Promise.resolve(mockWallet);
 export const fetchTimeSlots = () => Promise.resolve(mockTimeSlots);
+[
+  {
+    extraNameAr: " خدمة غسيل اضافية",
+    extraDescriptionsAr: "خدمة تعطير السيارات",
+    extraPrice: 50,
+  },
+  {
+    extraNameAr: "2خدمة غسيل اضافه",
+    extraDescriptionsAr: "2خدمة غسيل اضافه",
+    extraPrice: 60,
+  },
+];

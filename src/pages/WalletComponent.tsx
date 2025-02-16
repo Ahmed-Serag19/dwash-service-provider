@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { endpoints } from "@/constants/endPoints";
@@ -33,76 +33,28 @@ interface WalletData {
 }
 
 const WalletComponent: React.FC = () => {
-  const [walletData, setWalletData] = useState<WalletData | null>({
-    totalAmount: 5931.0,
-    totalDeductionAmount: 6524.1,
-    dueAmount: -593.1,
-    balanceDetails: [
-      {
-        balanceId: 4,
-        totalAmount: 900.0,
-        deductionPrs: 10,
-        deductionAmount: 90.0,
-        dueAmount: -90.0,
-      },
-      {
-        balanceId: 5,
-        totalAmount: -100.0,
-        deductionPrs: 10,
-        deductionAmount: -10.0,
-        dueAmount: 10.0,
-      },
-      {
-        balanceId: 7,
-        totalAmount: 2331.0,
-        deductionPrs: 10,
-        deductionAmount: 233.1,
-        dueAmount: -233.1,
-      },
-      {
-        balanceId: 8,
-        totalAmount: 900.0,
-        deductionPrs: 10,
-        deductionAmount: 90.0,
-        dueAmount: -90.0,
-      },
-      {
-        balanceId: 9,
-        totalAmount: 500.0,
-        deductionPrs: 10,
-        deductionAmount: 50.0,
-        dueAmount: -50.0,
-      },
-      {
-        balanceId: 10,
-        totalAmount: 900.0,
-        deductionPrs: 10,
-        deductionAmount: 90.0,
-        dueAmount: -90.0,
-      },
-      {
-        balanceId: 11,
-        totalAmount: 500.0,
-        deductionPrs: 10,
-        deductionAmount: 50.0,
-        dueAmount: -50.0,
-      },
-    ],
-  });
+  const [walletData, setWalletData] = useState<WalletData | null>(null);
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
 
-  // useEffect(() => {
   const fetchWalletData = async () => {
     setLoading(true);
     try {
       const response = await axios.get(endpoints.getWallet, {
         headers: {
-          Authorization: `Bearer {sessionStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },
       });
+
       if (response.data.success) {
-        setWalletData(response.data.content);
+        // If content is null, set default 0 values
+        const data = response.data.content || {
+          totalAmount: 0,
+          totalDeductionAmount: 0,
+          dueAmount: 0,
+          balanceDetails: [],
+        };
+        setWalletData(data);
       } else {
         toast.error(t("walletFetchError"));
       }
@@ -113,9 +65,10 @@ const WalletComponent: React.FC = () => {
       setLoading(false);
     }
   };
-  console.log(fetchWalletData);
-  //   fetchWalletData();
-  // }, [t]);
+
+  useEffect(() => {
+    fetchWalletData();
+  }, []);
 
   const handleDownload = () => {
     if (!walletData) return;
@@ -218,10 +171,12 @@ const WalletComponent: React.FC = () => {
                       {t("averageTransaction")}
                     </span>
                     <span>
-                      {(
-                        walletData.totalAmount /
-                        walletData.balanceDetails.length
-                      ).toFixed(2)}
+                      {walletData.balanceDetails.length > 0
+                        ? (
+                            walletData.totalAmount /
+                            walletData.balanceDetails.length
+                          ).toFixed(2)
+                        : "0.00"}
                     </span>
                   </div>
                   <div className="flex justify-between">
@@ -229,9 +184,13 @@ const WalletComponent: React.FC = () => {
                       {t("highestTransaction")}
                     </span>
                     <span>
-                      {Math.max(
-                        ...walletData.balanceDetails.map((d) => d.totalAmount)
-                      ).toFixed(2)}
+                      {walletData.balanceDetails.length > 0
+                        ? Math.max(
+                            ...walletData.balanceDetails.map(
+                              (d) => d.totalAmount
+                            )
+                          ).toFixed(2)
+                        : "0.00"}
                     </span>
                   </div>
                   <div className="flex justify-between">
@@ -239,9 +198,13 @@ const WalletComponent: React.FC = () => {
                       {t("lowestTransaction")}
                     </span>
                     <span>
-                      {Math.min(
-                        ...walletData.balanceDetails.map((d) => d.totalAmount)
-                      ).toFixed(2)}
+                      {walletData.balanceDetails.length > 0
+                        ? Math.min(
+                            ...walletData.balanceDetails.map(
+                              (d) => d.totalAmount
+                            )
+                          ).toFixed(2)
+                        : "0.00"}
                     </span>
                   </div>
                 </CardContent>
