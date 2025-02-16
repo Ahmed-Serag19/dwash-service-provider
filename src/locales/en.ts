@@ -270,4 +270,11 @@ export const en = {
   errorActivatingService: "Error Activating Service",
   errorAddingUpdatingService: "Error Updating Service",
   serviceDeactivatedSuccessfully: "Service Deactivated Successfully",
+  timeSlots: "Time Slots",
+  totalEarnings: "Total Earnings",
+  activeServices: "Active Services",
+  totalOrders: "Total Orders",
+  noOrders: "No Orders",
+  loginErrorRole: "Only Service Providers allowed on this page.",
+  notifications: "Notifications",
 };

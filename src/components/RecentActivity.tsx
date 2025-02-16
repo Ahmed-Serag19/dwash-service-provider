@@ -12,6 +12,10 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 interface Service {
+  customer: React.ReactNode | Iterable<React.ReactNode>;
+  statusAr: React.ReactNode | Iterable<React.ReactNode>;
+  customerAr: React.ReactNode | Iterable<React.ReactNode>;
+  status: React.ReactNode | Iterable<React.ReactNode>;
   serviceId: number;
   servicesNameEn: string;
   servicesNameAr: string;
@@ -20,44 +24,24 @@ interface Service {
 }
 
 interface RecentActivityProps {
-  services: Service[];
+  orders: Service[] | undefined; // Adjusted to handle undefined state
 }
 
-export default function RecentActivity({ services }: RecentActivityProps) {
+export default function RecentActivity({ orders }: RecentActivityProps) {
   const { t, i18n } = useTranslation();
-  console.log(services);
-  const recentOrders = [
-    {
-      service: "Exterior Wash",
-      serviceAr: "غسيل خارجي",
-      customer: "Alice Johnson",
-      customerAr: "ماجد احمد",
-      status: "In Progress",
-      statusAr: "جاري",
-      extraServices: 0,
-      amount: 50,
-    },
-    {
-      service: "Interior Wash",
-      serviceAr: "غسيل داخلي",
-      customer: "Bob Smith",
-      customerAr: "مصطفى ياسر",
-      status: "Pending",
-      statusAr: "معلق",
-      extraServices: 1,
-      amount: 100,
-    },
-    {
-      service: "Car Polishing",
-      serviceAr: "تلميع السيارة",
-      customer: "Charlie Brown",
-      customerAr: "احمد الدوسري",
-      status: "In Progress",
-      statusAr: "جاري",
-      extraServices: 2,
-      amount: 190,
-    },
-  ];
+
+  // Check if orders is defined and not empty
+  if (!orders || orders.length === 0) {
+    return (
+      <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+        <h3 className="mb-4 text-lg font-medium text-blue-950">
+          {t("recentOrders")}
+        </h3>
+        <p>{t("noOrders")}</p>{" "}
+        {/* Display a message when there are no orders */}
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
@@ -106,10 +90,12 @@ export default function RecentActivity({ services }: RecentActivityProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {recentOrders.map((order, index) => (
+            {orders.map((order, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium text-blue-950">
-                  {i18n.language === "en" ? order.service : order.serviceAr}
+                  {i18n.language === "en"
+                    ? order.servicesNameEn
+                    : order.servicesNameAr}
                   <div className="sm:hidden text-sm text-blue-700">
                     {i18n.language === "en" ? order.customer : order.customerAr}
                   </div>
@@ -124,12 +110,13 @@ export default function RecentActivity({ services }: RecentActivityProps) {
                   {i18n.language === "en" ? order.status : order.statusAr}
                 </TableCell>
                 <TableCell className="text-blue-950 hidden lg:table-cell">
-                  {order.extraServices}
+                  {order.extraServices ? order.extraServices.length : 0}
                 </TableCell>
                 <TableCell className="text-right text-blue-950">
-                  {order.amount} SAR
+                  {order.servicesPrice} SAR
                   <div className="lg:hidden text-sm text-blue-700">
-                    {order.extraServices} extra services
+                    {order.extraServices ? order.extraServices.length : 0} extra
+                    services
                   </div>
                 </TableCell>
               </TableRow>

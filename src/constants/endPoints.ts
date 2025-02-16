@@ -11,6 +11,8 @@ export const endpoints = {
 
   // Notification endpoints
   getNotification: `${API_BASE_URL}/freelancer/getNotifications`,
+  markNotificationAsRead: (notificationId: number) =>
+    `${API_BASE_URL}/freelancer/notification/read?notificationId=${notificationId}`,
 
   // Time slot endpoints
   getSlots: `${API_BASE_URL}/freelancer/getSlot`,

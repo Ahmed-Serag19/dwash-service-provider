@@ -275,4 +275,11 @@ export const ar = {
   errorActivatingService: "لم يتم تفعيل الخدمة",
   errorAddingUpdatingService: "لم يتم تحديث الخدمة",
   serviceDeactivatedSuccessfully: "تم تعطيل الخدمة بنجاح",
+  timeSlots: "الفواصل الزمنية",
+  totalEarnings: "اجمالي الارباح",
+  activeServices: "الخدمات المتاحة",
+  totalOrders: "اجمالي الطلبات",
+  noOrders: "لا يوجد طلبات",
+  loginErrorRole: "مسموح فقط لمقدمي الخدمات بالدخول",
+  notifications: "الاشعارات",
 };

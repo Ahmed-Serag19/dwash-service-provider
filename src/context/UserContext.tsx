@@ -12,6 +12,7 @@ import { UserContent } from "@/interface/interfaces";
 interface UserContextProps {
   user: UserContent | null;
   isLoading: boolean;
+  notifications: object[];
   refreshUser: () => Promise<void>;
 }
 
@@ -22,6 +23,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [user, setUser] = useState<UserContent | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [notifications, setNotifications] = useState<object[]>([]);
 
   const fetchUser = async () => {
     const accessToken = sessionStorage.getItem("accessToken");
@@ -43,6 +45,27 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
       setIsLoading(false);
     }
   };
+  const fetchNotifications = async () => {
+    const accessToken = sessionStorage.getItem("accessToken");
+    if (!accessToken) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.get(endpoints.getNotification, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      console.log(response);
+      if (response.data?.success) {
+        setNotifications(response.data.content);
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchUser();
@@ -52,6 +75,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
     <UserContext.Provider
       value={{
         user,
+        notifications,
         isLoading,
         refreshUser: fetchUser, // Expose the fetchUser function
       }}

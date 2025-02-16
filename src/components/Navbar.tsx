@@ -15,22 +15,105 @@ import LogoutModal from "@/components/LogoutModal";
 import i18n from "@/i18n";
 import { useUser } from "@/context/UserContext";
 import { t } from "i18next";
+import axios from "axios";
+import { endpoints } from "@/constants/endPoints";
+import { toast } from "react-toastify";
 
 interface HeaderProps {
   mobileOpen: boolean;
   setMobileOpen: (open: boolean) => void;
 }
 
+interface Notification {
+  notificationId: number;
+  notificationTitleAr: string;
+  notificationTitleEn: string;
+  notificationDescriptionAr: string;
+  notificationDescriptionEn: string;
+  createdOn: string;
+  read: number;
+}
+
 const Navbar = ({ mobileOpen, setMobileOpen }: HeaderProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { user, isLoading, refreshUser } = useUser();
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      const token = sessionStorage.getItem("accessToken");
+      try {
+        const response = await axios.get(endpoints.getNotification, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = response.data.content;
+
+        // Filter out notifications older than 1 week
+        const filteredNotifications = data.filter(
+          (notification: Notification) => {
+            const notificationDate = new Date(notification.createdOn);
+            const oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            return notificationDate >= oneWeekAgo;
+          }
+        );
+
+        setNotifications(filteredNotifications);
+
+        // Calculate unread notifications
+        const unread = filteredNotifications.filter(
+          (notification: Notification) => notification.read === 0
+        ).length;
+        setUnreadCount(unread);
+      } catch (error) {
+        console.error("Failed to fetch notifications", error);
+        toast.error(t("errorFetchingNotifications"));
+      }
+    };
+
+    fetchNotifications();
+  }, []);
+
+  // Mark a notification as read
+  const markAsRead = async (notificationId: number) => {
+    try {
+      const token = sessionStorage.getItem("accessToken");
+      await axios.put(
+        endpoints.markNotificationAsRead(notificationId),
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setNotifications((prevNotifications) =>
+        prevNotifications.map((notification) =>
+          notification.notificationId === notificationId
+            ? { ...notification, read: 1 }
+            : notification
+        )
+      );
+
+      setUnreadCount((prevCount) => prevCount - 1);
+    } catch (error) {
+      console.error("Failed to mark notification as read", error);
+      toast.error(t("errorMarkingAsRead"));
+    }
+  };
 
   useEffect(() => {
     refreshUser();
+    setNotifications([]);
   }, []);
 
   const dropDownClassName =
-    "outline-none cursor-pointer rounded-md transition font-semibold duration-300 hover:bg-slate-100 w-full px-3 my-1 py-2 hover:text-blue-800 hover:bg-stone-200";
+    "outline-none cursor-pointer rounded-md transition font-semibold duration-300  w-full px-3 my-1 py-2 hover:text-blue-800 hover:bg-stone-200";
+
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
@@ -42,6 +125,7 @@ const Navbar = ({ mobileOpen, setMobileOpen }: HeaderProps) => {
       </header>
     );
   }
+
   return (
     <header
       className="z-30 flex h-16 items-center min-h-16 justify-between md:justify-between border-b border-stone-200 bg-stone-50 px-4"
@@ -83,14 +167,15 @@ const Navbar = ({ mobileOpen, setMobileOpen }: HeaderProps) => {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="relative hover:bg-stone-200 rounded-lg transition duration-300">
-              <GoBell className="text-blue-950 w-6 h-6" />
+            <button className="relative hover:bg-stone-200 rounded-lg transition ring-0 border-0 focus:border-none duration-300">
+              <GoBell className="text-blue-950 w-6 h-6 " />
               <div className="absolute left-2 -top-1  h-4 w-4 rounded-full bg-blue-500 text-xs text-white">
                 <div className="relative flex items-center justify-center justify-items-center ">
                   <span className="absolute translate-y-[9px] left-[4.5px]">
-                    3
+                    {unreadCount || 0}
                   </span>
                 </div>
               </div>
@@ -98,21 +183,40 @@ const Navbar = ({ mobileOpen, setMobileOpen }: HeaderProps) => {
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="start"
-            className="md:w-52 mx-2 border-blue-950 border-[1px] flex flex-col rounded-md my-3 bg-stone-100"
+            className="md:w-52 mx-2  flex flex-col rounded-md my-3 bg-stone-100"
           >
-            <DropdownMenuLabel className={dropDownClassName}>
-              Notifications
+            <DropdownMenuLabel
+              className={`${dropDownClassName} hover:bg-transparent !cursor-default`}
+            >
+              {t("notifications")}
             </DropdownMenuLabel>
-            <DropdownMenuSeparator className="" />
-            <DropdownMenuItem className={dropDownClassName}>
-              New order received
-            </DropdownMenuItem>
-            <DropdownMenuItem className={dropDownClassName}>
-              Payment confirmed
-            </DropdownMenuItem>
-            <DropdownMenuItem className={dropDownClassName}>
-              Schedule updated
-            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            {notifications.map((notification) => (
+              <DropdownMenuItem
+                key={notification.notificationId}
+                onClick={() => markAsRead(notification.notificationId)}
+                className={`${
+                  notification.read === 0
+                    ? "bg-blue-100 hover:bg-blue-200"
+                    : "bg-gray-200 hover:bg-gray-300"
+                } p-2 rounded-md mb-2 cursor-pointer transition duration-300`}
+              >
+                <div className="font-bold">
+                  {i18n.language === "ar"
+                    ? notification.notificationTitleAr
+                    : notification.notificationTitleEn}
+                </div>
+                <div className="text-sm">
+                  {i18n.language === "ar"
+                    ? notification.notificationDescriptionAr
+                    : notification.notificationDescriptionEn}
+                </div>
+                <div className="text-xs text-gray-500">
+                  {t("created")}{" "}
+                  {new Date(notification.createdOn).toLocaleDateString()}
+                </div>
+              </DropdownMenuItem>
+            ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -120,7 +224,6 @@ const Navbar = ({ mobileOpen, setMobileOpen }: HeaderProps) => {
         className={`md:hidden text-2xl transition duration-300 ${
           mobileOpen ? "sm:translate-x-40" : ""
         }`}
-        // size="icon"
         onClick={() => setMobileOpen(!mobileOpen)}
       >
         <GiHamburgerMenu
@@ -128,6 +231,7 @@ const Navbar = ({ mobileOpen, setMobileOpen }: HeaderProps) => {
           className="text-blue-950 h-7 w-7 hover:text-blue-800 transition duration-300 "
         />
       </button>
+
       {/* Modal for Logout Confirmation */}
       {isModalOpen && <LogoutModal handleCloseModal={handleCloseModal} />}
     </header>
