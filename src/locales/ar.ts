@@ -282,4 +282,5 @@ export const ar = {
   noOrders: "لا يوجد طلبات",
   loginErrorRole: "مسموح فقط لمقدمي الخدمات بالدخول",
   notifications: "الاشعارات",
+  noOrdersFound: "لا يوجد طلبات بعد",
 };

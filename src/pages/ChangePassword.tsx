@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
+import { endpoints } from "@/constants/endPoints";
 
 // Define form data type
 interface ChangePasswordFormData {
@@ -34,7 +35,7 @@ const ChangePassword: React.FC = () => {
     try {
       const token = sessionStorage.getItem("accessToken");
       const response = await axios.put(
-        "/auth/changePassword",
+        endpoints.changePassword,
         {
           currentPassword: data.currentPassword,
           newPassword: data.newPassword,

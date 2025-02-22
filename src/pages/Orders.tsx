@@ -17,16 +17,16 @@ import { Calendar, Clock, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Order } from "@/interface/interfaces";
 import OrderModal from "@/components/OrderModal";
-import { dummyClosedOrders, dummyOpenOrders } from "@/utils/dummyOrders";
+// import { dummyClosedOrders, dummyOpenOrders } from "@/utils/dummyOrders";
 
 // Mock API call - replace with actual API call when ready
 const fetchOrders = async (status: "OPENNING" | "CLOSED") => {
   // Simulating API call
   await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
   if (status === "OPENNING") {
-    return { content: { data: dummyOpenOrders } };
+    return { content: { data: [] } };
   } else {
-    return { content: { data: dummyClosedOrders } };
+    return { content: { data: [] } };
   }
 };
 
@@ -85,7 +85,6 @@ export default function OrderList() {
             {renderOrderContent(
               isLoadingCurrent,
               errorCurrent,
-              // @ts-expect-error
               currentOrders?.content?.data,
               i18n.language
             )}
@@ -94,7 +93,6 @@ export default function OrderList() {
             {renderOrderContent(
               isLoadingClosed,
               errorClosed,
-              // @ts-expect-error
               closedOrders?.content?.data,
               i18n.language
             )}
@@ -107,9 +105,8 @@ export default function OrderList() {
 
 function ErrorAlert({ message }: { message: string }) {
   return (
-    <Alert variant="destructive">
+    <Alert variant="default">
       <AlertCircle className="h-4 w-4" />
-      <AlertTitle>Error</AlertTitle>
       <AlertDescription>{message}</AlertDescription>
     </Alert>
   );

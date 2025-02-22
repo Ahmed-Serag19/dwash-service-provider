@@ -277,4 +277,5 @@ export const en = {
   noOrders: "No Orders",
   loginErrorRole: "Only Service Providers allowed on this page.",
   notifications: "Notifications",
+  noOrdersFound: "No orders yet",
 };
