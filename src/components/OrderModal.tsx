@@ -33,6 +33,7 @@ interface OrderModalProps {
   order: Order;
   refetchCurrent: () => void;
   refetchClosed: () => void;
+  isClosed?: boolean;
 }
 function formatStatus(status: string) {
   return status
@@ -60,6 +61,7 @@ const OrderModal = ({
   order,
   refetchClosed,
   refetchCurrent,
+  isClosed,
 }: OrderModalProps) => {
   const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
@@ -88,6 +90,87 @@ const OrderModal = ({
     } catch (error) {
       console.error("Error rejecting order:", error);
       toast.error(t("errorRejectingOrder"));
+    }
+  };
+  const handleAcceptOrder = async (id: number) => {
+    const token = sessionStorage.getItem("accessToken");
+    if (!token) {
+      toast.error(t("pleaseLogin"));
+      return;
+    }
+
+    try {
+      const response = await axios.put(endpoints.acceptOrder(id), null, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data.success) {
+        toast.success(t("orderAccepted"));
+        setIsOpen(false);
+        refetchClosed();
+        refetchCurrent();
+      } else {
+        toast.error(t("errorAcceptingOrder"));
+      }
+    } catch (error) {
+      console.error("Error Accepting order:", error);
+      toast.error(t("errorAcceptingOrder"));
+    }
+  };
+
+  const handleProceedOrder = async (id: number) => {
+    const token = sessionStorage.getItem("accessToken");
+    if (!token) {
+      toast.error(t("pleaseLogin"));
+      return;
+    }
+
+    try {
+      const response = await axios.put(endpoints.proceedOrder(id), null, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data.success) {
+        toast.success(t("orderProceed"));
+        refetchCurrent();
+        refetchClosed();
+      } else {
+        toast.error(t("errorProceedingOrder"));
+      }
+    } catch (error) {
+      console.error("Error proceeding order:", error);
+      toast.error(t("errorProceedingOrder"));
+    }
+  };
+
+  const handleCompleteOrder = async (id: number) => {
+    const token = sessionStorage.getItem("accessToken");
+    if (!token) {
+      toast.error(t("pleaseLogin"));
+      return;
+    }
+
+    try {
+      const response = await axios.put(endpoints.completeOrder(id), null, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data.success) {
+        toast.success(t("orderCompleted"));
+        refetchCurrent();
+        refetchClosed();
+      } else {
+        toast.error(t("errorCompletingOrder"));
+      }
+    } catch (error) {
+      console.error("Error completing order:", error);
+      toast.error(t("errorCompletingOrder"));
     }
   };
 
@@ -276,36 +359,63 @@ const OrderModal = ({
               </div>
 
               {/* Status Section */}
-              <div className="flex items-start space-x-4 gap-4">
-                <div className="flex-shrink-0">
-                  <div className="p-3 bg-indigo-50 rounded-lg">
-                    <CheckCircle2 className="h-6 w-6 text-indigo-600" />
+              <div className="flex justify-between items-center max-[420px]:flex-col max-sm:gap-5">
+                <div className="flex items-start space-x-4 gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="p-3 bg-indigo-50 rounded-lg">
+                      <CheckCircle2 className="h-6 w-6 text-indigo-600" />
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-gray-900">
+                      {t("status") || "Status"}
+                    </h4>
+                    <span
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium mt-2 ${getStatusVariant(
+                        order.request.statusName
+                      )}`}
+                    >
+                      {language === "en"
+                        ? formatStatus(order.request.statusName)
+                        : order.request.statusName}
+                    </span>
                   </div>
                 </div>
-                <div className="flex-1">
-                  <h4 className="font-semibold text-gray-900">
-                    {t("status") || "Status"}
-                  </h4>
-                  <span
-                    className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium mt-2 ${getStatusVariant(
-                      order.request.statusName
-                    )}`}
-                  >
-                    {language === "en"
-                      ? formatStatus(order.request.statusName)
-                      : order.request.statusName}
-                  </span>
-                </div>
-                <div>
+                {!isClosed || order.request.statusName === "ACCEPTED" ? (
+                  ""
+                ) : (
+                  <div className="flex gap-5">
+                    <div>
+                      <button
+                        onClick={() => handleAcceptOrder(order.request.id)}
+                        className="px-7 py-1.5 text-lg bg-green-600 text-white rounded-lg"
+                      >
+                        {t("accept")}
+                      </button>
+                    </div>
+                    <div>
+                      <button
+                        onClick={() => handleCancelOrder(order.request.id)}
+                        className="px-7 py-1.5 text-lg bg-red-600 text-white rounded-lg"
+                      >
+                        {t("cancel")}
+                      </button>
+                    </div>
+                  </div>
+                )}
+                {order.request.statusName === "ACCEPTED" &&
+                order.request.waitingProcessId === 2 ? (
                   <div>
                     <button
-                      onClick={() => handleCancelOrder(order.request.id)}
-                      className="px-7 py-1.5 text-lg bg-red-600 text-white rounded-lg"
+                      onClick={() => handleProceedOrder(order.request.id)}
+                      className="px-7 py-1.5 text-lg bg-green-600 text-white rounded-lg"
                     >
-                      {t("cancel")}
+                      {t("proceedOrder")}
                     </button>
                   </div>
-                </div>
+                ) : (
+                  ""
+                )}
               </div>
             </div>
           </ScrollArea>

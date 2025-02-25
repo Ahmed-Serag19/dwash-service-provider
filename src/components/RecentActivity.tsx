@@ -12,6 +12,10 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 interface Service {
+  itemDto: any;
+  userNameEn: React.ReactNode | Iterable<React.ReactNode>;
+  userNameAr: React.ReactNode | Iterable<React.ReactNode>;
+  request: any;
   customer: React.ReactNode | Iterable<React.ReactNode>;
   statusAr: React.ReactNode | Iterable<React.ReactNode>;
   customerAr: React.ReactNode | Iterable<React.ReactNode>;
@@ -24,13 +28,11 @@ interface Service {
 }
 
 interface RecentActivityProps {
-  orders: Service[] | undefined; // Adjusted to handle undefined state
+  orders: Service[] | undefined;
 }
 
 export default function RecentActivity({ orders }: RecentActivityProps) {
   const { t, i18n } = useTranslation();
-
-  // Check if orders is defined and not empty
   if (!orders || orders.length === 0) {
     return (
       <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
@@ -38,7 +40,6 @@ export default function RecentActivity({ orders }: RecentActivityProps) {
           {t("recentOrders")}
         </h3>
         <p>{t("noOrders")}</p>{" "}
-        {/* Display a message when there are no orders */}
       </div>
     );
   }
@@ -89,35 +90,29 @@ export default function RecentActivity({ orders }: RecentActivityProps) {
               </TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody className="overflow-auto">
             {orders.map((order, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium text-blue-950">
                   {i18n.language === "en"
-                    ? order.servicesNameEn
-                    : order.servicesNameAr}
-                  <div className="sm:hidden text-sm text-blue-700">
-                    {i18n.language === "en" ? order.customer : order.customerAr}
-                  </div>
-                  <div className="md:hidden text-sm text-blue-600">
-                    {i18n.language === "en" ? order.status : order.statusAr}
-                  </div>
+                    ? order.itemDto.itemNameEn
+                    : order.itemDto.itemNameAr}
                 </TableCell>
                 <TableCell className="text-blue-950 hidden sm:table-cell">
-                  {i18n.language === "en" ? order.customer : order.customerAr}
+                  <div className=" text-sm text-blue-700">
+                    {i18n.language === "en"
+                      ? order?.userNameEn
+                      : order?.userNameAr}
+                  </div>
                 </TableCell>
                 <TableCell className="text-blue-950 hidden md:table-cell">
-                  {i18n.language === "en" ? order.status : order.statusAr}
+                  {order.request.statusName}
                 </TableCell>
                 <TableCell className="text-blue-950 hidden lg:table-cell">
                   {order.extraServices ? order.extraServices.length : 0}
                 </TableCell>
                 <TableCell className="text-right text-blue-950">
-                  {order.servicesPrice} SAR
-                  <div className="lg:hidden text-sm text-blue-700">
-                    {order.extraServices ? order.extraServices.length : 0} extra
-                    services
-                  </div>
+                  {order.itemDto.itemPrice} SAR
                 </TableCell>
               </TableRow>
             ))}

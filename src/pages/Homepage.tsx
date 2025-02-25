@@ -7,29 +7,24 @@ import {
 } from "@/utils/dashboardApi's";
 import QuickActions from "@/components/QuickActions";
 import StatsCard from "@/components/StatsCard";
-import ReminderCard from "@/components/ReminderCard";
+// import ReminderCard from "@/components/ReminderCard";
 import RecentActivity from "@/components/RecentActivity";
 import { useTranslation } from "react-i18next";
 
 const Homepage = () => {
   const { t } = useTranslation();
-  const { data: orders, isLoading: ordersLoading } = useQuery("orders", () =>
-    fetchOrders(1, 10, "pending")
+  const { data: currentOrders } = useQuery(["orders", "OPENNING"], () =>
+    fetchOrders(0, 10, "OPENNING")
   );
-  const { data: services, isLoading: servicesLoading } = useQuery(
-    "services",
-    fetchServices
-  );
-  const { data: wallet, isLoading: walletLoading } = useQuery(
-    "wallet",
-    fetchWallet
-  );
-  const { data: timeSlots, isLoading: timeSlotsLoading } = useQuery(
-    "timeSlots",
-    fetchTimeSlots
-  );
+
+  // const { data: orders, isLoading: ordersLoading } = useQuery("orders", () =>
+  //   fetchOrders(1, 10, "pending")
+  // );
+  const { data: services } = useQuery("services", fetchServices);
+  const { data: wallet } = useQuery("wallet", fetchWallet);
+  const { data: timeSlots } = useQuery("timeSlots", fetchTimeSlots);
   const stats = [
-    { label: t("totalOrders"), value: orders?.length ?? 0 },
+    { label: t("totalOrders"), value: currentOrders?.length ?? 0 },
     {
       label: t("activeServices"),
       value:
@@ -49,8 +44,8 @@ const Homepage = () => {
           <StatsCard key={stat.label} {...stat} />
         ))}
       </div>
-      <ReminderCard />
-      <RecentActivity orders={orders ?? []} />
+      {/* <ReminderCard /> */}
+      <RecentActivity orders={currentOrders ?? []} />
     </div>
   );
 };

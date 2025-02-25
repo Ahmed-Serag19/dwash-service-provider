@@ -83,6 +83,7 @@ export default function OrderList() {
                 language={i18n.language}
                 refetchClosed={refetchClosedOrders}
                 refetchCurrent={refetchCurrentOrders}
+                isClosed={true}
               />
             ) : (
               <ErrorAlert message={t("noOrdersFound")} />
@@ -108,11 +109,13 @@ function OrderTable({
   language,
   refetchClosed,
   refetchCurrent,
+  isClosed,
 }: {
   orders: Order[];
   language: string;
   refetchClosed: () => void;
   refetchCurrent: () => void;
+  isClosed?: boolean;
 }) {
   const { t } = useTranslation();
   return (
@@ -126,12 +129,16 @@ function OrderTable({
             <TableHead className={`min-w-[150px]  text-center`}>
               {t("service")}
             </TableHead>
-            <TableHead className={`min-w-[150px]  text-center`}>
-              {t("customer")}
-            </TableHead>
-            <TableHead className={`min-w-[180px]  text-center`}>
-              {t("dateTime")}
-            </TableHead>
+            {!isClosed && (
+              <>
+                <TableHead className={`min-w-[150px]  text-center`}>
+                  {t("customer")}
+                </TableHead>
+                <TableHead className={`min-w-[180px]  text-center`}>
+                  {t("dateTime")}
+                </TableHead>
+              </>
+            )}
             <TableHead className={`min-w-[120px]  text-center`}>
               {t("status")}
             </TableHead>
@@ -155,22 +162,32 @@ function OrderTable({
                   ? order.itemDto.itemNameEn
                   : order.itemDto.itemNameAr}
               </TableCell>
-              <TableCell>
-                {language === "en" ? order.userNameEn : order.userNameAr}
-              </TableCell>
-              <TableCell>
-                <div className="flex flex-col">
-                  <span className="flex items-center">
-                    <Calendar className="mr-2 h-4 w-4 text-gray-600" />
-                    {format(new Date(order.reservationDate), "MMM dd, yyyy")}
-                  </span>
-                  <span className="flex items-center">
-                    <Clock className="mr-2 h-4 w-4 text-gray-600" />
-                    {order?.fromTime?.split(":").slice(0, 2).join(":")} -{" "}
-                    {order?.timeTo?.split(":").slice(0, 2).join(":")}
-                  </span>
-                </div>
-              </TableCell>
+              {!isClosed && (
+                <>
+                  <TableCell>
+                    {language === "en" ? order.userNameEn : order.userNameAr}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-col">
+                      <span className="flex items-center">
+                        <Calendar className="mr-2 h-4 w-4 text-gray-600" />
+                        {format(
+                          new Date(order.reservationDate),
+                          "MMM dd, yyyy"
+                        )}
+                      </span>
+                      <span className="flex items-center">
+                        <Clock className="mr-2 h-4 w-4 text-gray-600" />
+                        {order?.fromTime
+                          ?.split(":")
+                          .slice(0, 2)
+                          .join(":")} -{" "}
+                        {order?.timeTo?.split(":").slice(0, 2).join(":")}
+                      </span>
+                    </div>
+                  </TableCell>
+                </>
+              )}
               <TableCell>
                 <Badge variant={getStatusVariant(order.request.statusName)}>
                   {language === "en"
@@ -187,6 +204,7 @@ function OrderTable({
                   language={language}
                   refetchCurrent={refetchCurrent}
                   refetchClosed={refetchClosed}
+                  isClosed={isClosed}
                 />
               </TableCell>
             </TableRow>
