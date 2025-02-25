@@ -14,21 +14,10 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, AlertCircle } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Order } from "@/interface/interfaces";
 import OrderModal from "@/components/OrderModal";
-// import { dummyClosedOrders, dummyOpenOrders } from "@/utils/dummyOrders";
-
-// Mock API call - replace with actual API call when ready
-const fetchOrders = async (status: "OPENNING" | "CLOSED") => {
-  // Simulating API call
-  await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
-  if (status === "OPENNING") {
-    return { content: { data: [] } };
-  } else {
-    return { content: { data: [] } };
-  }
-};
+import { fetchOrders } from "@/utils/dashboardApi's";
 
 export default function OrderList() {
   const { t, i18n } = useTranslation();
@@ -38,31 +27,15 @@ export default function OrderList() {
     data: currentOrders,
     isLoading: isLoadingCurrent,
     error: errorCurrent,
-  } = useQuery(["orders", "OPENNING"], () => fetchOrders("OPENNING"));
+    refetch: refetchCurrentOrders,
+  } = useQuery(["orders", "OPENNING"], () => fetchOrders(0, 10, "OPENNING"));
+
   const {
     data: closedOrders,
     isLoading: isLoadingClosed,
     error: errorClosed,
-  } = useQuery(["orders", "CLOSED"], () => fetchOrders("CLOSED"));
-  function renderOrderContent(
-    isLoading: boolean,
-    error: unknown,
-    orders: Order[] | undefined,
-    language: string
-  ) {
-    if (isLoading) return <div>{t("loading")}</div>;
-    if (error) return <ErrorAlert message={t("failedToFetchOrders")} />;
-    if (!orders || orders.length === 0)
-      return <ErrorAlert message={t("noOrdersFound")} />;
-    return <OrderTable orders={orders} language={language} />;
-  }
-  // const isLoading =
-  //   activeTab === "current" ? isLoadingCurrent : isLoadingClosed;
-  // const error = activeTab === "current" ? errorCurrent : errorClosed;
-  // const orders =
-  //   activeTab === "current"
-  //     ? currentOrders?.content?.data
-  //     : closedOrders?.content?.data;
+    refetch: refetchClosedOrders,
+  } = useQuery(["orders", "CLOSED"], () => fetchOrders(0, 10, "CLOSED"));
 
   return (
     <Card className="w-full text-blue-950">
@@ -75,26 +48,42 @@ export default function OrderList() {
           onValueChange={(value) => setActiveTab(value as "current" | "closed")}
           className="w-full"
         >
-          <div className="flex justify-center py-10">
+          <div className="flex justify-center py-6">
             <TabsList>
               <TabsTrigger value="current">{t("activeOrders")}</TabsTrigger>
               <TabsTrigger value="closed">{t("closedOrders")}</TabsTrigger>
             </TabsList>
           </div>
+
           <TabsContent value="current">
-            {renderOrderContent(
-              isLoadingCurrent,
-              errorCurrent,
-              currentOrders?.content?.data,
-              i18n.language
+            {isLoadingCurrent ? (
+              <p className="text-center text-gray-500">{t("loading")}</p>
+            ) : errorCurrent ? (
+              <ErrorAlert message={t("failedToFetchOrders")} />
+            ) : currentOrders?.length ? (
+              <OrderTable
+                orders={currentOrders}
+                language={i18n.language}
+                refetch={refetchCurrentOrders}
+              />
+            ) : (
+              <ErrorAlert message={t("noOrdersFound")} />
             )}
           </TabsContent>
+
           <TabsContent value="closed">
-            {renderOrderContent(
-              isLoadingClosed,
-              errorClosed,
-              closedOrders?.content?.data,
-              i18n.language
+            {isLoadingClosed ? (
+              <p className="text-center text-gray-500">{t("loading")}</p>
+            ) : errorClosed ? (
+              <ErrorAlert message={t("failedToFetchOrders")} />
+            ) : closedOrders?.length ? (
+              <OrderTable
+                orders={closedOrders}
+                language={i18n.language}
+                refetch={refetchClosedOrders}
+              />
+            ) : (
+              <ErrorAlert message={t("noOrdersFound")} />
             )}
           </TabsContent>
         </Tabs>
@@ -105,8 +94,8 @@ export default function OrderList() {
 
 function ErrorAlert({ message }: { message: string }) {
   return (
-    <Alert variant="default">
-      <AlertCircle className="h-4 w-4" />
+    <Alert variant="default" className="flex items-center justify-center">
+      <AlertCircle className="h-5 w-5 mr-2 text-red-500" />
       <AlertDescription>{message}</AlertDescription>
     </Alert>
   );
@@ -115,142 +104,85 @@ function ErrorAlert({ message }: { message: string }) {
 function OrderTable({
   orders,
   language,
+  refetch,
 }: {
   orders: Order[];
   language: string;
+  refetch: () => void;
 }) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   return (
     <div className="overflow-auto min-h-[450px] text-blue-950">
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead
-              className={`min-w-[75px] ${
-                i18n.language === "ar" ? "text-right" : "text-left"
-              }`}
-            >
+          <TableRow className="bg-gray-100">
+            <TableHead className={`min-w-[75px]  text-center`}>
               {t("orderId")}
             </TableHead>
-            <TableHead
-              className={`min-w-[100px] ${
-                i18n.language === "ar" ? "text-right" : "text-left"
-              }`}
-            >
+            <TableHead className={`min-w-[150px]  text-center`}>
               {t("service")}
             </TableHead>
-            <TableHead
-              className={`min-w-[100px] ${
-                i18n.language === "ar" ? "text-right" : "text-left"
-              }`}
-            >
+            <TableHead className={`min-w-[150px]  text-center`}>
               {t("customer")}
             </TableHead>
-            <TableHead
-              className={`min-w-[150px] ${
-                i18n.language === "ar" ? "text-right" : "text-left"
-              }`}
-            >
+            <TableHead className={`min-w-[180px]  text-center`}>
               {t("dateTime")}
             </TableHead>
-            <TableHead
-              className={`min-w-[100px] ${
-                i18n.language === "ar" ? "text-right" : "text-left"
-              }`}
-            >
+            <TableHead className={`min-w-[120px]  text-center`}>
               {t("status")}
             </TableHead>
-            <TableHead
-              className={`min-w-[100px] ${
-                i18n.language === "ar" ? "text-right" : "text-left"
-              }`}
-            >
+            <TableHead className={`min-w-[120px]  text-center`}>
               {t("price")}
             </TableHead>
-            <TableHead
-              className={`min-w-[100px] ${
-                i18n.language === "ar" ? "text-right" : "text-left"
-              }`}
-            >
+            <TableHead className={`min-w-[120px]  text-center`}>
               {t("actions")}
             </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {orders.map((order) => (
-            <TableRow key={order.invoiceId}>
-              <TableCell
-                className={`min-w-[75px] ${
-                  i18n.language === "ar" ? "text-right" : "text-left"
-                }`}
-              >
-                {order.invoiceId}
-              </TableCell>
-              <TableCell
-                className={`min-w-[100px] ${
-                  i18n.language === "ar" ? "text-right" : "text-left"
-                }`}
-              >
+            <TableRow
+              key={order.invoiceId}
+              className="border-b hover:bg-gray-50"
+            >
+              <TableCell>{order.invoiceId}</TableCell>
+              <TableCell>
                 {language === "en"
                   ? order.itemDto.itemNameEn
                   : order.itemDto.itemNameAr}
               </TableCell>
-              <TableCell
-                className={`min-w-[100px] ${
-                  i18n.language === "ar" ? "text-right" : "text-left"
-                }`}
-              >
+              <TableCell>
                 {language === "en" ? order.userNameEn : order.userNameAr}
               </TableCell>
-              <TableCell
-                className={`min-w-[100px] ${
-                  i18n.language === "ar" ? "text-right" : "text-left"
-                }`}
-              >
-                <div className="flex flex-col ">
-                  <span
-                    className={`flex items-center min-w-[150px] ${
-                      i18n.language === "ar" ? "justify-end" : "justify-start"
-                    } `}
-                  >
-                    <Calendar className="mr-2 h-4 w-4" />
+              <TableCell>
+                <div className="flex flex-col">
+                  <span className="flex items-center">
+                    <Calendar className="mr-2 h-4 w-4 text-gray-600" />
                     {format(new Date(order.reservationDate), "MMM dd, yyyy")}
                   </span>
-                  <span
-                    className={`flex items-center ${
-                      i18n.language === "ar" ? "justify-end" : "justify-start"
-                    }  `}
-                  >
-                    <Clock className="mr-2 h-4 w-4" />
-                    {order.fromTime.split(":").slice(0, 2).join(":")} -{" "}
-                    {order.timeTo.split(":").slice(0, 2).join(":")}{" "}
+                  <span className="flex items-center">
+                    <Clock className="mr-2 h-4 w-4 text-gray-600" />
+                    {order?.fromTime?.split(":").slice(0, 2).join(":")} -{" "}
+                    {order?.timeTo?.split(":").slice(0, 2).join(":")}
                   </span>
                 </div>
               </TableCell>
-              <TableCell
-                className={`min-w-[100px] ${
-                  i18n.language === "ar" ? "text-right" : "text-left"
-                }`}
-              >
+              <TableCell>
                 <Badge variant={getStatusVariant(order.request.statusName)}>
                   {language === "en"
                     ? formatStatus(order.request.statusName)
                     : order.request.statusName}
                 </Badge>
               </TableCell>
-              <TableCell
-                className={`min-w-[100px] ${
-                  i18n.language === "ar" ? "text-right" : "text-left"
-                }`}
-              >
-                {order.totalAmount} SAR
+              <TableCell className="font-semibold">
+                {order.totalAmount.toFixed(2)} SAR
               </TableCell>
-              <TableCell
-                className={`min-w-[100px] ${
-                  i18n.language === "ar" ? "justify-end" : "justify-start"
-                } flex `}
-              >
-                <OrderModal order={order} language={language} />
+              <TableCell>
+                <OrderModal
+                  order={order}
+                  language={language}
+                  refetch={refetch}
+                />
               </TableCell>
             </TableRow>
           ))}
@@ -259,17 +191,21 @@ function OrderTable({
     </div>
   );
 }
+
 function formatStatus(status: string) {
   return status
     .split("_")
     .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
     .join(" ");
 }
+
 function getStatusVariant(status: string) {
   switch (status) {
     case "COMPLETED":
       return "default";
     case "CANCELLED_BY_ADMIN":
+      return "destructive";
+    case "REJECTED":
       return "destructive";
     case "WAITING":
       return "secondary";

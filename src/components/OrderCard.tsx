@@ -71,19 +71,28 @@ export function OrderCard({ order, onStatusChange, language }: OrderCardProps) {
           </div>
         </div>
 
-        <Select
-          value={order.request.statusName}
-          onValueChange={(value) => onStatusChange(value)}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder={t("status")} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ACCEPTED">{t("accepted")}</SelectItem>
-            <SelectItem value="UNDER_PROCESSING">{t("inProgress")}</SelectItem>
-            <SelectItem value="COMPLETED">{t("completed")}</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex justify-between px-5">
+          <div>
+            <Select
+              value={order.request.statusName}
+              onValueChange={(value) => onStatusChange(value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={t("status")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ACCEPTED">{t("accepted")}</SelectItem>
+                <SelectItem value="UNDER_PROCESSING">
+                  {t("inProgress")}
+                </SelectItem>
+                <SelectItem value="COMPLETED">{t("completed")}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <button className="px-4 py-1.5 bg-red-600 ">{t("cancel")}</button>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

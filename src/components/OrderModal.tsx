@@ -23,10 +23,15 @@ import {
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
+import { endpoints } from "@/constants/endPoints";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useState } from "react";
 
 interface OrderModalProps {
   language: string;
   order: Order;
+  refetch: () => void;
 }
 function formatStatus(status: string) {
   return status
@@ -49,15 +54,44 @@ function getStatusVariant(status: string) {
   }
 }
 
-const OrderModal = ({ language, order }: OrderModalProps) => {
+const OrderModal = ({ language, order, refetch }: OrderModalProps) => {
   const { t, i18n } = useTranslation();
+  const [isOpen, setIsOpen] = useState(false);
+  const handleCancelOrder = async (id: number) => {
+    const token = sessionStorage.getItem("accessToken");
+    if (!token) {
+      toast.error(t("pleaseLogin"));
+      return;
+    }
+
+    try {
+      const response = await axios.put(endpoints.rejectOrder(id), null, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data.success) {
+        toast.success(t("orderRejected"));
+        setIsOpen(false);
+        refetch();
+      } else {
+        toast.error(t("errorRejectingOrder"));
+      }
+    } catch (error) {
+      console.error("Error rejecting order:", error);
+      toast.error(t("errorRejectingOrder"));
+    }
+  };
 
   return (
     <div>
-      <Dialog>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
           <Button
             variant="outline"
+            aria-describedby="click for more details button"
+            aria-description="click to show a pop up modal to control the order, cancel accept it"
             className="flex items-center space-x-2 hover:bg-gray-50 transition-colors"
           >
             <span>{t("details") || "View Details"}</span>
@@ -121,7 +155,10 @@ const OrderModal = ({ language, order }: OrderModalProps) => {
                   <p className="text-lg font-medium mt-1">
                     {language === "en" ? order.userNameEn : order.userNameAr}
                   </p>
-                  <div className="flex items-center mt-2 text-gray-600">
+                  <div
+                    dir="ltr"
+                    className="flex items-center justify-end gap-1 mt-2 text-gray-600"
+                  >
                     <Phone className="h-4 w-4 mr-2" />
                     <span>{order.userPhoneNumber}</span>
                   </div>
@@ -251,6 +288,16 @@ const OrderModal = ({ language, order }: OrderModalProps) => {
                       ? formatStatus(order.request.statusName)
                       : order.request.statusName}
                   </span>
+                </div>
+                <div>
+                  <div>
+                    <button
+                      onClick={() => handleCancelOrder(order.request.id)}
+                      className="px-7 py-1.5 text-lg bg-red-600 text-white rounded-lg"
+                    >
+                      {t("cancel")}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
