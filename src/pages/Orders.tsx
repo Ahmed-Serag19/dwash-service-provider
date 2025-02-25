@@ -64,7 +64,8 @@ export default function OrderList() {
               <OrderTable
                 orders={currentOrders}
                 language={i18n.language}
-                refetch={refetchCurrentOrders}
+                refetchCurrent={refetchCurrentOrders}
+                refetchClosed={refetchClosedOrders}
               />
             ) : (
               <ErrorAlert message={t("noOrdersFound")} />
@@ -80,7 +81,8 @@ export default function OrderList() {
               <OrderTable
                 orders={closedOrders}
                 language={i18n.language}
-                refetch={refetchClosedOrders}
+                refetchClosed={refetchClosedOrders}
+                refetchCurrent={refetchCurrentOrders}
               />
             ) : (
               <ErrorAlert message={t("noOrdersFound")} />
@@ -104,11 +106,13 @@ function ErrorAlert({ message }: { message: string }) {
 function OrderTable({
   orders,
   language,
-  refetch,
+  refetchClosed,
+  refetchCurrent,
 }: {
   orders: Order[];
   language: string;
-  refetch: () => void;
+  refetchClosed: () => void;
+  refetchCurrent: () => void;
 }) {
   const { t } = useTranslation();
   return (
@@ -181,7 +185,8 @@ function OrderTable({
                 <OrderModal
                   order={order}
                   language={language}
-                  refetch={refetch}
+                  refetchCurrent={refetchCurrent}
+                  refetchClosed={refetchClosed}
                 />
               </TableCell>
             </TableRow>

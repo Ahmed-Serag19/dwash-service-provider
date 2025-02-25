@@ -31,7 +31,8 @@ import { useState } from "react";
 interface OrderModalProps {
   language: string;
   order: Order;
-  refetch: () => void;
+  refetchCurrent: () => void;
+  refetchClosed: () => void;
 }
 function formatStatus(status: string) {
   return status
@@ -54,7 +55,12 @@ function getStatusVariant(status: string) {
   }
 }
 
-const OrderModal = ({ language, order, refetch }: OrderModalProps) => {
+const OrderModal = ({
+  language,
+  order,
+  refetchClosed,
+  refetchCurrent,
+}: OrderModalProps) => {
   const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const handleCancelOrder = async (id: number) => {
@@ -74,7 +80,8 @@ const OrderModal = ({ language, order, refetch }: OrderModalProps) => {
       if (response.data.success) {
         toast.success(t("orderRejected"));
         setIsOpen(false);
-        refetch();
+        refetchClosed();
+        refetchCurrent();
       } else {
         toast.error(t("errorRejectingOrder"));
       }
