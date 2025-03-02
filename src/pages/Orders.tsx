@@ -19,6 +19,38 @@ import { Order } from "@/interface/interfaces";
 import OrderModal from "@/components/OrderModal";
 import { fetchOrders } from "@/utils/dashboardApi's";
 
+// Define the status translations
+const statusTranslations: { [key: string]: { en: string; ar: string } } = {
+  WAITING: {
+    en: "Waiting",
+    ar: "في الانتظار",
+  },
+  COMPLETED: {
+    en: "Completed",
+    ar: "مكتمل",
+  },
+  COMPLETED_BY_ADMIN: {
+    en: "Completed by Admin",
+    ar: "مكتمل بواسطة الأدمن",
+  },
+  CANCELLED: {
+    en: "Cancelled",
+    ar: "ملغى",
+  },
+  CANCELLED_BY_ADMIN: {
+    en: "Cancelled by Admin",
+    ar: "ملغى بواسطة الأدمن",
+  },
+  REJECTED: {
+    en: "Rejected",
+    ar: "مرفوض",
+  },
+  ACCEPTED: {
+    en: "Accepted",
+    ar: "مقبول",
+  },
+};
+
 export default function OrderList() {
   const { t, i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState<"current" | "closed">("current");
@@ -118,6 +150,12 @@ function OrderTable({
   isClosed?: boolean;
 }) {
   const { t } = useTranslation();
+
+  // Function to get the translated status
+  const getTranslatedStatus = (status: string): string => {
+    return statusTranslations[status]?.[language as "en" | "ar"] || status;
+  };
+
   return (
     <div className="overflow-auto min-h-[450px] text-blue-950">
       <Table>
@@ -190,9 +228,7 @@ function OrderTable({
               )}
               <TableCell>
                 <Badge variant={getStatusVariant(order.request.statusName)}>
-                  {language === "en"
-                    ? formatStatus(order.request.statusName)
-                    : order.request.statusName}
+                  {getTranslatedStatus(order.request.statusName)}
                 </Badge>
               </TableCell>
               <TableCell className="font-semibold">
@@ -215,16 +251,11 @@ function OrderTable({
   );
 }
 
-function formatStatus(status: string) {
-  return status
-    .split("_")
-    .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
-    .join(" ");
-}
-
 function getStatusVariant(status: string) {
   switch (status) {
     case "COMPLETED":
+      return "default";
+    case "COMPLETED_BY_ADMIN":
       return "default";
     case "CANCELLED_BY_ADMIN":
       return "destructive";

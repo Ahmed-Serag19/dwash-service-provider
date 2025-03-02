@@ -11,6 +11,38 @@ import {
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
+// Define the status translations
+const statusTranslations: Record<string, { en: string; ar: string }> = {
+  WAITING: {
+    en: "Waiting",
+    ar: "في الانتظار",
+  },
+  COMPLETED: {
+    en: "Completed",
+    ar: "مكتمل",
+  },
+  COMPLETED_BY_ADMIN: {
+    en: "Completed by Admin",
+    ar: "مكتمل بواسطة الأدمن",
+  },
+  CANCELLED: {
+    en: "Cancelled",
+    ar: "ملغى",
+  },
+  CANCELLED_BY_ADMIN: {
+    en: "Cancelled by Admin",
+    ar: "ملغى بواسطة الأدمن",
+  },
+  REJECTED: {
+    en: "Rejected",
+    ar: "مرفوض",
+  },
+  ACCEPTED: {
+    en: "Accepted",
+    ar: "مقبول",
+  },
+};
+
 interface Service {
   itemDto: any;
   userNameEn: React.ReactNode | Iterable<React.ReactNode>;
@@ -33,6 +65,12 @@ interface RecentActivityProps {
 
 export default function RecentActivity({ orders }: RecentActivityProps) {
   const { t, i18n } = useTranslation();
+
+  // Function to get the translated status
+  const getTranslatedStatus = (status: string) => {
+    return statusTranslations[status]?.[i18n.language as "en" | "ar"] || status;
+  };
+
   if (!orders || orders.length === 0) {
     return (
       <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
@@ -106,7 +144,7 @@ export default function RecentActivity({ orders }: RecentActivityProps) {
                   </div>
                 </TableCell>
                 <TableCell className="text-blue-950 hidden md:table-cell">
-                  {order.request.statusName}
+                  {getTranslatedStatus(order.request.statusName)}
                 </TableCell>
                 <TableCell className="text-blue-950 hidden lg:table-cell">
                   {order.extraServices ? order.extraServices.length : 0}

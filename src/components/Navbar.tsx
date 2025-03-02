@@ -50,6 +50,7 @@ const Navbar = ({ mobileOpen, setMobileOpen }: HeaderProps) => {
           },
         });
         const data = response.data.content;
+        console.log(data);
 
         // Filter out notifications older than 1 week
         const filteredNotifications = data.filter(
@@ -61,13 +62,13 @@ const Navbar = ({ mobileOpen, setMobileOpen }: HeaderProps) => {
           }
         );
 
-        setNotifications(filteredNotifications);
-
-        // Calculate unread notifications
-        const unread = filteredNotifications.filter(
+        // Filter unread notifications
+        const unreadNotifications = filteredNotifications.filter(
           (notification: Notification) => notification.read === 0
-        ).length;
-        setUnreadCount(unread);
+        );
+
+        setNotifications(unreadNotifications); // Set only unread notifications
+        setUnreadCount(unreadNotifications.length); // Update unread count
       } catch (error) {
         console.error("Failed to fetch notifications", error);
         toast.error(t("errorFetchingNotifications"));
