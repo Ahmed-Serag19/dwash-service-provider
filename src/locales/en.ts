@@ -290,4 +290,6 @@ export const en = {
   service: "Service",
   customer: "Customer",
   proceedOrder: "Confirm Proceed",
+  samedayError: "Proceed order only available in the same day",
+  completeOrder: "Confirm finishing order",
 };

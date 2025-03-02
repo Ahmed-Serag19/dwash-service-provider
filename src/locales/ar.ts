@@ -293,4 +293,6 @@ export const ar = {
   errorProceedingOrder: "حدث خطأ أثناء متابعة الطلب",
   errorCompletingOrder: "حدث خطأ أثناء إتمام الطلب",
   proceedOrder: "تأكيد الذهاب",
+  samedayError: "تأكيد الذهاب يجب ان يكون في نفس اليوم",
+  completeOrder: "تأكيد انهاء الخدمة",
 };

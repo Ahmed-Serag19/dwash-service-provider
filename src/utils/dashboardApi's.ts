@@ -53,10 +53,11 @@ export const fetchWallet = async () => {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
     });
-    return response.data.content; // Adjust based on the structure of your wallet response
+    console.log(response);
+    return response.data.content;
   } catch (error) {
     console.error("Error fetching wallet:", error);
-    return { balance: 0 }; // Fallback to a default value
+    return { balance: 0 };
   }
 };
 

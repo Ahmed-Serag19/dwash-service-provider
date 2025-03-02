@@ -32,7 +32,7 @@ const Homepage = () => {
           (s: { servicesStatus: number }) => s.servicesStatus === 0
         ).length ?? 0,
     },
-    { label: t("totalEarnings"), value: `${wallet?.balance ?? 0} SAR` },
+    { label: t("totalEarnings"), value: `${wallet?.totalAmount ?? 0} SAR` },
     { label: t("timeSlots"), value: timeSlots?.length ?? 0 },
   ];
 

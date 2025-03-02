@@ -142,7 +142,13 @@ const OrderModal = ({
         toast.error(t("errorProceedingOrder"));
       }
     } catch (error) {
-      console.error("Error proceeding order:", error);
+      if (
+        (error as any).response.data.messageEn ===
+        "change status to under processing should be in the same day of reserved day"
+      ) {
+        toast.error(t("samedayError"));
+        return;
+      }
       toast.error(t("errorProceedingOrder"));
     }
   };
@@ -381,17 +387,17 @@ const OrderModal = ({
                     </span>
                   </div>
                 </div>
-                {!isClosed || order.request.statusName === "ACCEPTED" ? (
-                  ""
-                ) : (
+                {!isClosed || order.request.statusName === "WAITING" ? (
                   <div className="flex gap-5">
                     <div>
-                      <button
-                        onClick={() => handleAcceptOrder(order.request.id)}
-                        className="px-7 py-1.5 text-lg bg-green-600 text-white rounded-lg"
-                      >
-                        {t("accept")}
-                      </button>
+                      {order.request.statusName === "WAITING" && (
+                        <button
+                          onClick={() => handleAcceptOrder(order.request.id)}
+                          className="px-7 py-1.5 text-lg bg-green-600 text-white rounded-lg"
+                        >
+                          {t("accept")}
+                        </button>
+                      )}
                     </div>
                     <div>
                       <button
@@ -402,15 +408,30 @@ const OrderModal = ({
                       </button>
                     </div>
                   </div>
+                ) : (
+                  ""
                 )}
                 {order.request.statusName === "ACCEPTED" &&
                 order.request.waitingProcessId === 2 ? (
                   <div>
                     <button
                       onClick={() => handleProceedOrder(order.request.id)}
-                      className="px-7 py-1.5 text-lg bg-green-600 text-white rounded-lg"
+                      className="px-5 py-1.5 text-lg bg-green-600 text-white rounded-lg"
                     >
                       {t("proceedOrder")}
+                    </button>
+                  </div>
+                ) : (
+                  ""
+                )}
+                {order.request.statusName === "UNDER_PROCESSING" &&
+                order.request.waitingProcessId === 2 ? (
+                  <div>
+                    <button
+                      onClick={() => handleCompleteOrder(order.request.id)}
+                      className="px-7 py-1.5 text-lg bg-green-600 text-white rounded-lg"
+                    >
+                      {t("completeOrder")}
                     </button>
                   </div>
                 ) : (
