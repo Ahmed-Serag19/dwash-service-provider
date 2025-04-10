@@ -67,8 +67,8 @@ const Navbar = ({ mobileOpen, setMobileOpen }: HeaderProps) => {
           (notification: Notification) => notification.read === 0
         );
 
-        setNotifications(unreadNotifications); // Set only unread notifications
-        setUnreadCount(unreadNotifications.length); // Update unread count
+        setNotifications(unreadNotifications);
+        setUnreadCount(unreadNotifications.length);
       } catch (error) {
         console.error("Failed to fetch notifications", error);
         toast.error(t("errorFetchingNotifications"));
