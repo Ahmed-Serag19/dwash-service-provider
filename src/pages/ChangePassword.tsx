@@ -5,8 +5,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { endpoints } from "@/constants/endPoints";
+import { useUser } from "@/context/UserContext";
 
-// Define form data type
 interface ChangePasswordFormData {
   currentPassword: string;
   newPassword: string;
@@ -23,7 +23,7 @@ const ChangePassword: React.FC = () => {
     formState: { errors },
   } = useForm<ChangePasswordFormData>();
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const { logout } = useUser();
   const onSubmit: SubmitHandler<ChangePasswordFormData> = async (data) => {
     if (data.newPassword !== data.confirmNewPassword) {
       toast.error(t("passwordMismatch"));
@@ -51,8 +51,9 @@ const ChangePassword: React.FC = () => {
 
       if (response.data.success) {
         toast.success(t("passwordChanged"));
+        logout();
         setTimeout(() => {
-          navigate("/");
+          navigate("/login");
         }, 1500);
       } else {
         toast.error(response.data.messageEn || t("unknownError"));

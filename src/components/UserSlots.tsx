@@ -8,17 +8,37 @@ interface UserSlotsProps {
   handleDeleteSlot: (slotId: number) => void;
   loading: boolean;
 }
+
 const UserSlots: React.FC<UserSlotsProps> = ({
   slots,
   handleDeleteSlot,
   loading,
 }: UserSlotsProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  // Function to convert 24-hour time to 12-hour AM/PM format
+  const formatTimeToAMPM = (time24: string) => {
+    const [hours, minutes] = time24.split(":");
+    const hour = parseInt(hours);
+    const period = hour >= 12 ? "PM" : "AM";
+    const hour12 = hour % 12 || 12; // Convert 0 to 12 for 12 AM
+    return `${hour12}:${minutes} ${period}`;
+  };
+
+  // Function to format date based on current language
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString(i18n.language === "ar" ? "ar-EG" : "en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
 
   if (loading) {
     return (
       <div className="flex justify-center items-center h-92">
-        <p className="loader "></p>
+        <p className="loader"></p>
       </div>
     );
   }
@@ -40,23 +60,28 @@ const UserSlots: React.FC<UserSlotsProps> = ({
           >
             <div className="flex justify-between gap-4 flex-col mb-4">
               <h3 className="text-md font-semibold">
-                {t("date")}: <span>{slot.date}</span>
+                {t("date")}: <span>{formatDate(slot.date)}</span>
               </h3>
               <h2 className="text-md font-semibold">
                 {t("time")}:{" "}
-                <span>
-                  ({slot.timeFrom.slice(0, 5)} - {slot.timeTo.slice(0, 5)})
-                </span>
+                <div className="flex gap-3">
+                  <span>
+                    {t("from")} {formatTimeToAMPM(slot.timeFrom)}
+                  </span>
+                  <span>
+                    {t("to")} {formatTimeToAMPM(slot.timeTo)}
+                  </span>
+                </div>
               </h2>
             </div>
 
             {slot.reserved ? (
               <div>
                 <p>
-                  <strong>User:</strong> {slot.username || "Unknown"}
+                  <strong>{t("user")}:</strong> {slot.username || t("unknown")}
                 </p>
                 <p>
-                  <strong>Mobile:</strong> {slot.mobile || "Unknown"}
+                  <strong>{t("mobile")}:</strong> {slot.mobile || t("unknown")}
                 </p>
               </div>
             ) : (

@@ -1,3 +1,4 @@
+import { useUser } from "@/context/UserContext";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -8,9 +9,9 @@ interface LogoutModalProps {
 const LogoutModal = ({ handleCloseModal }: LogoutModalProps) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-
+  const { logout } = useUser();
   const handleLogout = () => {
-    sessionStorage.removeItem("accessToken");
+    logout();
     toast.success(t("logoutSuccess"), {
       position: "top-right",
       autoClose: 3000,

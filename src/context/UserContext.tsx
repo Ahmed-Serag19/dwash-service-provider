@@ -14,6 +14,7 @@ interface UserContextProps {
   isLoading: boolean;
   notifications: object[];
   refreshUser: () => Promise<void>;
+  logout: () => void;
 }
 
 const UserContext = createContext<UserContextProps | undefined>(undefined);
@@ -67,6 +68,11 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
+  const logout = () => {
+    sessionStorage.removeItem("accessToken");
+    setUser(null);
+  };
+
   useEffect(() => {
     fetchUser();
   }, []);
@@ -77,7 +83,8 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
         user,
         notifications,
         isLoading,
-        refreshUser: fetchUser, // Expose the fetchUser function
+        refreshUser: fetchUser,
+        logout,
       }}
     >
       {children}

@@ -166,7 +166,7 @@ const TimeSlotPicker: React.FC = () => {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },
       });
-      toast.success("Time slot deleted successfully.");
+      toast.success(t("timeSlotDeleted"));
       setSlots((prev) => prev.filter((slot) => slot.slotId !== slotId));
     } catch (error) {
       console.error("Error deleting slot:", error);
