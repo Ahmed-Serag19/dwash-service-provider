@@ -41,4 +41,7 @@ export const endpoints = {
     `${API_BASE_URL}/freelancer/completeOrder?orderId=${orderId}`,
   acceptOrder: (orderId: number) =>
     `${API_BASE_URL}/freelancer/acceptOrder?orderId=${orderId}`,
+
+  initiateForgotPassword: `${API_BASE_URL}/auth/forgetPassword/initiate`,
+  finalizeForgotPassword: `${API_BASE_URL}/auth/forgetPassword/finalize`,
 };

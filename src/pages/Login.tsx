@@ -170,6 +170,15 @@ const Login = () => {
               {t("login")}
             </button>
           </div>
+          <div className="text-center">
+            <button
+              type="button"
+              onClick={() => navigate("/forgot-password")}
+              className="text-blue-700 hover:underline text-md"
+            >
+              {t("forgotPassword")}
+            </button>
+          </div>
         </form>
       </div>
       <div className="h-screen w-6/12 hidden sm:block">

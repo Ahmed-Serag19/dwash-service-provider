@@ -272,3 +272,13 @@ export interface ClosedOrder {
   dueAmount: number;
   reviewed: boolean;
 }
+
+export interface InitiateFormData {
+  email: string;
+}
+
+export interface FinalizeFormData {
+  confirmationCode: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}

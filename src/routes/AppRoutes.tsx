@@ -11,6 +11,7 @@ import Layout from "@/layout/Layout";
 import EditProfile from "@/pages/EditProfile";
 import NotFoundPage from "@/pages/404";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import ForgotPassword from "@/pages/ForgotPassword";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,7 @@ const router = createBrowserRouter([
     ],
   },
   { path: "/login", element: <Login />, errorElement: <NotFoundPage /> },
+  { path: "/forgot-password", element: <ForgotPassword /> },
 ]);
 
 const AppRoutes = () => <RouterProvider router={router} />;
