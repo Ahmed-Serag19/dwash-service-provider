@@ -50,7 +50,6 @@ const Navbar = ({ mobileOpen, setMobileOpen }: HeaderProps) => {
           },
         });
         const data = response.data.content;
-        console.log(data);
 
         // Filter out notifications older than 1 week
         const filteredNotifications = data.filter(

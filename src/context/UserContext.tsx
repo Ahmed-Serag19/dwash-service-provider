@@ -57,7 +57,6 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
       const response = await axios.get(endpoints.getNotification, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
-      console.log(response);
       if (response.data?.success) {
         setNotifications(response.data.content);
       }
@@ -75,6 +74,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 
   useEffect(() => {
     fetchUser();
+    fetchNotifications();
   }, []);
 
   return (

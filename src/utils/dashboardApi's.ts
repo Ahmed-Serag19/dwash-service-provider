@@ -8,10 +8,6 @@ export const fetchOrders = async (
   orderStatus: string = "pending"
 ) => {
   try {
-    console.log(
-      `Fetching orders for status: ${orderStatus}, page: ${page}, size: ${size}`
-    );
-
     const response = await axios.get(
       endpoints.getOrders(page, size, orderStatus),
       {
@@ -21,7 +17,6 @@ export const fetchOrders = async (
       }
     );
 
-    console.log("Orders API Response:", response.data); // ✅ Debugging step
     return response.data.content?.data || []; // Ensure this structure is correct
   } catch (error) {
     console.error("Error fetching orders:", error);
@@ -53,7 +48,6 @@ export const fetchWallet = async () => {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
     });
-    console.log(response);
     return response.data.content;
   } catch (error) {
     console.error("Error fetching wallet:", error);

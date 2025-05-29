@@ -38,7 +38,6 @@ const Login = () => {
       });
 
       const result = response.data;
-      console.log(result);
 
       if (result.success) {
         const successMessage =
