@@ -16,22 +16,31 @@ const UserSlots: React.FC<UserSlotsProps> = ({
 }: UserSlotsProps) => {
   const { t, i18n } = useTranslation();
 
-  // Function to convert 24-hour time to 12-hour AM/PM format
-  const formatTimeToAMPM = (time24: string) => {
-    const [hours, minutes] = time24.split(":");
-    const hour = parseInt(hours);
-    const period = hour >= 12 ? "PM" : "AM";
-    const hour12 = hour % 12 || 12; // Convert 0 to 12 for 12 AM
-    return `${hour12}:${minutes} ${period}`;
-  };
+  // Choose locale based on current language
+  const locale = i18n.language === "ar" ? "ar-EG" : "en-US";
 
-  // Function to format date based on current language
+  // Format a date string in the correct locale, with long month, day, year
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString(i18n.language === "ar" ? "ar-EG" : "en-US", {
+    return date.toLocaleDateString(locale, {
       year: "numeric",
       month: "long",
       day: "numeric",
+    });
+  };
+
+  // Format "HH:mm" into a localized 12-hour clock string
+  const formatTimeToAMPM = (time24: string) => {
+    const [hourStr, minuteStr] = time24.split(":");
+    const hour = parseInt(hourStr, 10);
+    const minute = parseInt(minuteStr, 10);
+    // Create a Date object for today at that hour/minute
+    const temp = new Date();
+    temp.setHours(hour, minute, 0, 0);
+    return temp.toLocaleTimeString(locale, {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
     });
   };
 
@@ -56,7 +65,7 @@ const UserSlots: React.FC<UserSlotsProps> = ({
         {slots.map((slot) => (
           <div
             key={slot.slotId}
-            className={`p-4 border rounded-lg border-blue-950 bg-slate-100`}
+            className="p-4 border rounded-lg border-blue-950 bg-slate-100"
           >
             <div className="flex justify-between gap-4 flex-col mb-4">
               <h3 className="text-md font-semibold">
@@ -89,6 +98,7 @@ const UserSlots: React.FC<UserSlotsProps> = ({
                 {t("Available")}
               </p>
             )}
+
             {!slot.reserved && (
               <div className="flex justify-end mt-4">
                 <Button

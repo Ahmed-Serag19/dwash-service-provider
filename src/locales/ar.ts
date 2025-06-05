@@ -199,7 +199,7 @@ export const ar = {
   Available: "متاح",
   conflictSlots: "تعارض الفترات الزمنية",
   walletSummary: " المحفظة",
-  totalBalance: "المبلغ الاجمالي",
+  totalBalance: "اجمالي الخصم",
   netBalance: "المبلغ الاجمالي بدون خصم",
   outstandingAmount: "المبلغ المستحق بعد الخصم",
   balanceDetails: "تفاصيل الرصيد",
@@ -317,4 +317,7 @@ export const ar = {
   initiateError: "فشل في إرسال رمز التأكيد. حاول مرة أخرى.",
   finalizeSuccess: "تم إعادة تعيين كلمة المرور بنجاح.",
   finalizeError: "فشل في إعادة تعيين كلمة المرور. تحقق من البيانات.",
+  shareProfile: "مشاركة الملف الشخصي",
+  conflictSlotError: "تعارض في الفترات الزمنية المختارة",
+  refunded: "مرتجع",
 };

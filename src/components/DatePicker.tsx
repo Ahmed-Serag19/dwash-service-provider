@@ -1,3 +1,4 @@
+// components/DatePicker.tsx
 import React from "react";
 import { CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,8 +9,9 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { format, isBefore, startOfToday } from "date-fns";
+import { ar, enUS } from "date-fns/locale";
 import { cn } from "@/lib/utils";
-import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 
 interface DatePickerProps {
   date: Date | undefined;
@@ -17,7 +19,8 @@ interface DatePickerProps {
 }
 
 const DatePicker: React.FC<DatePickerProps> = ({ date, setDate }) => {
-  // Get today's date
+  const { t, i18n } = useTranslation();
+  const localeObj = i18n.language === "ar" ? ar : enUS;
   const today = startOfToday();
 
   return (
@@ -31,15 +34,21 @@ const DatePicker: React.FC<DatePickerProps> = ({ date, setDate }) => {
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, "PPP") : <span>{t("pickDate")}</span>}
+          {date ? (
+            format(date, "PPP", { locale: localeObj })
+          ) : (
+            <span>{t("pickDate")}</span>
+          )}
         </Button>
       </PopoverTrigger>
+
       <PopoverContent className="w-auto p-0">
         <Calendar
           mode="single"
           selected={date}
           onSelect={setDate}
-          disabled={(date) => isBefore(date, today)}
+          disabled={(d) => isBefore(d, today)}
+          locale={localeObj}
         />
       </PopoverContent>
     </Popover>

@@ -2,11 +2,12 @@ import React, { useEffect } from "react";
 import { useUser } from "@/context/UserContext";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DummyUser from "@/assets/images/dummy-user.webp";
 import DummyBg from "@/assets/images/dummy-bg.webp";
+import { Copy } from "lucide-react";
 
 const Profile: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -80,6 +81,29 @@ const Profile: React.FC = () => {
           <Card>
             <CardContent className="p-4 sm:p-6">
               <div className="grid grid-cols-1 sm:grid-cols-1 gap-4 sm:gap-8">
+                <div>
+                  <p>{t("shareProfile")}</p>
+                  <div className="flex items-center gap-2">
+                    <Link
+                      to={`https://dw.dussur.sa/service-provider/${user?.brandId}`}
+                      className="text-blue-900 font-semibold"
+                      target="_blank"
+                    >
+                      {`https://dw.dussur.sa/service-provider/${user?.brandId}`}
+                    </Link>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => {
+                        navigator.clipboard.writeText(
+                          `https://dw.dussur.sa/service-provider/${user?.brandId}`
+                        );
+                      }}
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
                 <ProfileField
                   label={t("brandNameAr")}
                   value={user?.userDto?.nameAr || ""}

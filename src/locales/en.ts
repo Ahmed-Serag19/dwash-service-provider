@@ -314,4 +314,8 @@ export const en = {
   initiateError: "Failed to send confirmation code. Please try again.",
   finalizeSuccess: "Password reset successfully.",
   finalizeError: "Failed to reset password. Please check your inputs.",
+  shareProfile: "Share Profile",
+  conflictSlotError: "Conflict Timeslot",
+  refunded: "Refunded",
+  typeService: "خدمة",
 };

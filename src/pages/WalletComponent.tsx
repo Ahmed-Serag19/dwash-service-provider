@@ -1,3 +1,4 @@
+// components/WalletComponent.tsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -23,6 +24,7 @@ interface BalanceDetails {
   deductionPrs: number;
   deductionAmount: number;
   dueAmount: number;
+  balanceType: "REFUNDED" | "SERVICE";
 }
 
 interface WalletData {
@@ -47,7 +49,6 @@ const WalletComponent: React.FC = () => {
       });
 
       if (response.data.success) {
-        // If content is null, set default 0 values
         const data = response.data.content || {
           totalAmount: 0,
           totalDeductionAmount: 0,
@@ -83,6 +84,13 @@ const WalletComponent: React.FC = () => {
     return <p className="text-center py-8">{t("noWalletData")}</p>;
   }
 
+  // Helper to translate balanceType
+  const translateType = (type: "REFUNDED" | "SERVICE") => {
+    if (type === "REFUNDED") return t("refunded");
+    if (type === "SERVICE") return t("typeService");
+    return type; // fallback
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <Card>
@@ -97,7 +105,7 @@ const WalletComponent: React.FC = () => {
             <Card>
               <CardContent className="pt-6">
                 <p className="text-sm font-medium text-muted-foreground mb-2">
-                  {t("totalBalance")}
+                  {t("totalDeductionAmount")}
                 </p>
                 <p className="text-2xl font-bold">
                   {walletData.totalDeductionAmount.toFixed(2)}
@@ -107,7 +115,7 @@ const WalletComponent: React.FC = () => {
             <Card>
               <CardContent className="pt-6">
                 <p className="text-sm font-medium text-muted-foreground mb-2">
-                  {t("netBalance")}
+                  {t("totalBalance")}
                 </p>
                 <p className="text-2xl font-bold">
                   {walletData.totalAmount.toFixed(2)}
@@ -133,6 +141,7 @@ const WalletComponent: React.FC = () => {
               </TabsTrigger>
               <TabsTrigger value="details">{t("details")}</TabsTrigger>
             </TabsList>
+
             <TabsContent value="transactions" className="min-h-72">
               <Table>
                 <TableHeader>
@@ -142,6 +151,7 @@ const WalletComponent: React.FC = () => {
                     <TableHead>{t("deductionPrs")}</TableHead>
                     <TableHead>{t("deductionAmount")}</TableHead>
                     <TableHead>{t("netDue")}</TableHead>
+                    <TableHead>{t("type")}</TableHead> {/* New column */}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -152,11 +162,13 @@ const WalletComponent: React.FC = () => {
                       <TableCell>{detail.deductionPrs}%</TableCell>
                       <TableCell>{detail.deductionAmount.toFixed(2)}</TableCell>
                       <TableCell>{detail.dueAmount.toFixed(2)}</TableCell>
+                      <TableCell>{translateType(detail.balanceType)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </TabsContent>
+
             <TabsContent value="details" className="min-h-72">
               <Card>
                 <CardContent className="space-y-4 pt-6">
