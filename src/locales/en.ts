@@ -318,4 +318,7 @@ export const en = {
   conflictSlotError: "Conflict Timeslot",
   refunded: "Refunded",
   typeService: "خدمة",
+  outOfAllowedRangeError: "Timeslot date must be within 14 days from today",
+  noTime: "No time selected",
+  editProfile: "Edit Profile",
 };

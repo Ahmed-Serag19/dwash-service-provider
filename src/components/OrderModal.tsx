@@ -20,7 +20,7 @@ import {
   CreditCard,
   CheckCircle2,
 } from "lucide-react";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { endpoints } from "@/constants/endPoints";
@@ -65,8 +65,11 @@ const OrderModal = ({
 }: OrderModalProps) => {
   const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const handleCancelOrder = async (id: number) => {
     const token = sessionStorage.getItem("accessToken");
+    setLoading(true);
     if (!token) {
       toast.error(t("pleaseLogin"));
       return;
@@ -90,10 +93,14 @@ const OrderModal = ({
     } catch (error) {
       console.error("Error rejecting order:", error);
       toast.error(t("errorRejectingOrder"));
+    } finally {
+      setLoading(false);
     }
   };
+
   const handleAcceptOrder = async (id: number) => {
     const token = sessionStorage.getItem("accessToken");
+    setLoading(true);
     if (!token) {
       toast.error(t("pleaseLogin"));
       return;
@@ -117,11 +124,14 @@ const OrderModal = ({
     } catch (error) {
       console.error("Error Accepting order:", error);
       toast.error(t("errorAcceptingOrder"));
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleProceedOrder = async (id: number) => {
     const token = sessionStorage.getItem("accessToken");
+    setLoading(true);
     if (!token) {
       toast.error(t("pleaseLogin"));
       return;
@@ -150,11 +160,14 @@ const OrderModal = ({
         return;
       }
       toast.error(t("errorProceedingOrder"));
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleCompleteOrder = async (id: number) => {
     const token = sessionStorage.getItem("accessToken");
+    setLoading(true);
     if (!token) {
       toast.error(t("pleaseLogin"));
       return;
@@ -177,6 +190,8 @@ const OrderModal = ({
     } catch (error) {
       console.error("Error completing order:", error);
       toast.error(t("errorCompletingOrder"));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -392,8 +407,9 @@ const OrderModal = ({
                     <div>
                       {order.request.statusName === "WAITING" && (
                         <button
+                          disabled={loading}
                           onClick={() => handleAcceptOrder(order.request.id)}
-                          className="px-7 py-1.5 text-lg bg-green-600 text-white rounded-lg"
+                          className="disabled:bg-gray-400 disabled:cursor-not-allowed disabled:text-red-500 px-7 py-1.5 text-lg bg-green-600 text-white rounded-lg"
                         >
                           {t("accept")}
                         </button>
@@ -401,8 +417,9 @@ const OrderModal = ({
                     </div>
                     <div>
                       <button
+                        disabled={loading}
                         onClick={() => handleCancelOrder(order.request.id)}
-                        className="px-7 py-1.5 text-lg bg-red-600 text-white rounded-lg"
+                        className="disabled:bg-gray-400 disabled:cursor-not-allowed disabled:text-red-500 px-7 py-1.5 text-lg bg-red-600 text-white rounded-lg"
                       >
                         {t("cancel")}
                       </button>
@@ -415,8 +432,9 @@ const OrderModal = ({
                 order.request.waitingProcessId === 2 ? (
                   <div>
                     <button
+                      disabled={loading}
                       onClick={() => handleProceedOrder(order.request.id)}
-                      className="px-5 py-1.5 text-lg bg-green-600 text-white rounded-lg"
+                      className="disabled:bg-gray-400 disabled:cursor-not-allowed disabled:text-red-500 px-5 py-1.5 text-lg bg-green-600 text-white rounded-lg"
                     >
                       {t("proceedOrder")}
                     </button>
@@ -428,8 +446,9 @@ const OrderModal = ({
                 order.request.waitingProcessId === 2 ? (
                   <div>
                     <button
+                      disabled={loading}
                       onClick={() => handleCompleteOrder(order.request.id)}
-                      className="px-7 py-1.5 text-lg bg-green-600 text-white rounded-lg"
+                      className="disabled:bg-gray-400 disabled:cursor-not-allowed disabled:text-red-500  px-7 py-1.5 text-lg bg-green-600 text-white rounded-lg"
                     >
                       {t("completeOrder")}
                     </button>

@@ -320,4 +320,8 @@ export const ar = {
   shareProfile: "مشاركة الملف الشخصي",
   conflictSlotError: "تعارض في الفترات الزمنية المختارة",
   refunded: "مرتجع",
+  outOfAllowedRangeError:
+    "اضافة وقت للخدمة يجب أن يكون في نطاق ١٤ يومًا من اليوم الحالي.",
+  noTime: "لا يوجد وقت",
+  editProfile: "تعديل الملف الشخصي",
 };

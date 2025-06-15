@@ -1,4 +1,3 @@
-// components/TimeSlotPicker.tsx
 import React, { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -98,6 +97,8 @@ const TimeSlotPicker: React.FC = () => {
         };
         if (data.messageAr === "Conflict slot") {
           toast.error(t("conflictSlotError"));
+        } else if (data.messageAr === "out of allowed range") {
+          toast.error(t("outOfAllowedRangeError"));
         } else if (i18n.language === "ar" && data.messageAr) {
           toast.error(data.messageAr);
         } else if (data.messageEn) {

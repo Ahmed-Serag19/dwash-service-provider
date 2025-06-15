@@ -282,3 +282,48 @@ export interface FinalizeFormData {
   newPassword: string;
   confirmNewPassword: string;
 }
+
+export interface User {
+  userDto?: {
+    nameAr?: string;
+    nameEn?: string;
+    email?: string;
+  };
+  brandDescriptionsAr?: string;
+  brandDescriptionsEn?: string;
+  brandWalletDto?: {
+    iban?: string;
+    bankAccountNumber?: string;
+    bankName?: string;
+  };
+}
+
+export interface EditProfileFormData {
+  brandNameAr: string;
+  brandNameEn: string;
+  email: string;
+  brandDescriptionsAr: string;
+  brandDescriptionsEn: string;
+  iban: string;
+  bankAccountNumber: string;
+  bankName: string;
+  brandLogo: FileList;
+  brandBackgroundImage: FileList;
+  bankCertificate: FileList;
+}
+
+export interface ValidationRule {
+  required?: string;
+  maxLength?: { value: number; message: string };
+  minLength?: { value: number; message: string };
+  pattern?: { value: RegExp; message: string };
+}
+
+export interface FileValidationConfig {
+  maxSize: number;
+  allowedTypes: string[];
+  errorMessages: {
+    size: string;
+    type: string;
+  };
+}
