@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback } from "react";
 
 export const useOptimizedFileUpload = () => {
@@ -60,12 +58,27 @@ export const useOptimizedFileUpload = () => {
 
   const validateAndCompress = useCallback(
     async (file: File): Promise<File> => {
-      // Always compress to ensure compatibility
+      // 1. Sanitize filename: replace spaces with dashes
+      const originalName = file.name;
+      const sanitizedFileName = originalName
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9.\-_]/g, "");
+
+      // 2. Compress the file (keeping original name for now)
       const compressed = await compressImage(file, 500); // 500KB max
+
+      // 3. Return new file with sanitized name
+      const finalFile = new File([compressed], sanitizedFileName, {
+        type: compressed.type,
+        lastModified: Date.now(),
+      });
+
       console.log(
-        `Compressed ${file.name}: ${file.size} -> ${compressed.size} bytes`
+        `Compressed ${originalName} (${file.size} bytes) -> ${sanitizedFileName} (${finalFile.size} bytes)`
       );
-      return compressed;
+
+      return finalFile;
     },
     [compressImage]
   );

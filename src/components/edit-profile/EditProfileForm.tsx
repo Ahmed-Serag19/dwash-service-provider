@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PersonalInfoSection } from "./PersonalInfoSection";
 import { BankInfoSection } from "./BankInfoSection";
-import { FileUploadSection } from "./FileUploadSection";
+// import { FileUploadSection } from "./FileUploadSection";
 import { FormActions } from "./FormActions";
 import { useEditProfile } from "@/hooks/useEditProfile";
 import { useFormDefaults } from "@/hooks/useFormDefaults";

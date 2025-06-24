@@ -190,8 +190,10 @@ export interface Order {
   userNameAr: string;
   userNameEn: string;
   userPhoneNumber: string;
-  latitude: string;
-  longitude: string;
+  userAddressDto: {
+    latitude: string;
+    longitude: string;
+  };
   status: string;
   totalAmount: number;
   discountAmount: number;
@@ -326,4 +328,24 @@ export interface FileValidationConfig {
     size: string;
     type: string;
   };
+}
+
+export interface OrderModalProps {
+  language: string;
+  order: Order;
+  refetchCurrent: () => void;
+  refetchClosed: () => void;
+  isClosed?: boolean;
+}
+
+export interface OrderActionProps {
+  order: Order;
+  onAction: (id: number) => Promise<void>;
+  loading: boolean;
+  isClosed?: boolean;
+}
+
+export interface OrderSectionProps {
+  order: Order;
+  language: string;
 }

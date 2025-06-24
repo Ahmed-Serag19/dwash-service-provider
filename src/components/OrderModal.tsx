@@ -319,7 +319,7 @@ const OrderModal = ({
                     {t("location") || "Location"}
                   </h4>
                   <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${order.latitude},${order.longitude}`}
+                    href={`https://www.google.com/maps/search/?api=1&query=${order.userAddressDto.latitude},${order.userAddressDto.longitude}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center mt-2 text-blue-600 hover:text-blue-800 transition-colors"

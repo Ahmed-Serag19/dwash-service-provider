@@ -34,16 +34,16 @@ const Profile: React.FC = () => {
       {/* Hero Section */}
       <div className="relative mb-4 sm:mb-8">
         <img
-          src={user?.brandBackgroundImage || DummyBg}
+          src={`http://161.97.122.116${user?.brandBackgroundImage} ` || DummyBg}
           alt={t("brandBackground")}
-          className="w-full h-48 sm:h-64 md:h-80 lg:h-96 object-cover rounded-lg"
+          className="w-full h-[350px] sm:h-[400px] md:h-[450px] lg:h-[500px] object-cover rounded-lg"
         />
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row items-center sm:items-end">
             <img
-              src={user?.brandLogo || DummyUser}
+              src={`http://161.97.122.116${user?.brandLogo}` || DummyUser}
               alt={t("brandLogo")}
-              className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-white mb-2 sm:mb-0 sm:mr-4"
+              className="w-20 h-20 sm:w-36 sm:h-36 rounded-full border-4 border-white mb-2 sm:mb-0 sm:mr-4"
             />
             <div className="text-center sm:text-left mx-2 sm:mx-5">
               <h1
@@ -167,11 +167,13 @@ const Profile: React.FC = () => {
               <div className="grid grid-cols-1  gap-4 sm:gap-8">
                 <ProfileImage
                   label={t("brandLogo")}
-                  src={user?.brandLogo || ""}
+                  src={`http://161.97.122.116${user?.brandLogo}` || ""}
                 />
                 <ProfileImage
                   label={t("brandBackgroundImage")}
-                  src={user?.brandBackgroundImage || ""}
+                  src={
+                    `http://161.97.122.116${user?.brandBackgroundImage}` || ""
+                  }
                 />
               </div>
             </CardContent>

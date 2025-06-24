@@ -117,9 +117,11 @@ const ServiceDetailsModal: React.FC<ServiceDetailsModalProps> = ({
                 {serviceImages.map((imagePath, index) => (
                   <img
                     key={index}
-                    src={imagePath || "/placeholder.svg"}
+                    src={
+                      `http://161.97.122.116${imagePath}` || "/placeholder.svg"
+                    }
                     alt={`Service Image ${index + 1}`}
-                    className="w-full h-24 object-cover rounded-md"
+                    className="w-fit h-52 object-contain rounded-lg"
                   />
                 ))}
               </div>
