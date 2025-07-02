@@ -105,20 +105,20 @@ const WalletComponent: React.FC = () => {
             <Card>
               <CardContent className="pt-6">
                 <p className="text-sm font-medium text-muted-foreground mb-2">
-                  {t("totalDeductionAmount")}
+                  {t("totalBalance")}
                 </p>
                 <p className="text-2xl font-bold">
-                  {walletData.totalDeductionAmount.toFixed(2)}
+                  {walletData.totalAmount.toFixed(2)}
                 </p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="pt-6">
                 <p className="text-sm font-medium text-muted-foreground mb-2">
-                  {t("totalBalance")}
+                  {t("totalDeductionAmount")}
                 </p>
                 <p className="text-2xl font-bold">
-                  {walletData.totalAmount.toFixed(2)}
+                  {walletData.totalDeductionAmount.toFixed(2)}
                 </p>
               </CardContent>
             </Card>

@@ -349,3 +349,23 @@ export interface OrderSectionProps {
   order: Order;
   language: string;
 }
+// Define the order action types for better type safety
+export type OrderAction = "accept" | "reject" | "proceed" | "complete";
+
+// Define the order status enum for better maintainability
+export enum OrderStatus {
+  WAITING = "WAITING",
+  ACCEPTED = "ACCEPTED",
+  UNDER_PROCESSING = "UNDER_PROCESSING",
+  COMPLETED = "COMPLETED",
+  COMPLETED_BY_ADMIN = "COMPLETED_BY_ADMIN",
+  CANCELLED = "CANCELLED",
+  CANCELLED_BY_ADMIN = "CANCELLED_BY_ADMIN",
+  REJECTED = "REJECTED",
+}
+
+// Define waiting process IDs
+export enum WaitingProcessId {
+  INITIAL = 1,
+  READY_TO_PROCEED = 2,
+}

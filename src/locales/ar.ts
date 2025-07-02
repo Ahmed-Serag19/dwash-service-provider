@@ -199,7 +199,7 @@ export const ar = {
   Available: "متاح",
   conflictSlots: "تعارض الفترات الزمنية",
   walletSummary: " المحفظة",
-  totalBalance: "اجمالي الخصم",
+  totalBalance: "المبلغ الاجمالي",
   netBalance: "المبلغ الاجمالي بدون خصم",
   outstandingAmount: "المبلغ المستحق بعد الخصم",
   balanceDetails: "تفاصيل الرصيد",
@@ -324,4 +324,27 @@ export const ar = {
     "اضافة وقت للخدمة يجب أن يكون في نطاق ١٤ يومًا من اليوم الحالي.",
   noTime: "لا يوجد وقت",
   editProfile: "تعديل الملف الشخصي",
+  totalDeductionAmount: "اجمالي الخصم",
+  // Calendar and Date Viewing
+  selectDateToViewSlots: "اختر تاريخاً لعرض المواعيد",
+  datesWithAvailableSlots: "التواريخ التي تحتوي على مواعيد متاحة",
+  viewSlotsByDate: "عرض المواعيد حسب التاريخ",
+  viewAllSlots: "عرض جميع المواعيد",
+  viewByDate: "عرض حسب التاريخ",
+  backToCalendar: "العودة للتقويم",
+  clickDateToViewSlots:
+    "انقر على التاريخ الأخضر لعرض المواعيد المتاحة لذلك اليوم",
+
+  // Slot Status and Information
+  slotAvailable: "متاح",
+  slotReserved: "محجوز",
+  customerName: "اسم العميل",
+  customerMobile: "جوال العميل",
+  notAvailable: "غير متوفر",
+  deleteSlot: "حذف الموعد",
+
+  // Slot Counts and Summary
+  availableSlotsCount: "المواعيد المتاحة",
+  reservedSlotsCount: "المواعيد المحجوزة",
+  noSlotsFoundForThisDate: "لا توجد مواعيد لهذا التاريخ",
 };

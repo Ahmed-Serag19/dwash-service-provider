@@ -10,7 +10,7 @@ import Modal from "@/components/ui/Modal";
 import { Button } from "@/components/ui/button";
 import TimePicker from "@/components/TimePicker";
 import DatePicker from "@/components/DatePicker";
-import UserSlots from "@/components/UserSlots";
+import UserSlots from "@/components/time-slots/UserSlots";
 import PendingSlotsList from "@/components/PendingSlotsList";
 
 import { endpoints } from "@/constants/endPoints";

@@ -1,8 +1,17 @@
-"use client";
-
 import type React from "react";
 import { useTranslation } from "react-i18next";
-import type { OrderActionProps } from "@/interface/interfaces";
+import { Button } from "@/components/ui/button";
+import type { Order } from "@/interface/interfaces";
+import type { OrderAction } from "@/interface/interfaces";
+import { OrderStatus, WaitingProcessId } from "@/interface/interfaces";
+import { isOrderCancellable } from "@/utils/order-utils";
+
+interface OrderActionProps {
+  order: Order;
+  onAction: (action: OrderAction) => void;
+  loading: boolean;
+  isClosed?: boolean;
+}
 
 export const OrderActions: React.FC<OrderActionProps> = ({
   order,
@@ -11,81 +20,75 @@ export const OrderActions: React.FC<OrderActionProps> = ({
   isClosed,
 }) => {
   const { t } = useTranslation();
+  const { statusName, waitingProcessId } = order.request;
 
-  const handleAccept = () => onAction(order.request.id);
-  const handleReject = () => onAction(order.request.id);
-  const handleProceed = () => onAction(order.request.id);
-  const handleComplete = () => onAction(order.request.id);
-
+  // Render action buttons based on order status
   const renderActionButtons = () => {
-    const { statusName, waitingProcessId } = order.request;
+    switch (statusName) {
+      case OrderStatus.WAITING:
+        return (
+          <div className="flex gap-3">
+            <Button
+              disabled={loading}
+              onClick={() => onAction("accept")}
+              className="px-6 py-2 text-sm bg-green-600 text-white hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+            >
+              {loading ? t("loading") : t("accept")}
+            </Button>
+            <Button
+              disabled={loading}
+              onClick={() => onAction("reject")}
+              variant="destructive"
+              className="px-6 py-2 text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
+            >
+              {loading ? t("loading") : t("reject")}
+            </Button>
+          </div>
+        );
 
-    // Waiting orders - show accept/reject
-    if (statusName === "WAITING") {
-      return (
-        <div className="flex gap-3">
-          <button
-            disabled={loading}
-            onClick={handleAccept}
-            className="disabled:bg-gray-400 disabled:cursor-not-allowed px-6 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-          >
-            {t("accept")}
-          </button>
-          <button
-            disabled={loading}
-            onClick={handleReject}
-            className="disabled:bg-gray-400 disabled:cursor-not-allowed px-6 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-          >
-            {t("reject")}
-          </button>
-        </div>
-      );
+      case OrderStatus.ACCEPTED:
+        if (waitingProcessId === WaitingProcessId.READY_TO_PROCEED) {
+          return (
+            <Button
+              disabled={loading}
+              onClick={() => onAction("proceed")}
+              className="px-6 py-2 text-sm bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+            >
+              {loading ? t("loading") : t("proceedOrder")}
+            </Button>
+          );
+        }
+        break;
+
+      case OrderStatus.UNDER_PROCESSING:
+        if (waitingProcessId === WaitingProcessId.READY_TO_PROCEED) {
+          return (
+            <Button
+              disabled={loading}
+              onClick={() => onAction("complete")}
+              className="px-6 py-2 text-sm bg-green-600 text-white hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+            >
+              {loading ? t("loading") : t("completeOrder")}
+            </Button>
+          );
+        }
+        break;
+
+      default:
+        break;
     }
 
-    // Accepted orders - show proceed button
-    if (statusName === "ACCEPTED" && waitingProcessId === 2) {
+    // Show cancel button for orders that can be cancelled
+    if (isOrderCancellable(statusName, isClosed)) {
       return (
-        <button
+        <Button
           disabled={loading}
-          onClick={handleProceed}
-          className="disabled:bg-gray-400 disabled:cursor-not-allowed px-6 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          onClick={() => onAction("reject")}
+          variant="destructive"
+          className="px-6 py-2 text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
-          {t("proceedOrder")}
-        </button>
-      );
-    }
-
-    // Under processing orders - show complete button
-    if (statusName === "UNDER_PROCESSING" && waitingProcessId === 2) {
-      return (
-        <button
-          disabled={loading}
-          onClick={handleComplete}
-          className="disabled:bg-gray-400 disabled:cursor-not-allowed px-6 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-        >
-          {t("completeOrder")}
-        </button>
-      );
-    }
-
-    // Show cancel button for non-closed orders (except completed ones)
-    if (
-      !isClosed &&
-      ![
-        "COMPLETED",
-        "COMPLETED_BY_ADMIN",
-        "CANCELLED",
-        "CANCELLED_BY_ADMIN",
-      ].includes(statusName)
-    ) {
-      return (
-        <button
-          disabled={loading}
-          onClick={handleReject}
-          className="disabled:bg-gray-400 disabled:cursor-not-allowed px-6 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-        >
-          {t("cancel")}
-        </button>
+          {loading ? t("loading") : t("cancel")}
+        </Button>
       );
     }
 

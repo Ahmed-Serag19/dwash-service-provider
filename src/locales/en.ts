@@ -199,7 +199,7 @@ export const en = {
   Available: "Available",
   conflictSlots: "Conflict Slots",
   walletSummary: "Wallet Summary",
-  totalBalance: "Total Deducted Amount",
+  totalBalance: "Total Balance",
   netBalance: "Total Balance Without Deduction",
   outstandingAmount: "Total Balance After Deduction",
   balanceDetails: "Balance Details",
@@ -321,4 +321,26 @@ export const en = {
   outOfAllowedRangeError: "Timeslot date must be within 14 days from today",
   noTime: "No time selected",
   editProfile: "Edit Profile",
+  // Calendar and Date Viewing
+  selectDateToViewSlots: "Select a date to view slots",
+  datesWithAvailableSlots: "Dates with available slots",
+  viewSlotsByDate: "View Slots by Date",
+  viewAllSlots: "View All Slots",
+  viewByDate: "View by Date",
+  backToCalendar: "Back to Calendar",
+  clickDateToViewSlots:
+    "Click on a green date to view available slots for that day",
+
+  // Slot Status and Information
+  slotAvailable: "Available",
+  slotReserved: "Reserved",
+  customerName: "Customer Name",
+  customerMobile: "Customer Mobile",
+  notAvailable: "Not Available",
+  deleteSlot: "Delete Slot",
+
+  // Slot Counts and Summary
+  availableSlotsCount: "Available Slots",
+  reservedSlotsCount: "Reserved Slots",
+  noSlotsFoundForThisDate: "No slots found for this date",
 };
