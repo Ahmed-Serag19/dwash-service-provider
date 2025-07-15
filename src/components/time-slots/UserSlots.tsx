@@ -157,9 +157,9 @@ const UserSlots: React.FC<UserSlotsProps> = ({
                   <span>
                     {t("from")} {formatTimeToAMPM(slot.timeFrom)}
                   </span>
-                  <span>
-                    {t("to")} {formatTimeToAMPM(slot.timeTo)}
-                  </span>
+                  {/* <span> */}
+                  {/* {t("to")} {formatTimeToAMPM(slot.timeTo)} */}
+                  {/* </span> */}
                 </div>
               </h2>
             </div>

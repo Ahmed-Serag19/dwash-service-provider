@@ -139,7 +139,7 @@ const TimeSlotPicker: React.FC = () => {
         <Button
           variant="outline"
           onClick={() => setIsModalOpen(true)}
-          className="mb-4 bg-blue-950 text-white hover:bg-blue-900 text-lg px-8 py-4"
+          className="mb-4 bg-blue-950 text-white hover:bg-blue-800 text-lg px-8 py-4 hover:text-white"
           disabled={isSubmitting}
         >
           {t("add")}
