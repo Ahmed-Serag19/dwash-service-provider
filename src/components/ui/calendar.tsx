@@ -1,11 +1,12 @@
-import * as React from "react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import { DayPicker } from "react-day-picker"
+import * as React from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { DayPicker } from "react-day-picker";
 
-import { cn } from "@/lib/utils"
-import { buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
-export type CalendarProps = React.ComponentProps<typeof DayPicker>
+export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
 function Calendar({
   className,
@@ -13,6 +14,10 @@ function Calendar({
   showOutsideDays = true,
   ...props
 }: CalendarProps) {
+  const { i18n } = useTranslation
+    ? useTranslation()
+    : { i18n: { language: "en" } };
+  const isArabic = i18n.language === "ar";
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
@@ -48,7 +53,8 @@ function Calendar({
         day_range_end: "day-range-end",
         day_selected:
           "bg-neutral-900 text-neutral-50 hover:bg-neutral-900 hover:text-neutral-50 focus:bg-neutral-900 focus:text-neutral-50 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-50 dark:hover:text-neutral-900 dark:focus:bg-neutral-50 dark:focus:text-neutral-900",
-        day_today: "bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-50",
+        day_today:
+          "bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-50",
         day_outside:
           "day-outside text-neutral-500 aria-selected:bg-neutral-100/50 aria-selected:text-neutral-500 dark:text-neutral-400 dark:aria-selected:bg-neutral-800/50 dark:aria-selected:text-neutral-400",
         day_disabled: "text-neutral-500 opacity-50 dark:text-neutral-400",
@@ -56,6 +62,16 @@ function Calendar({
           "aria-selected:bg-neutral-100 aria-selected:text-neutral-900 dark:aria-selected:bg-neutral-800 dark:aria-selected:text-neutral-50",
         day_hidden: "invisible",
         ...classNames,
+      }}
+      formatters={{
+        formatDay: (date, _options) =>
+          isArabic
+            ? date.getDate().toLocaleString("ar-EG")
+            : date.getDate().toString(),
+        formatMonthCaption: (date, _options) =>
+          isArabic
+            ? date.toLocaleString("ar-EG", { month: "long", year: "numeric" })
+            : date.toLocaleString("en-US", { month: "long", year: "numeric" }),
       }}
       components={{
         IconLeft: ({ className, ...props }) => (
@@ -67,8 +83,8 @@ function Calendar({
       }}
       {...props}
     />
-  )
+  );
 }
-Calendar.displayName = "Calendar"
+Calendar.displayName = "Calendar";
 
-export { Calendar }
+export { Calendar };

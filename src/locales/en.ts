@@ -343,4 +343,18 @@ export const en = {
   availableSlotsCount: "Available Slots",
   reservedSlotsCount: "Reserved Slots",
   noSlotsFoundForThisDate: "No slots found for this date",
+  customersPerHourQuestion: "How many customers can you serve in 1 hour?",
+  customersPerHourLabel: "Number of customers per hour",
+  customersPerHourPlaceholder: "Select number of customers",
+  customersPerHourError:
+    "Please select how many customers you can serve in one hour.",
+  slotGenerationError:
+    "Could not generate time slots. Please check your input.",
+  endTimeInvalidError: "End time is invalid.",
+  slotConflictError: "Conflict with existing pending slot.",
+  sessionExpiredError: "Session expired. Please log in again.",
+  availableTab: "Available",
+  bookedTab: "Booked",
+  next: "Next",
+  previous: "Previous",
 };

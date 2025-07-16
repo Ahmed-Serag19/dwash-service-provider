@@ -41,6 +41,7 @@ const TimeSlotPicker: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [date, setDate] = useState<Date>();
   const [startTime, setStartTime] = useState<string>("");
+  const [customersPerHour, setCustomersPerHour] = useState<number | "">("");
 
   // Prevent double‐submission
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -55,13 +56,47 @@ const TimeSlotPicker: React.FC = () => {
 
   // Handler: “Add to pending list” button
   const handleAddToPending = useCallback(() => {
-    if (!date || !startTime) {
-      toast.error(t("fillAllFieldsError") || "Fill all fields");
+    if (!date || !startTime || !customersPerHour) {
+      toast.error(t("customersPerHourError"));
       return;
     }
-    addSlot(date, startTime);
-    setStartTime(""); // reset only time, keep date for multiple additions
-  }, [date, startTime, addSlot, t]);
+    const slotsToAdd = [];
+    const [startHour, startMinute] = startTime.split(":").map(Number);
+    const slotCount = Number(customersPerHour);
+    if (slotCount < 1 || slotCount > 10) {
+      toast.error(t("customersPerHourError"));
+      return;
+    }
+    const slotDuration = Math.floor(60 / slotCount); // in minutes
+    let currentHour = startHour;
+    let currentMinute = startMinute;
+    for (let i = 0; i < slotCount; i++) {
+      const slotStart = `${currentHour
+        .toString()
+        .padStart(2, "0")}:${currentMinute.toString().padStart(2, "0")}`;
+      let endMinute = currentMinute + slotDuration;
+      let endHour = currentHour;
+      if (endMinute >= 60) {
+        endHour += Math.floor(endMinute / 60);
+        endMinute = endMinute % 60;
+      }
+      const slotEnd = `${endHour.toString().padStart(2, "0")}:${endMinute
+        .toString()
+        .padStart(2, "0")}`;
+      slotsToAdd.push({ date, startTime: slotStart, endTime: slotEnd });
+      currentHour = endHour;
+      currentMinute = endMinute;
+    }
+    if (slotsToAdd.length !== slotCount) {
+      toast.error(t("slotGenerationError"));
+      return;
+    }
+    slotsToAdd.forEach((slot) =>
+      addSlot(slot.date, slot.startTime, slot.endTime)
+    );
+    setStartTime("");
+    setCustomersPerHour("");
+  }, [date, startTime, customersPerHour, addSlot, t]);
 
   // Handler: “Submit all pending” button
   const handleSubmitAll = useCallback(async () => {
@@ -172,10 +207,9 @@ const TimeSlotPicker: React.FC = () => {
           }
         />
 
-        {/* FORM TO ADD A SINGLE SLOT TO PENDING */}
+        {/* FORM TO ADD SLOTS TO PENDING */}
         <div className="space-y-4">
           <DatePicker date={date} setDate={setDate} />
-
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <TimePicker
@@ -189,29 +223,25 @@ const TimeSlotPicker: React.FC = () => {
                 disabled={isSubmitting}
               />
             </div>
-
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">
-                {t("endTime")}
+                {t("customersPerHourLabel")}
               </label>
-              <div className="px-4 py-1 border rounded-md bg-gray-50">
-                {startTime
-                  ? new Date(
-                      `1970-01-01T${calculateEndTime(
-                        parseInt(startTime.split(":")[0], 10),
-                        parseInt(startTime.split(":")[1], 10)
-                      )}:00`
-                    ).toLocaleTimeString(locale, {
-                      hour: "numeric",
-                      minute: "numeric",
-                      hour12: true,
-                    })
-                  : "--:--"}
-              </div>
-              <p className="text-xs text-blue-900">{t("endTimeMessage")}</p>
+              <select
+                className="px-2 py-0.5 border rounded-md bg-gray-50 w-full"
+                value={customersPerHour}
+                onChange={(e) => setCustomersPerHour(Number(e.target.value))}
+                disabled={isSubmitting}
+              >
+                <option value="">{t("customersPerHourPlaceholder")}</option>
+                {[...Array(10)].map((_, i) => (
+                  <option key={i + 1} value={i + 1}>
+                    {i + 1}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
-
           <div className="flex justify-end">
             <Button
               type="button"

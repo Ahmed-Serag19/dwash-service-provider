@@ -3,6 +3,7 @@ import axios from "axios";
 import { endpoints } from "@/constants/endPoints";
 import { Slot } from "@/interface/interfaces";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 const getAuthHeader = () => ({
   headers: {
@@ -13,6 +14,7 @@ const getAuthHeader = () => ({
 export function useSlots() {
   const [slots, setSlots] = useState<Slot[]>([]);
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
 
   // Fetch all slots
   const fetchSlots = useCallback(async () => {
@@ -22,28 +24,31 @@ export function useSlots() {
       if (response.data.success) {
         setSlots(response.data.content || []);
       } else {
-        toast.error("Failed to fetch time slots.");
+        toast.error(t("fetchTimeSlotsError"));
       }
     } catch (err) {
       console.error("Error fetching slots:", err);
-      toast.error("An error occurred while fetching slots.");
+      toast.error(t("fetchTimeSlotsError"));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   // Delete a single slot
-  const deleteSlot = useCallback(async (slotId: number) => {
-    try {
-      await axios.delete(endpoints.deleteTimeSlot(slotId), getAuthHeader());
-      toast.success("Time slot deleted successfully.");
-      // Remove deleted slot from state:
-      setSlots((prev) => prev.filter((s) => s.slotId !== slotId));
-    } catch (err) {
-      console.error("Error deleting slot:", err);
-      toast.error("Failed to delete the time slot.");
-    }
-  }, []);
+  const deleteSlot = useCallback(
+    async (slotId: number) => {
+      try {
+        await axios.delete(endpoints.deleteTimeSlot(slotId), getAuthHeader());
+        toast.success(t("timeSlotDeletedSuccess"));
+        // Remove deleted slot from state:
+        setSlots((prev) => prev.filter((s) => s.slotId !== slotId));
+      } catch (err) {
+        console.error("Error deleting slot:", err);
+        toast.error(t("timeSlotDeletedError"));
+      }
+    },
+    [t]
+  );
 
   // Automatically fetch on mount
   useEffect(() => {

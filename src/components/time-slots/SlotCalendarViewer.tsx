@@ -69,7 +69,19 @@ const SlotCalendarViewer: React.FC<SlotCalendarViewerProps> = ({
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {date ? (
-            format(date, "PPP", { locale: localeObj })
+            i18n.language === "ar" ? (
+              date.toLocaleDateString("ar-EG", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })
+            ) : (
+              date.toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })
+            )
           ) : (
             <span>{t("selectDateToViewSlots")}</span>
           )}

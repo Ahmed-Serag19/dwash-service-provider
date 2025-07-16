@@ -27,7 +27,7 @@ const ProtectedRoute = ({ children }: { children: ReactNode }) => {
       const currentTime = Date.now() / 1000; // Convert to Unix timestamp
       if (decodedToken.exp < currentTime) {
         sessionStorage.removeItem("accessToken");
-        toast.error("Session expired. Please log in again.");
+        toast.error(t("sessionExpiredError"));
         navigate("/login");
         return;
       }
@@ -38,7 +38,7 @@ const ProtectedRoute = ({ children }: { children: ReactNode }) => {
       // Set timeout for token expiration
       const logoutTimer = setTimeout(() => {
         sessionStorage.removeItem("accessToken");
-        toast.error("Session expired. Please log in again.");
+        toast.error(t("sessionExpiredError"));
         navigate("/login");
       }, remainingTime);
 

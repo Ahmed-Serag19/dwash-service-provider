@@ -347,4 +347,17 @@ export const ar = {
   availableSlotsCount: "المواعيد المتاحة",
   reservedSlotsCount: "المواعيد المحجوزة",
   noSlotsFoundForThisDate: "لا توجد مواعيد لهذا التاريخ",
+  customersPerHourQuestion: "كم عدد العملاء الذين يمكنك خدمتهم في ساعة واحدة؟",
+  customersPerHourLabel: "عدد العملاء في الساعة",
+  customersPerHourPlaceholder: "اختر عدد العملاء",
+  customersPerHourError:
+    "يرجى اختيار عدد العملاء الذين يمكنك خدمتهم في ساعة واحدة.",
+  slotGenerationError: "تعذر إنشاء الفترات الزمنية. يرجى التحقق من المدخلات.",
+  endTimeInvalidError: "وقت الانتهاء غير صالح.",
+  slotConflictError: "تعارض مع فترة زمنية معلقة موجودة.",
+  sessionExpiredError: "انتهت الجلسة. يرجى تسجيل الدخول مرة أخرى.",
+  availableTab: "المتاحة",
+  bookedTab: "المحجوزة",
+  next: "التالي",
+  previous: "السابق",
 };

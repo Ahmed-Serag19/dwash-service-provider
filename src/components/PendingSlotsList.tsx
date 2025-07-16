@@ -21,6 +21,18 @@ const PendingSlotsList: React.FC<PendingSlotsListProps> = ({
     return null;
   }
 
+  function formatHourLocalized(time24: string) {
+    const [hourStr] = time24.split(":");
+    const hour = Number(hourStr);
+    const temp = new Date();
+    temp.setHours(hour, 0, 0, 0);
+    return temp.toLocaleTimeString(undefined, {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+  }
+
   return (
     <div className="mb-6">
       <h3 className="text-md font-medium mb-2">{t("pendingSlots")}</h3>
@@ -36,8 +48,8 @@ const PendingSlotsList: React.FC<PendingSlotsListProps> = ({
               </span>
               <span className="mx-2">|</span>
               <span>
-                {formatTimeDisplay(slot.startTime)} -{" "}
-                {formatTimeDisplay(slot.endTime)}
+                {formatHourLocalized(slot.startTime)} -{" "}
+                {formatHourLocalized(slot.endTime)}
               </span>
             </div>
             <Button

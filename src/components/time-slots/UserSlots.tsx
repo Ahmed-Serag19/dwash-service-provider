@@ -1,5 +1,5 @@
 import type React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { Calendar, Grid } from "lucide-react";
@@ -23,6 +23,17 @@ const UserSlots: React.FC<UserSlotsProps> = ({
   const { t, i18n } = useTranslation();
   const [viewMode, setViewMode] = useState<ViewMode>("all");
   const [selectedDate, setSelectedDate] = useState<Date>();
+  // Tab state for filtering
+  const [slotTab, setSlotTab] = useState<"available" | "booked">("available");
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const slotsPerPage = 8;
+
+  // Reset page when tab changes or slots change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [slotTab, slots]);
 
   // Choose locale based on current language
   const locale = i18n.language === "ar" ? "ar-EG" : "en-US";
@@ -38,15 +49,20 @@ const UserSlots: React.FC<UserSlotsProps> = ({
   };
 
   // Format "HH:mm:ss" into a localized 12-hour clock string
-  const formatTimeToAMPM = (time24: string) => {
-    const [hourStr, minuteStr] = time24.split(":");
-    const hour = Number.parseInt(hourStr, 10);
-    const minute = Number.parseInt(minuteStr, 10);
+  const formatHourOnly = (time24: string) => {
+    const [hourStr] = time24.split(":");
+    return `${hourStr.padStart(2, "0")}:00`;
+  };
+
+  // Format slot time to localized 12-hour format, always showing hour:00
+  const formatHourLocalized = (time24: string) => {
+    const [hourStr] = time24.split(":");
+    const hour = Number(hourStr);
     const temp = new Date();
-    temp.setHours(hour, minute, 0, 0);
+    temp.setHours(hour, 0, 0, 0);
     return temp.toLocaleTimeString(locale, {
       hour: "numeric",
-      minute: "numeric",
+      minute: "2-digit",
       hour12: true,
     });
   };
@@ -65,6 +81,28 @@ const UserSlots: React.FC<UserSlotsProps> = ({
     setViewMode("all");
     setSelectedDate(undefined);
   };
+
+  // Group slots for all view
+  const bookedSlots = slots.filter((slot) => slot.reserved !== 0);
+  const availableSlots = slots.filter((slot) => slot.reserved === 0);
+
+  // Paginated slots
+  const paginatedAvailable = availableSlots.slice(
+    (currentPage - 1) * slotsPerPage,
+    currentPage * slotsPerPage
+  );
+  const paginatedBooked = bookedSlots.slice(
+    (currentPage - 1) * slotsPerPage,
+    currentPage * slotsPerPage
+  );
+  const totalPages =
+    slotTab === "available"
+      ? Math.ceil(availableSlots.length / slotsPerPage)
+      : Math.ceil(bookedSlots.length / slotsPerPage);
+
+  // Helper for localized page number
+  const formatPageNumber = (num: number) =>
+    i18n.language === "ar" ? num.toLocaleString("ar-EG") : num;
 
   if (loading) {
     return (
@@ -141,61 +179,156 @@ const UserSlots: React.FC<UserSlotsProps> = ({
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {slots.map((slot) => (
-          <div
-            key={slot.slotId}
-            className="p-4 border rounded-lg border-blue-950 bg-slate-100"
-          >
-            <div className="flex justify-between gap-4 flex-col mb-4">
-              <h3 className="text-md font-semibold">
-                {t("date")}: <span>{formatDate(slot.date)}</span>
-              </h3>
-              <h2 className="text-md font-semibold">
-                {t("time")}:{" "}
-                <div className="flex gap-3">
-                  <span>
-                    {t("from")} {formatTimeToAMPM(slot.timeFrom)}
-                  </span>
-                  {/* <span> */}
-                  {/* {t("to")} {formatTimeToAMPM(slot.timeTo)} */}
-                  {/* </span> */}
+      {/* Tabs for Available/Booked */}
+      <div className="flex gap-4 mb-6">
+        <Button
+          variant={slotTab === "available" ? "default" : "outline"}
+          onClick={() => setSlotTab("available")}
+        >
+          {t("availableTab")}
+        </Button>
+        <Button
+          variant={slotTab === "booked" ? "default" : "outline"}
+          onClick={() => setSlotTab("booked")}
+        >
+          {t("bookedTab")}
+        </Button>
+      </div>
+
+      {/* Show slots based on tab */}
+      {slotTab === "available" ? (
+        availableSlots.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {paginatedAvailable.map((slot) => (
+                <div
+                  key={slot.slotId}
+                  className="p-4 border rounded-lg border-blue-950 bg-slate-100"
+                >
+                  <div className="flex justify-between gap-4 flex-col mb-4">
+                    <h3 className="text-md font-semibold">
+                      {t("date")}: <span>{formatDate(slot.date)}</span>
+                    </h3>
+                    <h2 className="text-md font-semibold">
+                      {t("time")}:{" "}
+                      <div className="flex gap-3">
+                        <span>
+                          {t("from")} {formatHourLocalized(slot.timeFrom)}
+                        </span>
+                      </div>
+                    </h2>
+                  </div>
+                  <p className="text-green-800 font-semibold text-lg">
+                    {t("slotAvailable")}
+                  </p>
+                  <div className="flex justify-end mt-4">
+                    <Button
+                      variant="outline"
+                      size="default"
+                      onClick={() => handleDeleteSlot(slot.slotId)}
+                      className="text-red-500 border-red-500 hover:bg-red-100 text-lg"
+                    >
+                      {t("deleteSlot")}
+                    </Button>
+                  </div>
                 </div>
-              </h2>
+              ))}
             </div>
-
-            {slot.reserved !== 0 ? (
-              <div>
-                <p>
-                  <strong>{t("customerName")}:</strong>{" "}
-                  {slot.username || t("notAvailable")}
-                </p>
-                <p>
-                  <strong>{t("customerMobile")}:</strong>{" "}
-                  {slot.mobile || t("notAvailable")}
-                </p>
-              </div>
-            ) : (
-              <p className="text-green-800 font-semibold text-lg">
-                {t("slotAvailable")}
-              </p>
-            )}
-
-            {slot.reserved === 0 && (
-              <div className="flex justify-end mt-4">
+            {/* Pagination controls */}
+            {totalPages > 1 && (
+              <div className="flex justify-center gap-4 mt-8">
                 <Button
                   variant="outline"
-                  size="default"
-                  onClick={() => handleDeleteSlot(slot.slotId)}
-                  className="text-red-500 border-red-500 hover:bg-red-100 text-lg"
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
                 >
-                  {t("deleteSlot")}
+                  {t("previous")}
+                </Button>
+                <span className="self-center">
+                  {formatPageNumber(currentPage)} /{" "}
+                  {formatPageNumber(totalPages)}
+                </span>
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(totalPages, p + 1))
+                  }
+                  disabled={currentPage === totalPages}
+                >
+                  {t("next")}
                 </Button>
               </div>
             )}
+          </>
+        ) : (
+          <p className="text-center text-gray-500 mt-8">
+            {t("noTimeSlotsAvailable")}
+          </p>
+        )
+      ) : bookedSlots.length > 0 ? (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {paginatedBooked.map((slot) => (
+              <div
+                key={slot.slotId}
+                className="p-4 border rounded-lg border-blue-950 bg-slate-100"
+              >
+                <div className="flex justify-between gap-4 flex-col mb-4">
+                  <h3 className="text-md font-semibold">
+                    {t("date")}: <span>{formatDate(slot.date)}</span>
+                  </h3>
+                  <h2 className="text-md font-semibold">
+                    {t("time")}:{" "}
+                    <div className="flex gap-3">
+                      <span>
+                        {t("from")} {formatHourLocalized(slot.timeFrom)}
+                      </span>
+                    </div>
+                  </h2>
+                </div>
+                <div>
+                  <p>
+                    <strong>{t("customerName")}:</strong>{" "}
+                    {slot.username || t("notAvailable")}
+                  </p>
+                  <p>
+                    <strong>{t("customerMobile")}:</strong>{" "}
+                    {slot.mobile || t("notAvailable")}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+          {/* Pagination controls */}
+          {totalPages > 1 && (
+            <div className="flex justify-center gap-4 mt-8">
+              <Button
+                variant="outline"
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+              >
+                {t("previous")}
+              </Button>
+              <span className="self-center">
+                {currentPage} / {totalPages}
+              </span>
+              <Button
+                variant="outline"
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
+                disabled={currentPage === totalPages}
+              >
+                {t("next")}
+              </Button>
+            </div>
+          )}
+        </>
+      ) : (
+        <p className="text-center text-gray-500 mt-8">
+          {t("noTimeSlotsAvailable")}
+        </p>
+      )}
     </div>
   );
 };
