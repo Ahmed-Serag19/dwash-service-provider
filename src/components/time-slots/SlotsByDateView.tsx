@@ -36,10 +36,11 @@ const SlotsByDateView: React.FC<SlotsByDateViewProps> = ({
   const [slotTab, setSlotTab] = useState<"available" | "booked">("available");
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const slotsPerPage = 8;
+  const slotsPerPage = 6;
   useEffect(() => {
     setCurrentPage(1);
-  }, [slotTab, slotsForDate]);
+  }, [slotTab, selectedDate]);
+
   // Group slots
   const bookedSlots = slotsForDate.filter((slot) => slot.reserved !== 0);
   const availableSlots = slotsForDate.filter((slot) => slot.reserved === 0);
@@ -56,6 +57,13 @@ const SlotsByDateView: React.FC<SlotsByDateViewProps> = ({
     slotTab === "available"
       ? Math.ceil(availableSlots.length / slotsPerPage)
       : Math.ceil(bookedSlots.length / slotsPerPage);
+
+  // Ensure currentPage is always valid
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
   // Helper for localized page number
   const formatPageNumber = (num: number) =>
     i18n.language === "ar" ? num.toLocaleString("ar-EG") : num;
@@ -140,8 +148,7 @@ const SlotsByDateView: React.FC<SlotsByDateViewProps> = ({
                 >
                   <div className="mb-4">
                     <h3 className="text-lg font-semibold mb-2">
-                      {formatHourLocalized(slot.timeFrom)} -{" "}
-                      {formatHourLocalized(slot.timeTo)}
+                      {formatHourLocalized(slot.timeFrom)}
                     </h3>
                     <p className="text-green-600 font-semibold">
                       {t("slotAvailable")}
@@ -201,8 +208,7 @@ const SlotsByDateView: React.FC<SlotsByDateViewProps> = ({
               >
                 <div className="mb-4">
                   <h3 className="text-lg font-semibold mb-2">
-                    {formatHourLocalized(slot.timeFrom)} -{" "}
-                    {formatHourLocalized(slot.timeTo)}
+                    {formatHourLocalized(slot.timeFrom)}
                   </h3>
                   <div className="space-y-1">
                     <p className="text-red-600 font-medium">
